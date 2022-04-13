@@ -10,6 +10,14 @@
 --///////////////////////////////////////////////////////////////////////////
 
 
+local max_skins = 20;
+
+local CarPaletteProps = {
+	Size = SIZE(30,128),
+	Position = POS(0,7), -- offsets
+	Padding = 10, -- padding between y items
+	ItemSize = SIZE(28,14),
+}
 
 
 
@@ -562,20 +570,23 @@ function cardealer_real_init(backaction,forwardaction,useprice,istrade, enabled_
 	addchild(Button{Position=RELATIVEPOS(SPOS(516,142),ppos),Size=GetResourceSize(menucommon.nuoliylos),Parent=parent, Layer=11}):AttachResource(menucommon.nuoliylos)
 	addchild(Button{Position=RELATIVEPOS(SPOS(516,266),ppos),Size=GetResourceSize(menucommon.nuolialas),Parent=parent, Layer=11}):AttachResource(menucommon.nuolialas)
 	addchild(Button{Position=RELATIVEPOS(SPOS(516,147),ppos),Size=SIZE(128,128),Parent=parent, Layer=10}):AttachResource(cardealer_data.images.colorbox)
-addchild(Button{Position=RELATIVEPOS(SPOS(516,142),ppos),Size=GetResourceSize(common.color_glassblock),Parent=parent, Layer=0}):AttachResource(common.color_glassblock)
+	addchild(Button{Position=RELATIVEPOS(SPOS(516,142),ppos),Size=GetResourceSize(common.color_glassblock),Parent=parent, Layer=0}):AttachResource(common.color_glassblock)
 
 	parent=addchild(ButtonGroup{Name="colorbox",Position=POS(0,0),Layer=0,Size=SIZE(128,128),ShowBorders=FALSE,Parent=parent})
-	parent.childs={}
+	parent.childs={f={}}
 
 
-	--//boxes
-	local b
-
-	for i=1,5 do
+	--//boxes and frames
+	local b,f
+	for i=1,max_skins do
 		b=addchild(Button{Position=RELATIVEPOS(SPOS(512,160+((i-1)*23)),ppos),Size=SIZE(28,14),Parent=parent,DrawBackgroundColor=TRUE})
+		f=addchild(Button{Position=RELATIVEPOS(SPOS(509,159+((i-1)*23)),ppos),Size=SIZE(33,16),Parent=parent})
+		f:AttachResource(menucommon.color_glassblock)
 		table.insert(parent.childs,b)
+		table.insert(parent.childs.f,f)
+		parent.childs[i]:HideWindow()
+		parent.childs.f[i]:HideWindow()
 		
-		addchild(Button{Position=RELATIVEPOS(SPOS(509,159+((i-1)*23)),ppos),Size=SIZE(33,16),Parent=parent}):AttachResource(menucommon.color_glassblock)
 	end
 	
 
@@ -589,10 +600,30 @@ addchild(Button{Position=RELATIVEPOS(SPOS(516,142),ppos),Size=GetResourceSize(co
 	parent.SetButtonColors = function(self)
 		colors=cardealer_data.car_data[cardealer_state.carnum].colors
 		
-		local i
-		for i=1,table.getn(colors) do
-			self.childs[i]:SetInactiveColor(colors[i][1])
-			self.childs[i]:SetActiveColor(colors[i][2])
+		local cpp = CarPaletteProps;
+		local sn, rsn
+		sn = table.getn(colors)
+		rsn = sn
+		if rsn < 2 then rsn = 2 end
+		local bs = cpp.Size[2]
+		local p = cpp.Padding
+		local is = cpp.ItemSize[2]
+		local spacing = (((bs-(p*2))-(is*rsn))/(rsn-1)) -- please don't try to understand this crazy math shit xd
+		local pxp = ((cpp.Size[1] - cpp.ItemSize[1])/2)
+		local pxy = cpp.Position
+		
+		for i=1,max_skins do
+			if i<=sn then
+				self.childs[i]:SetPosition(pxp+pxy[1],((p)+(((i-1)*(is+spacing)) ))+pxy[2]) -- please don't try to understand even this crazy math shit xd
+				self.childs[i]:SetInactiveColor(colors[i][1])
+				self.childs[i]:SetActiveColor(colors[i][2])
+				self.childs[i]:ShowWindow()
+				self.childs.f[i]:SetPosition(pxp+pxy[1]-3,((p)+(((i-1)*(is+spacing)) ))+pxy[2]-1) -- please don't try to understand even this crazy math shit xd
+				self.childs.f[i]:ShowWindow()
+			else
+				self.childs[i]:HideWindow()
+				self.childs.f[i]:HideWindow()
+			end
 		end
 
 	end
@@ -606,10 +637,13 @@ addchild(Button{Position=RELATIVEPOS(SPOS(516,142),ppos),Size=GetResourceSize(co
 
 	parent.onMoveUp = function(self)
 		local c=cardealer_state.skin
-		if c > 1 then
-			c = c - 1
-		else
-			c = table.getn(colors)
+		local sn = table.getn(colors) -- skin count
+		if sn>0 then
+			if c > 1 then
+				c = c - 1
+			else
+				c = sn
+			end
 		end
 		cardealer_state.skin = c
 		MenuScene:SetCarSkin(cardealer_state.skin)
@@ -618,10 +652,13 @@ addchild(Button{Position=RELATIVEPOS(SPOS(516,142),ppos),Size=GetResourceSize(co
 
 	parent.onMoveDown = function(self)
 		local c=cardealer_state.skin
-		if c < table.getn(colors) then
-			c = c + 1
-		else
-			c = 1
+		local sn = table.getn(colors) -- skin count
+		if sn>0 then
+			if c < sn then
+				c = c + 1
+			else
+				c = 1
+			end
 		end
 		cardealer_state.skin = c
 		MenuScene:SetCarSkin(cardealer_state.skin)
