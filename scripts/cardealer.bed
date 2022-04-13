@@ -609,11 +609,12 @@ addchild(Button{Position=RELATIVEPOS(SPOS(516,142),ppos),Size=GetResourceSize(co
 		MenuScene:SetCarSkin(self.number)
 	end
 
-	parent.SetButtonColors = function(self)
-		local colors=cardealer_data.car_data[cardealer_state.carnum].colors
+	local colors=cardealer_data.car_data[cardealer_state.carnum].colors
 
+	parent.SetButtonColors = function(self)
+		
 		local i
-		for i=1,5 do
+		for i=1,table.getn(colors) do
 			self.childs[i]:SetInactiveColor(colors[i][1])
 			self.childs[i]:SetActiveColor(colors[i][2])
 		end
@@ -631,6 +632,8 @@ addchild(Button{Position=RELATIVEPOS(SPOS(516,142),ppos),Size=GetResourceSize(co
 		local c=cardealer_state.skin
 		if c > 1 then
 			c = c - 1
+		else
+			c = table.getn(colors)
 		end
 		cardealer_state.skin = c
 		MenuScene:SetCarSkin(cardealer_state.skin)
@@ -639,8 +642,10 @@ addchild(Button{Position=RELATIVEPOS(SPOS(516,142),ppos),Size=GetResourceSize(co
 
 	parent.onMoveDown = function(self)
 		local c=cardealer_state.skin
-		if c < 5 then
+		if c < table.getn(colors) then
 			c = c + 1
+		else
+			c = 1
 		end
 		cardealer_state.skin = c
 		MenuScene:SetCarSkin(cardealer_state.skin)
