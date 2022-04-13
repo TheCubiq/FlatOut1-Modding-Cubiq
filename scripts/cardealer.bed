@@ -569,39 +569,14 @@ addchild(Button{Position=RELATIVEPOS(SPOS(516,142),ppos),Size=GetResourceSize(co
 
 
 	--//boxes
-	local b=addchild(Button{Position=RELATIVEPOS(SPOS(512,160),ppos),Size=SIZE(28,14),Parent=parent,DrawBackgroundColor=TRUE})
-	table.insert(parent.childs,b)
-	
-	addchild(Button{Position=RELATIVEPOS(SPOS(509,159),ppos),Size=SIZE(33,16),Parent=parent}):AttachResource(menucommon.color_glassblock)
+	local b
 
-
-
-	b=addchild(Button{Position=RELATIVEPOS(SPOS(512,183),ppos),Size=SIZE(28,14),Parent=parent,DrawBackgroundColor=TRUE})
-	table.insert(parent.childs,b)
-
-	addchild(Button{Position=RELATIVEPOS(SPOS(509,182),ppos),Size=SIZE(33,16),Parent=parent}):AttachResource(menucommon.color_glassblock)
-
-
-
-	b=addchild(Button{Position=RELATIVEPOS(SPOS(512,205),ppos),Size=SIZE(28,14),Parent=parent,DrawBackgroundColor=TRUE})
-	table.insert(parent.childs,b)
-
-	addchild(Button{Position=RELATIVEPOS(SPOS(509,204),ppos),Size=SIZE(33,16),Parent=parent}):AttachResource(menucommon.color_glassblock)
-
-
-
-	b=addchild(Button{Position=RELATIVEPOS(SPOS(512,226),ppos),Size=SIZE(28,14),Parent=parent,DrawBackgroundColor=TRUE})
-	table.insert(parent.childs,b)
-
-	addchild(Button{Position=RELATIVEPOS(SPOS(509,225),ppos),Size=SIZE(33,16),Parent=parent}):AttachResource(menucommon.color_glassblock)
-
-
-
-	b=addchild(Button{Position=RELATIVEPOS(SPOS(512,248),ppos),Size=SIZE(28,14),Parent=parent,DrawBackgroundColor=TRUE})
-	table.insert(parent.childs,b)
-
-	addchild(Button{Position=RELATIVEPOS(SPOS(509,247),ppos),Size=SIZE(33,16),Parent=parent}):AttachResource(menucommon.color_glassblock)
-
+	for i=1,5 do
+		b=addchild(Button{Position=RELATIVEPOS(SPOS(512,160+((i-1)*23)),ppos),Size=SIZE(28,14),Parent=parent,DrawBackgroundColor=TRUE})
+		table.insert(parent.childs,b)
+		
+		addchild(Button{Position=RELATIVEPOS(SPOS(509,159+((i-1)*23)),ppos),Size=SIZE(33,16),Parent=parent}):AttachResource(menucommon.color_glassblock)
+	end
 	
 
 	local func_selected = function(self)
