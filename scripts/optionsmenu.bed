@@ -1,0 +1,1635 @@
+---@diagnostic disable: duplicate-set-field
+--///////////////////////////////////////////////////////////////////////////
+--// OptionsMenu.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2004 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// Created on 9.1.2004 14:16:05
+--// 
+--// @Author Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+
+options_data = {
+	
+	xbox_layouts = {
+		[1] = {
+			[KeyCodes.BUTTON_A] = { POS(398,218), OPTIONS_HANDBRAKE, },
+			[KeyCodes.BUTTON_B] = { POS(398,202), OPTIONS_NITRO, },
+			[KeyCodes.BUTTON_X] = { POS(398,186), OPTIONS_GEARDOWN, },
+			[KeyCodes.BUTTON_Y] = { POS(398,165), OPTIONS_GEARUP, },
+			[KeyCodes.BUTTON_START] = { POS(115,257), OPTIONS_PAUSE, },
+			[KeyCodes.BUTTON_EXTRA3] = { POS(85,183), OPTIONS_STEERING, },
+			[KeyCodes.BUTTON_SELECT] = { POS(85,208), OPTIONS_CAMERA, },
+			[KeyCodes.BUTTON_EXTRA2] = { POS(365,269), OPTIONS_RESET, },
+			[KeyCodes.BUTTON_LEFT_TRIGGER] = { POS(398,127), OPTIONS_BRAKE, },
+			[KeyCodes.BUTTON_RIGHT_TRIGGER] = { POS(118,142), OPTIONS_THROTTLE, },
+			[KeyCodes.BUTTON_EXTRA1] = { POS(365,247), OPTIONS_LOOK, },
+			[KeyCodes.BUTTON_DIGITAL_UP] = { POS(186,322), OPTIONS_STEERING, },
+		},
+
+
+
+		[2] = {
+			[KeyCodes.BUTTON_A] = { POS(398,218), OPTIONS_THROTTLE, },
+			[KeyCodes.BUTTON_B] = { POS(398,202), OPTIONS_BRAKE, },
+			[KeyCodes.BUTTON_X] = { POS(398,186), OPTIONS_HANDBRAKE, },
+			[KeyCodes.BUTTON_Y] = { POS(398,165), OPTIONS_NITRO, },
+			[KeyCodes.BUTTON_START] = { POS(107,253), OPTIONS_PAUSE, },
+			[KeyCodes.BUTTON_EXTRA3] = { POS(95,199), OPTIONS_STEERING, },
+			[KeyCodes.BUTTON_SELECT] = { POS(95,222), OPTIONS_CAMERA, },
+			[KeyCodes.BUTTON_EXTRA2] = { POS(365,269), OPTIONS_RESET, },
+			[KeyCodes.BUTTON_LEFT_TRIGGER] = { POS(398,127), OPTIONS_GEARDOWN, },
+			[KeyCodes.BUTTON_RIGHT_TRIGGER] = { POS(91,129), OPTIONS_GEARUP, },
+			[KeyCodes.BUTTON_EXTRA1] = { POS(365,247), OPTIONS_LOOK, },
+			[KeyCodes.BUTTON_DIGITAL_UP] = { POS(193,329), OPTIONS_STEERING, },
+		},
+
+		[3] = {
+			[KeyCodes.BUTTON_A] = { POS(398,218), OPTIONS_GEARDOWN, },
+			[KeyCodes.BUTTON_B] = { POS(398,202), OPTIONS_GEARUP, },
+			[KeyCodes.BUTTON_X] = { POS(398,186), OPTIONS_HANDBRAKE, },
+			[KeyCodes.BUTTON_Y] = { POS(398,165), OPTIONS_NITRO, },
+			[KeyCodes.BUTTON_START] = { POS(107,253), OPTIONS_PAUSE, },
+			[KeyCodes.BUTTON_EXTRA3] = { POS(95,198), OPTIONS_STEERING, },
+			[KeyCodes.BUTTON_SELECT] = { POS(95,222), OPTIONS_CAMERA, },
+			[KeyCodes.BUTTON_EXTRA2] = { POS(365,269), OPTIONS_RESET, },
+			[KeyCodes.BUTTON_LEFT_TRIGGER] = { POS(398,127), OPTIONS_BRAKE, },
+			[KeyCodes.BUTTON_RIGHT_TRIGGER] = { POS(91,129), OPTIONS_THROTTLE, },
+			[KeyCodes.BUTTON_EXTRA1] = { POS(365,247), OPTIONS_LOOK, },
+			[KeyCodes.BUTTON_DIGITAL_UP] = { POS(193,329), OPTIONS_STEERING, },
+
+		},
+
+--// 4. is xbox wheel. digital left/right are pedals.
+
+		[4] = {
+			[KeyCodes.BUTTON_A] = { POS(360,207), OPTIONS_GEARDOWN, },
+			[KeyCodes.BUTTON_B] = { POS(360,185), OPTIONS_HANDBRAKE, },
+			[KeyCodes.BUTTON_X] = { POS(360,147), OPTIONS_GEARUP, },
+			[KeyCodes.BUTTON_Y] = { POS(360,165), OPTIONS_CAMERA, },
+			[KeyCodes.BUTTON_SELECT] = { POS(50,207), OPTIONS_LOOK, },
+			[KeyCodes.BUTTON_START] = { POS(90,255), OPTIONS_PAUSE, },
+			[KeyCodes.BUTTON_EXTRA3] = { POS(150,83), OPTIONS_BRAKE, },
+			[KeyCodes.BUTTON_EXTRA4] = { POS(295,83), OPTIONS_THROTTLE, },
+			[KeyCodes.BUTTON_EXTRA1] = { POS(363,225), OPTIONS_RESET, },
+			[KeyCodes.BUTTON_EXTRA2] = { POS(363,255), OPTIONS_NITRO, },
+			[KeyCodes.BUTTON_DIGITAL_LEFT] = { POS(230,300), OPTIONS_BRAKE, },
+			[KeyCodes.BUTTON_DIGITAL_RIGHT] = { POS(380,300), OPTIONS_THROTTLE, },
+
+
+		},
+
+
+	},
+
+--// left ja right trigger vastaavat tatteja. digital up on d-pad
+
+	ps2_layouts = {
+
+		[1] = {
+			[KeyCodes.BUTTON_A] = { POS(384,222), OPTIONS_THROTTLE, },
+			[KeyCodes.BUTTON_B] = { POS(384,179), OPTIONS_HANDBRAKE, },
+			[KeyCodes.BUTTON_X] = { POS(384,247), OPTIONS_BRAKE, },
+			[KeyCodes.BUTTON_Y] = { POS(384,144), OPTIONS_RESET, },
+			[KeyCodes.BUTTON_SELECT] = { POS(233,72), OPTIONS_CAMERA, },
+			[KeyCodes.BUTTON_EXTRA1] = { POS(66,114), OPTIONS_LOOK, },
+			[KeyCodes.BUTTON_START] = { POS(250,128), OPTIONS_PAUSE, },
+			[KeyCodes.BUTTON_EXTRA2] = { POS(353,93), OPTIONS_GEARUP, },
+			[KeyCodes.BUTTON_EXTRA4] = { POS(353,114), OPTIONS_NITRO, },
+			[KeyCodes.BUTTON_LEFT_TRIGGER] = { POS(215,303), OPTIONS_STEERING, },
+			[KeyCodes.BUTTON_RIGHT_TRIGGER] = { POS(290,285), OPTIONS_THROTTLEBRAKE, },
+			[KeyCodes.BUTTON_EXTRA3] = { POS(66,93), OPTIONS_GEARDOWN, },
+			[KeyCodes.BUTTON_DIGITAL_UP] = { POS(75,177), OPTIONS_STEERING, },
+		},
+
+		[2] = {
+			[KeyCodes.BUTTON_A] = { POS(384,222), OPTIONS_THROTTLE, },
+			[KeyCodes.BUTTON_B] = { POS(384,179), OPTIONS_HANDBRAKE, },
+			[KeyCodes.BUTTON_X] = { POS(384,247), OPTIONS_BRAKE, },
+			[KeyCodes.BUTTON_Y] = { POS(384,144), OPTIONS_RESET, },
+			[KeyCodes.BUTTON_SELECT] = { POS(233,72), OPTIONS_CAMERA, },
+			[KeyCodes.BUTTON_EXTRA1] = { POS(66,114), OPTIONS_GEARDOWN, },
+			[KeyCodes.BUTTON_START] = { POS(250,128), OPTIONS_PAUSE, },
+			[KeyCodes.BUTTON_EXTRA2] = { POS(353,93), OPTIONS_NITRO, },
+			[KeyCodes.BUTTON_EXTRA4] = { POS(353,114), OPTIONS_GEARUP, },
+			[KeyCodes.BUTTON_LEFT_TRIGGER] = { POS(215,303), OPTIONS_STEERING, },
+			[KeyCodes.BUTTON_RIGHT_TRIGGER] = { POS(290,285), OPTIONS_THROTTLEBRAKE, },
+			[KeyCodes.BUTTON_EXTRA3] = { POS(66,93), OPTIONS_LOOK, },
+			[KeyCodes.BUTTON_DIGITAL_UP] = { POS(75,177), OPTIONS_STEERING, },
+		},
+
+		[3] = {
+			[KeyCodes.BUTTON_A] = { POS(384,222), OPTIONS_THROTTLE, },
+			[KeyCodes.BUTTON_B] = { POS(384,179), OPTIONS_LOOK, },
+			[KeyCodes.BUTTON_X] = { POS(384,247), OPTIONS_BRAKE, },
+			[KeyCodes.BUTTON_Y] = { POS(384,144), OPTIONS_RESET, },
+			[KeyCodes.BUTTON_SELECT] = { POS(233,72), OPTIONS_CAMERA, },
+			[KeyCodes.BUTTON_EXTRA1] = { POS(66,114), OPTIONS_NITRO, },
+			[KeyCodes.BUTTON_START] = { POS(250,128), OPTIONS_PAUSE, },
+			[KeyCodes.BUTTON_EXTRA2] = { POS(353,93), OPTIONS_GEARUP, },
+			[KeyCodes.BUTTON_EXTRA4] = { POS(353,114), OPTIONS_HANDBRAKE, },
+			[KeyCodes.BUTTON_LEFT_TRIGGER] = { POS(215,303), OPTIONS_STEERING, },
+			[KeyCodes.BUTTON_RIGHT_TRIGGER] = { POS(290,285), OPTIONS_THROTTLEBRAKE, },
+			[KeyCodes.BUTTON_EXTRA3] = { POS(66,93), OPTIONS_GEARDOWN, },
+			[KeyCodes.BUTTON_DIGITAL_UP] = { POS(75,177), OPTIONS_STEERING, },
+		},
+
+--// 4. is ps2 wheel. digital left/right are pedals.
+
+		[4] = {
+			[KeyCodes.BUTTON_A] = { POS(369,208), OPTIONS_LOOK, },
+			[KeyCodes.BUTTON_B] = { POS(369,189), OPTIONS_NITRO, },
+			[KeyCodes.BUTTON_X] = { POS(369,147), OPTIONS_HANDBRAKE, },
+			[KeyCodes.BUTTON_Y] = { POS(369,165), OPTIONS_RESET, },
+			[KeyCodes.BUTTON_START] = { POS(315,262), OPTIONS_PAUSE, },
+			[KeyCodes.BUTTON_SELECT] = { POS(135,262), OPTIONS_RESET, },
+			[KeyCodes.BUTTON_DIGITAL_LEFT] = { POS(235,297), OPTIONS_BRAKE, },
+			[KeyCodes.BUTTON_DIGITAL_RIGHT] = { POS(385,297), OPTIONS_THROTTLE, },
+		},
+
+
+	},
+
+}
+
+if getplatform() == "PS2" then
+	options_data.layouts=options_data.ps2_layouts
+	options_data.xbox_layouts=nil
+	options_data.controller=image("ps2_controller.tga")
+end
+
+if getplatform() == "XBOX" then
+	options_data.layouts=options_data.xbox_layouts
+	options_data.ps2_layouts=nil
+	options_data.controller=image("xbox_controller.tga")
+	options_data.wheel_controller=image("xbox_wheel.tga")
+end
+
+
+
+
+function options_submenu(name)
+
+	local w=GetWindow(name)
+	
+	if w.getSettings then
+		menustate_options.settings=w:getSettings()
+	else
+		menustate_options.settings={}
+	end
+
+	w:ShowWindow()
+	w:SetFocus()
+	if w.first then
+		w:SetSelected(w.first)
+	end
+	SetBalkButtonsText(MENU_OK,MENU_BACK)
+	Menu:DisableButtons()
+--//    HideForwardButton()
+--[[--/*
+		if menustate_options.current_submenu then
+			menustate_options.current_submenu:HideWindow()
+		end
+		
+		local win=GetWindow(name)
+
+		win:ShowWindow()
+		menustate_options.current_submenu=win
+--]]--*/		
+end
+
+function enter_options_submenu(name)
+	local f=function()
+		local n=name
+		options_submenu(n)
+	end
+	return f
+end
+
+
+
+function slider(name,pos,category,valuename,parent)
+	
+	local win=addchild(Frame{Position=pos,Size=SIZE(640,26),Parent=parent,ShowBorders=FALSE})
+
+	win.onSelected = function(self)
+--//		self.valuewindow:SetInactiveColor(menustate_options.color_selected)
+--//		self.titlewindow:SetInactiveColor(menustate_options.color_selected)
+		self.titlewindow:AttachResource(option_balks.big_balk_active)
+		self.valuewindow:AttachResource(option_balks.small_balk_active)
+	end
+
+	win.onDeselected = function(self)
+		self.titlewindow:AttachResource(option_balks.big_balk_inactive)
+		self.valuewindow:AttachResource(option_balks.small_balk_inactive)
+		--//self.valuewindow:SetInactiveColor(menustate_options.color)
+		--//self.titlewindow:SetInactiveColor(menustate_options.color)
+	end
+
+	win.onMoveLeft = function(self)
+		self.value:onMoveLeft()
+	end
+
+	win.onMoveRight = function(self)
+		self.value:onMoveRight()
+	end
+
+	win.onShow = function(self)
+		self.titlewindow:AttachResource(option_balks.big_balk_inactive)
+		self.valuewindow:AttachResource(option_balks.small_balk_inactive)
+		--//self.valuewindow:SetInactiveColor(menustate_options.color)
+		--//self.titlewindow:SetInactiveColor(menustate_options.color)
+	end
+
+	win.onHide = function(self)
+		self.titlewindow:AttachResource(option_balks.big_balk_inactive)
+		self.valuewindow:AttachResource(option_balks.small_balk_inactive)
+		--//self.valuewindow:SetInactiveColor(menustate_options.color)
+		--//self.titlewindow:SetInactiveColor(menustate_options.color)
+	end
+
+	win.getValue = function(self)
+		return self.value:getValue()
+	end
+
+	win.setValue = function(self,value)
+		win.value:setValue(value)
+	end
+
+	--//text  --//Size=SIZE(276, 28)
+	local w=addchild(Button{Title=name,Position=POS(0,0),Size=GetResourceSize(option_balks.big_balk_inactive),Parent=win,Font=font12(), DrawBackgroundColor=FALSE})
+	
+	w:SetActiveColor(menustate_options.color_selected)
+	w:SetInactiveColor(menustate_options.color)
+
+	win.titlewindow=w
+
+	w=addchild(Button{Position=POS(283,0),Size=GetResourceSize(option_balks.small_balk_inactive),Parent=win,DrawBackgroundColor=FALSE})
+
+	win.valuewindow=w
+
+--//	w:SetActiveColor(menustate_options.color)
+--//	w:SetInactiveColor(menustate_options.color_selected)
+
+--//	w=addchild(Button{Position=POS(0,0),Size=GetResourceSize(option_balks.small_balk_inactive),Parent=w})
+--//	w:AttachResource(option_balks.small_balk_inactive)
+--//	win.valuebg=w
+
+	w=addchild(Button{Name=valuename,Position=POS(12,11),Size=SIZE(0,8),Parent=w})
+	w:AttachResource(option_balks.progress_bar)
+
+	win.value=w
+
+
+--//	w:SetInactiveColor(menustate_options.color)
+--//	w:SetActiveColor(menustate_options.color_selected)
+
+	w.maxsize=SIZE(165,7)
+	w.category=category
+	w.valuename=valuename
+	w.valuemin=Settings.GetValueMin(string.format("%s.%s",category,valuename))
+	w.valuemax=Settings.GetValueMax(string.format("%s.%s",category,valuename))
+
+
+	w.setTitle = function(self)
+		--//self:SetTitle(ConvertToWString(string.format("%d",self:getValue())))
+		local v=(self:getValue()-self.valuemin)/(self.valuemax-self.valuemin)
+
+		self:SetSize(self.maxsize[1]*v,self.maxsize[2])
+		
+	end
+
+	w.onInit = function(self)
+		self:setTitle()
+	end
+
+	w.setValue = function(self,value)
+		Settings[self.category][self.valuename]=value
+		if self.valuename == "IngameSfxVolume" then
+			Settings.Audio.InterfaceSfxVolume=value
+		end
+		self:setTitle()
+	end
+
+	w.getValue = function(self)
+		return Settings[self.category][self.valuename]
+	end
+
+	w.onMoveLeft = function(self)
+		local v=(self.valuemax - self.valuemin)/20
+		if v < 1 then v=1 end
+
+		self:setValue(self:getValue()-v)
+		playmenusound_move()
+	end
+
+		
+	w.onMoveRight = function(self)
+		local v=(self.valuemax - self.valuemin)/20
+		if v < 1 then v=1 end
+		self:setValue(self:getValue()+v)
+		playmenusound_move()
+	end
+
+	--//add arrows
+	win:onHide()
+
+	return win
+end
+
+
+function onoff(name,pos,category,valuename,parent)
+	
+	local win=addchild(Frame{Position=pos,Size=SIZE(640,32),Parent=parent,ShowBorders=FALSE})
+
+	win.onSelected = function(self)
+--//		self.valuewindow:SetInactiveColor(menustate_options.color_selected)
+--//		self.titlewindow:SetInactiveColor(menustate_options.color_selected)
+		self.titlewindow:AttachResource(option_balks.big_balk_active)
+		self.valuewindow:AttachResource(option_balks.small_balk_active)
+	end
+
+	win.onDeselected = function(self)
+		self.titlewindow:AttachResource(option_balks.big_balk_inactive)
+		self.valuewindow:AttachResource(option_balks.small_balk_inactive)
+		--//self.valuewindow:SetInactiveColor(menustate_options.color)
+		--//self.titlewindow:SetInactiveColor(menustate_options.color)
+	end
+
+
+	win.onMoveLeft = function(self)
+		self.valuewindow:onMoveLeft()
+	end
+
+	win.onMoveRight = function(self)
+		self.valuewindow:onMoveRight()
+	end
+
+	win.onInit = function(self)
+		self.titlewindow:AttachResource(option_balks.big_balk_inactive)
+		self.valuewindow:AttachResource(option_balks.small_balk_inactive)
+	end
+
+	win.onShow = function(self)
+		if self.showactive then
+			self.titlewindow:AttachResource(option_balks.big_balk_active)
+			self.valuewindow:AttachResource(option_balks.small_balk_active)
+			self.showactive=nil
+		else
+			self.titlewindow:AttachResource(option_balks.big_balk_inactive)
+			self.valuewindow:AttachResource(option_balks.small_balk_inactive)
+		end
+		--//self.valuewindow:SetInactiveColor(menustate_options.color)
+		--//self.titlewindow:SetInactiveColor(menustate_options.color)
+	end
+
+	win.onHide = function(self)
+		self.titlewindow:AttachResource(option_balks.big_balk_inactive)
+		self.valuewindow:AttachResource(option_balks.small_balk_inactive)
+		--//self.valuewindow:SetInactiveColor(menustate_options.color)
+		--//self.titlewindow:SetInactiveColor(menustate_options.color)
+	end
+
+	win.getValue = function(self)
+		return self.valuewindow:getValue()
+	end
+
+	win.setValue = function(self,value,undo)
+		win.valuewindow:setValue(value,undo)
+	end
+
+	--//text
+	local w=addchild(Button{Title=name,Position=POS(0,0),Size=GetResourceSize(option_balks.big_balk_inactive),Parent=win,Font=font12(),DrawBackgroundColor=FALSE})
+
+	w:SetActiveColor(menustate_options.color)
+	w:SetInactiveColor(menustate_options.color_selected)
+	
+	 win.titlewindow=w
+
+	w=addchild(Button{Name=valuename,Position=POS(283,0),Size=GetResourceSize(option_balks.small_balk_inactive),Parent=win,Font=font12(),DrawBackgroundColor=FALSE})
+
+
+
+	win.valuewindow=w
+
+	w.category=category
+	w.valuename=valuename
+	
+	w.setTitle = function(self)
+		if self:getValue() == true then
+			self:SetTitle(OPTIONS_ON)
+		else
+			self:SetTitle(OPTIONS_OFF)
+		 end
+	end
+
+	w.onInit = function(self)
+		self:setTitle()
+	end
+
+	w.setValue = function(self,value,undo)
+		Settings[self.category][self.valuename]=value
+		--//KLUDGE for vibration
+		if self.valuename == "ForceFeedback" and not undo then
+			if value == TRUE then
+				GUI:SetVibration(true)
+			else
+				GUI:SetVibration(false)
+			end
+		end
+		self:setTitle()
+	end
+
+	w.getValue = function(self)
+		return Settings[self.category][self.valuename]
+	end
+
+	w.onMoveLeft = function(self)
+		if self:getValue() == true then
+			self:setValue(FALSE)
+		else
+			self:setValue(TRUE)
+		 end
+		playmenusound_move()
+	end
+
+		
+	w.onMoveRight = function(self)
+		if self:getValue() == true then
+			self:setValue(FALSE)
+		else
+			self:setValue(TRUE)
+		end		
+		playmenusound_move()
+	end
+
+	--//add arrows
+
+	win:onHide()
+
+	return win
+end
+
+
+function subbutton(name,pos,action,parent)
+	
+	local win=addchild(Frame{Position=pos,Size=SIZE(640,32),Parent=parent,ShowBorders=FALSE})
+
+	win.action=action
+
+	win.onSelected = function(self)
+--//		self.valuewindow:SetInactiveColor(menustate_options.color_selected)
+--//		self.titlewindow:SetInactiveColor(menustate_options.color_selected)
+		self.titlewindow:AttachResource(option_balks.big_balk_active)
+	end
+
+	win.onDeselected = function(self)
+		self.titlewindow:AttachResource(option_balks.big_balk_inactive)
+		--//self.valuewindow:SetInactiveColor(menustate_options.color)
+		--//self.titlewindow:SetInactiveColor(menustate_options.color)
+	end
+
+	win.onShow = function(self)
+		self.titlewindow:AttachResource(option_balks.big_balk_inactive)
+		--//self.titlewindow:SetInactiveColor(menustate_options.color)
+	end
+
+	win.onHide = function(self)
+		self.titlewindow:AttachResource(option_balks.big_balk_inactive)
+		--//self.titlewindow:SetInactiveColor(menustate_options.color)
+	end
+
+	win.onAction = function(self)
+		if win.action then
+			win.action()
+			playmenusound_action()
+		end
+	end
+
+	--//text
+	local w=addchild(Button{Title=name,Position=POS(0,0),Size=GetResourceSize(option_balks.big_balk_inactive),Parent=win,Font=font12(),DrawBackgroundColor=FALSE})
+
+
+	win.titlewindow=w
+--[[--/*
+	w=addchild(Button{Name=valuename,Position=POS(283,0),Size=SIZE(198,32),Parent=win,Font=font12()})
+
+
+	w:SetActiveColor(menustate_options.color)
+	w:SetInactiveColor(menustate_options.color_selected)
+
+	win.valuewindow=w
+
+	w.category=category
+	w.valuename=valuename
+	
+	w.setTitle = function(self)
+		if self:getValue() then
+			self:SetTitle(OPTIONS_ON)
+		else
+			self:SetTitle(OPTIONS_OFF)
+		 end
+	end
+
+	w.onInit = function(self)
+		self:setTitle()
+	end
+
+	w.setValue = function(self,value)
+		Settings[self.category][self.valuename]=value
+		self:setTitle()
+	end
+
+	w.getValue = function(self)
+		return Settings[self.category][self.valuename]
+	end
+
+	w.onMoveLeft = function(self)
+		if self:getValue() then
+			self:setValue(FALSE)
+		else
+			self:setValue(TRUE)
+		 end
+	end
+
+		
+	w.onMoveRight = function(self)
+		if self:getValue() then
+			self:setValue(FALSE)
+		else
+			self:setValue(TRUE)
+		 end		
+	end
+
+	--//add arrows
+--]]--*/
+
+	win:onHide()
+	return win
+end
+
+
+
+function mapbutton(name,buttonid,pos,parent)
+	
+	local win=addchild(Frame{Position=pos,Size=SIZE(640,28),Parent=parent,ShowBorders=FALSE})
+
+	win.buttonid=buttonid
+
+	win.onSelected = function(self)
+--//		self.valuewindow:SetInactiveColor(menustate_options.color_selected)
+--//		self.titlewindow:SetInactiveColor(menustate_options.color_selected)
+		self.titlewindow:AttachResource(option_balks.big_balk_active)
+		self.valuewindow:AttachResource(option_balks.small_balk_active)
+	end
+
+	win.onDeselected = function(self)
+--//		self.valuewindow:SetInactiveColor(menustate_options.color)
+--//		self.titlewindow:SetInactiveColor(menustate_options.color)
+		self.titlewindow:AttachResource(option_balks.big_balk_inactive)
+		self.valuewindow:AttachResource(option_balks.small_balk_inactive)
+	end
+
+	win.onMoveLeft = function(self)
+		if self.valuewindow.onMoveLeft then
+			self.valuewindow:onMoveLeft()
+		end
+	end
+
+	win.onMoveRight = function(self)
+		if self.valuewindow.onMoveRight then
+			self.valuewindow:onMoveRight()
+		end
+	end
+
+	win.onInit = function(self)
+		self.titlewindow:AttachResource(option_balks.big_balk_inactive)
+		self.valuewindow:AttachResource(option_balks.small_balk_inactive)
+	end
+
+	win.onShow = function(self)
+--//		self.titlewindow:AttachResource(option_balks.big_balk_inactive)
+--//		self.valuewindow:AttachResource(option_balks.small_balk_inactive)
+		
+		if self.valuewindow.onShow then
+			self.valuewindow:onShow()
+		end
+		if self.titlewindow.onShow then
+			self.titlewindow:onShow()
+		end
+	end
+
+
+	win.onHide = function(self)
+		self.titlewindow:AttachResource(option_balks.big_balk_inactive)
+		self.valuewindow:AttachResource(option_balks.small_balk_inactive)
+	end
+
+	win.endRemap = function(self)
+		currentRemapButton=nil
+		Input.RemapEnd(Settings.Control.Controller)
+		self.status=nil
+		self.valuewindow:setTitle()
+	end
+
+	win.setTitle = function(self)
+		self.valuewindow:setTitle()
+	end
+
+	win.onAction = function(self)
+		if not currentRemapButton then
+			currentRemapButton=self
+			Input.RemapBegin(Settings.Control.Controller,self.buttonid)
+
+		elseif currentRemapButton == self then
+			self.status=Input.Remap(Settings.Control.Controller)
+
+			if self.status ~= Input.CONTROLLER_REMAP_PENDING then
+				self:endRemap()
+			end
+		end
+		self.valuewindow:setTitle()
+	end
+
+	--//text
+	local w=addchild(Button{Title=name,Position=POS(0,0),Size=SIZE(278,28),Parent=win,Font=font12()})
+
+	w:SetActiveColor(menustate_options.color)
+	w:SetInactiveColor(menustate_options.color_selected)
+	
+    win.titlewindow=w
+
+	w=addchild(Button{Position=POS(319,0),Size=SIZE(106,28),Parent=win,Font=font12()})
+
+
+	w:SetActiveColor(menustate_options.color)
+	w:SetInactiveColor(menustate_options.color_selected)
+
+	win.valuewindow=w
+
+	w.parent=win
+	
+	w.setTitle = function(self)
+		if self.parent.status ~= Input.CONTROLLER_REMAP_PENDING then
+			self.title=Input.GetButtonName(Settings.Control.Controller,self.parent.buttonid)
+			self:SetTitle(self.title)
+		else
+			self:SetTitle(ConvertToWString("???"))
+--//		    wm.RepostEvent()
+		end
+	end
+
+	w.onShow = function(self)
+		self:setTitle()
+	end
+
+
+
+	return win
+end
+
+
+
+function controllerselectbutton(name,pos,parent)
+	
+	local win=addchild(Frame{Position=pos,Size=SIZE(640,32),Parent=parent,ShowBorders=FALSE})
+
+	win.onSelected = function(self)
+--//		self.valuewindow:SetInactiveColor(menustate_options.color_selected)
+--//		self.titlewindow:SetInactiveColor(menustate_options.color_selected)
+		self.titlewindow:AttachResource(option_balks.big_balk_active)
+		self.valuewindow:AttachResource(option_balks.small_balk_active)
+	end
+
+	win.onDeselected = function(self)
+--//		self.valuewindow:SetInactiveColor(menustate_options.color)
+--//		self.titlewindow:SetInactiveColor(menustate_options.color)
+		self.titlewindow:AttachResource(option_balks.big_balk_inactive)
+		self.valuewindow:AttachResource(option_balks.small_balk_inactive)
+	end
+
+	win.onMoveLeft = function(self)
+		if self.valuewindow.onMoveLeft then
+			self.valuewindow:onMoveLeft()
+		end
+	end
+
+	win.onMoveRight = function(self)
+		if self.valuewindow.onMoveRight then
+			self.valuewindow:onMoveRight()
+		end
+	end
+
+	win.onShow = function(self)
+		self.titlewindow:AttachResource(option_balks.big_balk_inactive)
+		self.valuewindow:AttachResource(option_balks.small_balk_inactive)
+
+		if self.valuewindow.onShow then
+			self.valuewindow:onShow()
+		end
+		if self.titlewindow.onShow then
+			self.titlewindow:onShow()
+		end
+	end
+
+	win.onHide = function(self)
+		self.titlewindow:AttachResource(option_balks.big_balk_inactive)
+		self.valuewindow:AttachResource(option_balks.small_balk_inactive)
+	end
+
+	--//text
+	local w=addchild(Button{Title=name,Position=POS(0,0),Size=GetResourceSize(option_balks.big_balk_inactive),Parent=win,Font=font12()})
+
+	w:SetActiveColor(menustate_options.color)
+	w:SetInactiveColor(menustate_options.color_selected)
+	
+    win.titlewindow=w
+
+	w=addchild(Button{Position=POS(283,0),Size=GetResourceSize(option_balks.small_balk_inactive),Parent=win,Font=font12()})
+
+
+	w:SetActiveColor(menustate_options.color)
+	w:SetInactiveColor(menustate_options.color_selected)
+
+	win.valuewindow=w
+
+	win.titlewindow:AttachResource(option_balks.big_balk_inactive)
+	win.valuewindow:AttachResource(option_balks.small_balk_inactive)
+
+	w.setTitle = function(self)
+		self.title=Input.GetControllerName(self.currentcontroller)
+		self:SetTitle(self.title)
+	end
+
+	w.onShow = function(self)
+		self:setTitle()
+	end
+
+	w.onMoveRight = function(self)
+		local c=self.currentcontroller
+
+		if c < Input.GetNumControllers() - 1 then
+			Input.SaveActionMap(self.currentcontroller)
+			self.currentcontroller = c + 1
+			Settings.Control.Controller=self.currentcontroller
+			Settings.Control.ControllerGuid=Input.GetControllerGuid(self.currentcontroller)
+			Input.LoadActionMap(self.currentcontroller)
+			self:setTitle()
+			playmenusound_move()
+		else
+			playmenusound_error()
+		end
+		
+	end
+
+	w.onMoveLeft = function(self)
+		local c=self.currentcontroller
+		if c > 0 then
+			Input.SaveActionMap(self.currentcontroller)
+			self.currentcontroller = c - 1
+			Settings.Control.Controller=self.currentcontroller
+			Settings.Control.ControllerGuid=Input.GetControllerGuid(self.currentcontroller)
+			Input.LoadActionMap(self.currentcontroller)
+			self:setTitle()
+			playmenusound_move()
+		else
+			playmenusound_error()
+		end
+	end
+
+	w.onInit = function(self)
+		self.currentcontroller=Settings.Control.Controller
+		self:setTitle()
+	end
+
+	return win
+end
+
+
+
+
+
+function consolebutton(name,buttonid,pos,parent)
+	
+	local win=addchild(Button{Title=name,Position=pos,Size=SIZE(640,20),Font=font12(),Parent=parent,ShowBorders=FALSE})
+
+	win.buttonid=buttonid
+
+	
+	win.setTitle = function(self)
+		self.title=ConvertToWString(Input.GetButtonName(0,self.buttonid))
+		self:SetTitle(self.title)
+	end
+
+	win.onShow = function(self)
+		self:setTitle()
+	end
+
+
+
+	return win
+end
+
+
+function enter_saveoptions(forward,back)
+
+	menu_options_save.options.forward_action=forward
+	menu_options_save.options.back_action=back
+	EnterMenu("menu_options_save")
+
+end
+
+
+menu_options_save = {
+
+	options = {
+	
+		title = ConvertToWString(""),
+		background = noimage(), 
+		orientation = MENU_HORIZONTAL,
+		position = POS(260,396),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+	},
+
+	init_function = function()
+		windows_reset()
+
+		StandardUpperBalk()
+		StandardLowerBalk(false,false,false,true)
+
+		Save.SavePlayerProfile(PlayerProfile:GetAutosaveSlot()) --//Save.SaveOptions()
+		Save.UpdateSaveFlow()
+
+		activateparents()
+
+	end,
+
+
+	deinit_function = function()
+		windows_reset()
+
+	end,
+
+	update_function = function()
+		--//Save.UpdateSaveFlow()
+
+
+		if Save.GetSaveFlowState() == Save.SAVEFLOW_NONE and Save.GetSaveFlowResult() == Save.SAVEFLOW_OK then
+		    menu_options_save.options.forward_action()
+		end
+
+		if Save.GetSaveFlowState() == Save.SAVEFLOW_NONE and Save.GetSaveFlowResult() == Save.SAVEFLOW_USER_BACK then
+			menu_options_save.options.back_action()
+		end
+
+	end,
+
+
+	items={
+	},
+
+}
+
+
+
+
+
+
+
+
+function enter_optionsmenu(backmenu,submenu)
+	local f=function()
+		local back=backmenu
+		local sub=submenu
+
+		if type(back) == "function" then
+			menu_options.backmenu=back
+		else
+			menu_options.backmenu=entermenu(backmenu)
+		end
+--[[--/*
+		if type(back) == "function" then
+			menu_options.options.back_action=function() local backaction=back  Save.SaveSystemData(); backaction() end
+		else
+		    menu_options.options.back_action=function() local backmenu=back; Save.SaveSystemData();  EnterMenu(backmenu) end
+		end
+--]]--*/
+		EnterMenu("menu_options")
+
+		if sub then
+			options_submenu(sub)
+		end
+	end
+	return f
+end
+
+menu_options = {
+
+	options = {
+			title = OPTIONS_TITLE,
+			background = noimage(),
+			orientation = MENU_HORIZONTAL,
+			position = POS(260,396),
+			padding = { 6,0 },
+			button  = {
+				image = image("button.tga"),
+			},
+		
+		back_action=function() 
+							if menustate_options.changed or getplatform() == "PC" then 
+								menustate_options.changed=nil
+								enter_saveoptions(menu_options.backmenu,enter_optionsmenu(menu_options.backmenu))
+							else
+								menustate_options=nil
+								EnterMenu("menu_mainmenu")
+							end
+					end,
+
+	},
+	
+	init_function = function()
+
+			if not menustate_options then
+				menustate_options={
+					color={ 0,0,0,60 },
+					color_selected={0,0,0,128},
+				}
+			end
+			--//get data from Settings
+
+
+--//			Input.ResetActionMap(Settings.Control.Controller)
+
+			windows_reset()
+
+			StandardUpperBalk()
+			StandardLowerBalk()
+
+			local win
+			if getplatform() == "PC" then
+				win=addparent(Frame{Position=POS(0,59),Size=SIZE(640,298+37),ShowBorders=FALSE})
+			else
+				win=addparent(Frame{Position=POS(0,36+59),Size=SIZE(640,298),ShowBorders=FALSE})
+			end
+			win:AttachResource(menucommon.black_transparent)
+
+			--//GUI:LoadBackground("data/menu/bg/game_background.tga")
+
+			local win=addparent(ButtonGroup{Name="options_game", Position=SAFEPOS(0,0), Size=SIZE(256,300), ShowBorders=FALSE})
+			win:HideWindow()
+
+			win.onEscape = function(self,noundo)
+				if getplatform() == "PC" then
+					noundo=true
+				end
+
+				local c=self:GetSelected()
+				if c.onDeselected then
+					c:onDeselected()
+				end
+				if not noundo then
+					self:setSettings(menustate_options.settings)
+				else
+					menustate_options.changed=true
+				end
+				ResetBalkButtonsText()
+				playmenusound_back()
+				Menu:EnableButtons()
+				ShowForwardButton()
+			end
+
+			win.onAction = function(self)
+				local c=self:GetSelected()
+
+				if c.onAction then
+					c:onAction()
+				else
+					self:onEscape(true)
+				 end
+			end
+
+			win.onMoveLeft = function(self)
+				local c=self:GetSelected()
+
+				if c.onMoveLeft then
+					c:onMoveLeft()
+				end
+			end
+
+			win.onMoveRight = function(self)
+				local c=self:GetSelected()
+
+				if c.onMoveRight then
+					c:onMoveRight()
+				 end
+			end
+
+			win.getSettings = function(self)
+				local t= {}
+				local k,v
+				for k,v in ipairs(self.childs) do
+					if v.getValue then
+						local value=v:getValue()
+						if value == true then
+							value = TRUE
+						end
+						if value == false then
+							value = FALSE
+						end
+						t[k]=value
+					end
+				end
+				return t
+			end
+
+			win.setSettings = function(self,tbl)
+				local k,v
+
+				for k,v in ipairs(tbl) do
+					if self.childs[k] then
+						if self.childs[k].setValue then
+							self.childs[k]:setValue(v,true)
+						end
+					end
+				end
+			end
+
+			win.childs={}
+			--//add controls
+			
+			--//imperial units
+			win.first=onoff(OPTIONS_IMPERIAL,POS(60,82),"Game","ImperialUnits",win)
+
+			table.insert(win.childs,win.first)
+			--//onoff(OPTIONS_RAGDOLL,POS(60,112),"Game","Ragdoll",win)
+
+
+			--//overlay on/off
+			table.insert(win.childs,onoff(OPTIONS_GAUGES,POS(60,112),"Game","OverlayGauges",win))
+			table.insert(win.childs,onoff(OPTIONS_RACEMAP,POS(60,142),"Game","IngameMap",win))
+			if getplatform() == "PC" then
+				table.insert(win.childs,onoff(OPTIONS_RAGDOLL,POS(60,172),"Game","Ragdoll",win))
+				table.insert(win.childs,slider(PC_GRAPHICS_VIEW,POS(60,202),"Visual","Visibility",win))
+				table.insert(win.childs,slider(PC_GRAPHICS_TRACK,POS(60,232),"Visual","TrackDetail",win))
+				table.insert(win.childs,slider(PC_GRAPHICS_TEXTURE,POS(60,262),"Visual","TextureQuality",win))
+			end
+
+			win=addparent(ButtonGroup{Name="options_audio", Position=SAFEPOS(0,0), Size=SIZE(256,196), ShowBorders=FALSE})
+			win:HideWindow()
+
+			win.onEscape = function(self,noundo)
+				if getplatform() == "PC" then
+					noundo=true
+				end
+
+				local c=self:GetSelected()
+				if c.onDeselected then
+					c:onDeselected()
+				end
+				if not noundo then
+					self:setSettings(menustate_options.settings)
+				else
+					menustate_options.changed=true
+			    end
+				ResetBalkButtonsText()
+				playmenusound_back()
+				Menu:EnableButtons()
+				ShowForwardButton()
+			end
+
+			win.onAction = function(self)
+				local c=self:GetSelected()
+
+				if c.onAction then
+					c:onAction()
+				else
+					self:onEscape(true)
+				 end
+			end
+
+			win.onMoveLeft = function(self)
+				local c=self:GetSelected()
+
+				if c.onMoveLeft then
+					c:onMoveLeft()
+				end
+			end
+
+			win.onMoveRight = function(self)
+				local c=self:GetSelected()
+
+				if c.onMoveRight then
+					c:onMoveRight()
+				 end
+			end
+
+			win.getSettings = function(self)
+				local t= {}
+				local k,v
+				for k,v in ipairs(self.childs) do
+					if v.getValue then
+						local value=v:getValue()
+						if value == true then
+							value = TRUE
+						end
+						if value == false then
+							value = FALSE
+						end
+						t[k]=value
+					end
+				end
+				return t
+			end
+
+
+			win.setSettings = function(self,tbl)
+				local k,v
+
+				for k,v in ipairs(tbl) do
+					if self.childs[k] then
+						if self.childs[k].setValue then
+							self.childs[k]:setValue(v,true)
+						end
+					end
+				end
+			end
+
+
+			win.childs={}
+			--//add controls
+			--//menu music volume
+			--//ingame music volume
+			win.first=slider(OPTIONS_RACEVOL,POS(60,82),"Audio","IngameMusicVolume",win)
+			table.insert(win.childs,win.first)
+
+			table.insert(win.childs,slider(OPTIONS_MENUVOL,POS(60,112),"Audio","InterfaceMusicVolume",win))
+			
+
+			--//sfx volume
+			table.insert(win.childs,slider(OPTIONS_SFXVOL,POS(60,142),"Audio","IngameSfxVolume",win))
+
+			if getplatform() == "PC" then
+				table.insert(win.childs,onoff(PC_CONF_AUDIO_DOPPLER,POS(60,172),"Audio","DopplerEffects",win))
+			end
+			--//surround sound
+
+--[[/*
+			win=addparent(ButtonGroup{Name="options_graphics", Position=SAFEPOS(0,0), Size=SIZE(256,196), ShowBorders=FALSE})
+			win:HideWindow()
+
+			win.onEscape = function(self)
+				local c=self:GetSelected()
+				if c.onDeselected then
+					c:onDeselected()
+				end
+				Menu:EnableButtons()
+			end
+
+			win.onMoveLeft = function(self)
+				local c=self:GetSelected()
+
+				if c.onMoveLeft then
+					c:onMoveLeft()
+				end
+			end
+
+			win.onMoveRight = function(self)
+				local c=self:GetSelected()
+
+				if c.onMoveRight then
+					c:onMoveRight()
+				 end
+			end
+
+--]]--*/
+
+			--//quality for pc 
+
+
+
+			win=addparent(ButtonGroup{Name="options_controls", Position=SAFEPOS(0,0), Size=SIZE(256,320), ShowBorders=FALSE})
+			win:HideWindow()
+
+			win.onEscape = function(self,noundo)
+				if getplatform() == "PC" then
+					noundo=true
+				end
+
+				local c=self:GetSelected()
+				if c.onDeselected then
+					c:onDeselected()
+				end
+				if not noundo then
+					self:setSettings(menustate_options.settings)
+				else
+					menustate_options.changed=true
+				end
+				ResetBalkButtonsText()
+				playmenusound_back()
+				Menu:EnableButtons()
+				ShowForwardButton()
+			end
+
+			win.onMoveLeft = function(self)
+				local c=self:GetSelected()
+
+				if c.onMoveLeft then
+					c:onMoveLeft()
+				end
+			end
+
+			win.onShow = function(self)
+				if self.fromsubmenu then
+					self.first.showactive=true
+					self.fromsubmenu=nil
+				end
+
+				self:SetSelectedChild(self.first)
+				self.first:onSelected()
+			end
+
+			win.onMoveRight = function(self)
+				local c=self:GetSelected()
+
+				if c.onMoveRight then
+					c:onMoveRight()
+				 end
+			end
+
+			win.onAction = function(self)
+				local c=self:GetSelected()
+
+				if c.onAction then
+					c:onAction()
+				else
+					self:onEscape(true)
+				 end
+			end
+
+			win.getSettings = function(self)
+				local t= {}
+				local k,v
+				for k,v in ipairs(self.childs) do
+					if v.getValue then
+						local value=v:getValue()
+						if value == true then
+							value = TRUE
+						end
+						if value == false then
+							value = FALSE
+						end
+						t[k]=value
+					end
+				end
+				return t
+			end
+
+
+			win.setSettings = function(self,tbl)
+				local k,v
+
+				for k,v in ipairs(tbl) do
+					if self.childs[k] then
+						if self.childs[k].setValue then
+							self.childs[k]:setValue(v,true)
+						end
+					end
+				end
+			end
+
+			win.childs={}
+
+			--//add controls
+
+
+			
+			--//force feedback on/off
+			--//mapping for pc
+			if getplatform() == "PC" then
+				win.first=onoff(OPTIONS_FORCE,POS(60,82),"Control","ForceFeedback",win)
+
+				slider(PC_CONTROLLER_FORCELEVEL,POS(60,82+30),"Control","ForceMagnitude",win)
+				slider(PC_CONTROLLER_SENSITIVITY,POS(60,82+30+30),"Control","ControllerSensitivity",win)
+				slider(PC_CONTROLLER_DEADZONE,POS(60,82+30+30+30),"Control","ControllerDeadzone",win)
+				controllerselectbutton(OPTIONS_CONTROLLERS,POS(60,82+30+30+30+30),win)
+				subbutton(OPTIONS_CONFIGURE,POS(60,82+30+30+30+30+30),enter_options_submenu("controller_config"),win)
+			elseif getplatform() == "PS2" then
+				win.first=onoff(OPTIONS_CONTROLLERVIBRA,POS(60,82),"Control","ForceFeedback",win)
+				
+			else
+				win.first=onoff(OPTIONS_VIBRA,POS(60,82),"Control","ForceFeedback",win)
+			end
+
+			if getplatform() ~= "PC" then
+				win.controller=subbutton(OPTIONS_CONFIGURE_2,POS(60,112),function() enter_controllermenu() end,win) --//function() EnterMenu("menu_options_controller") end,win)
+			end
+
+				table.insert(win.childs,win.first)
+
+			
+			if getplatform() == "PC" then
+				win=addparent(ButtonGroup{Name="controller_config", Position=SAFEPOS(0,0), Size=SIZE(256,480), ShowBorders=FALSE})
+				win:HideWindow()
+
+				win.onEscape = function(self)
+					wm.SetExclusive(nil)
+
+					local c=self:GetSelected()
+					if c and c.endRemap then
+						c:endRemap()
+					end
+					currentRemapButton=nil
+
+					Input.SaveActionMap(Settings.Control.Controller)
+					self:HideWindow()
+					GetWindow("options_controls").fromsubmenu=true
+					options_submenu("options_controls")
+				end
+
+				win.onShow = function(self)
+					GetWindow("options_controls"):HideWindow()
+					
+					--//Input.LoadActionMap(Settings.Control.Controller)
+
+					table.foreach(self.childs,function (i,value) if value.onShow then value:onShow() end end)
+
+					self:SetSelectedChild(self.first)
+					self.first:onSelected()
+				end
+
+				win.onAction = function(self)
+					local c=self:GetSelected()
+
+					local curmap=currentRemapButton
+
+					if c and c.onAction then
+						c:onAction()
+
+
+						if not curmap and currentRemapButton then
+							wm.SetExclusive(self)
+						end
+
+						if curmap and not currentRemapButton then
+							wm.SetExclusive(nil)
+							table.foreach(self.childs,function(i,value) if value.setTitle then value:setTitle() end end)
+						end
+
+						if currentRemapButton then
+							wm.RepostEvent()
+						end
+					 end
+				end
+
+				local buttons = {
+					{ OPTIONS_THROTTLE, Input.CONTROLLER_BUTTON_UP },
+					{ OPTIONS_BRAKE, Input.CONTROLLER_BUTTON_DOWN },
+					{ PC_CONTROLLER_BUTTON_LEFT, Input.CONTROLLER_BUTTON_LEFT },
+					{ PC_CONTROLLER_BUTTON_RIGHT, Input.CONTROLLER_BUTTON_RIGHT },
+					{ OPTIONS_NITRO, Input.CONTROLLER_BUTTON_B },
+					{ OPTIONS_HANDBRAKE, Input.CONTROLLER_BUTTON_A },
+					{ OPTIONS_CAMERA, Input.CONTROLLER_BUTTON_Y },
+					{ OPTIONS_LOOK, Input.CONTROLLER_BUTTON_EXTRA1 },
+					{ OPTIONS_RESET, Input.CONTROLLER_BUTTON_EXTRA2 },
+					{ OPTIONS_GEARUP, Input.CONTROLLER_BUTTON_RIGHT_TRIGGER },
+					{ OPTIONS_GEARDOWN, Input.CONTROLLER_BUTTON_LEFT_TRIGGER },
+				}
+
+					--//mapbutton(name,pos,buttonid,parent)
+				--//if getplatform() == "PC" then --//PC
+
+					local k,v
+					local ypos=72
+					local first
+					win.childs={}
+					for k,v in pairs(buttons) do
+						LOG("pc_buttons %s",v[1])
+						local w=mapbutton(v[1],v[2],POS(60,ypos),win)
+
+						if not first then 
+							first=w 
+						end
+						table.insert(win.childs,w)
+						ypos = ypos + 28
+					end
+
+					win.first=first
+							
+			end
+			
+
+			menustate_options.submenus={}
+			menustate_options.submenus[1]="options_game"
+			menustate_options.submenus[2]="options_audio"
+--//			menustate_options.submenus[3]=GetWindow("options_graphics")
+			menustate_options.submenus[3]="options_controls"
+
+			activateparents()
+
+			
+			GetWindow("options_audio"):HideWindow()
+--//			GetWindow("options_graphics"):HideWindow()
+			GetWindow("options_controls"):HideWindow()
+			
+			if getplatform() == "PC" then
+				GetWindow("controller_config"):HideWindow()	
+			end
+
+			if menustate_options.controller_submenu then
+				Menu:SetActiveItem(3)
+				menustate_options.controller_submenu=nil
+				menu_options.buttonchange_function(-1,3)
+				GetWindow("options_game"):HideWindow()
+				enter_options_submenu("options_controls")
+
+				local win=GetWindow("options_controls")
+				win:SetSelected(win.controller)
+			end
+	end,
+	
+	deinit_function = function()
+
+			if menustate_options then
+				menustate_options.submenus=nil
+			end
+
+			windows_reset()
+	end,
+	
+	buttonchange_function = function(oldbutton,newbutton)
+		
+		if menustate_options.current_submenu then
+			GetWindow(menustate_options.current_submenu):HideWindow()
+		end
+		
+		GetWindow(menustate_options.submenus[newbutton]):ShowWindow();
+		GetWindow(menustate_options.submenus[newbutton]):SetSelected(GetWindow(menustate_options.submenus[newbutton]).first)
+		menustate_options.current_submenu=menustate_options.submenus[newbutton]
+
+	end,
+
+
+	update_function = function(time)
+	
+	
+	end,
+
+
+
+
+	items = {
+		{ OPTIONS_GAME, noimage(), enter_options_submenu("options_game") },
+		{ OPTIONS_AUDIO, noimage(), enter_options_submenu("options_audio") },
+--//		{ OPTIONS_GRAPHICS, noimage(), enter_options_submenu("options_graphics") },
+		{ OPTIONS_CONTROLS, noimage(), enter_options_submenu("options_controls") },
+	},
+
+}
+
+
+function options_create_controllerlayout()
+	
+	local parent=addparent(Frame{Position=SPOS(0,0),Size=SIZE(543,291),ShowBorders=FALSE})
+
+	--//image
+	local w=addchild(Button{Position=POS(141,92),Size=GetResourceSize(options_data.controller),Parent=parent})
+	
+
+	local layout=options_data.layouts[1]
+
+	if menu_options_controller.options.wheel then
+		layout=options_data.layouts[4]
+		w:AttachResource(options_data.wheel_controller)
+	else
+		w:AttachResource(options_data.controller)
+	end
+
+	menustate_options.layoutbuttons = {}
+
+	local k,v
+
+
+	for k,v in pairs(layout) do
+		menustate_options.layoutbuttons[k]=addchild(Button{Position=v[1],Size=SIZE(32,32),TitleCentering=0,Font=font12(),Parent=parent})
+	end
+
+end
+
+
+function options_set_controllerlayout(l)
+	local k,v
+
+	for k,v in pairs(options_data.layouts[l]) do
+		menustate_options.layoutbuttons[k]:SetTitle(v[2])
+	end
+
+end
+
+
+function enter_controllermenu()
+	if getplatform() == "XBOX" then
+		local controller=GUI:GetLastActiveController()
+		local type=Input.GetControllerType(controller-1)
+
+		if type == Input.CONTROLLER_TYPE_WHEEL then
+			menu_options_controller.options.wheel=true
+
+			menu_options_controller.items={
+				{ OPTIONS_LAYOUT_1,noimage(),function() EnterMenu("menu_options"); end },
+			}
+
+		else
+			menu_options_controller.options.wheel=nil
+
+			menu_options_controller.items={
+					{ OPTIONS_LAYOUT_1,noimage(),function() GUI:SetControllerLayout(0); EnterMenu("menu_options"); end },
+					{ OPTIONS_LAYOUT_2,noimage(),function() GUI:SetControllerLayout(1); EnterMenu("menu_options"); end },
+					{ OPTIONS_LAYOUT_3,noimage(),function() GUI:SetControllerLayout(2); EnterMenu("menu_options"); end },
+			}
+
+
+		end
+	else
+		menu_options_controller.options.wheel=nil
+		menu_options_controller.items={
+				{ OPTIONS_LAYOUT_1,noimage(),function() GUI:SetControllerLayout(0); EnterMenu("menu_options"); end },
+				{ OPTIONS_LAYOUT_2,noimage(),function() GUI:SetControllerLayout(1); EnterMenu("menu_options"); end },
+				{ OPTIONS_LAYOUT_3,noimage(),function() GUI:SetControllerLayout(2); EnterMenu("menu_options"); end },
+		}
+	end
+
+	EnterMenu("menu_options_controller")
+end
+
+
+menu_options_controller = {
+
+	options = {
+			title = OPTIONS_LAYOUT,
+			background = noimage(),
+			orientation = MENU_HORIZONTAL,
+			position = POS(260,396),
+			padding = { 6,0 },
+			button  = {
+				image = image("button.tga"),
+			},
+		
+		back_action=function() if not menu_options_controller.options.wheel then
+									Settings.Control.ControllerLayout=menustate_options.old_layout; 
+								end
+								EnterMenu("menu_options") 
+					end,
+	},
+
+
+	init_function = function()
+		windows_reset()
+		StandardUpperBalk()
+		StandardLowerBalk()
+
+		local win=addparent(Frame{Position=POS(0,36+59),Size=SIZE(640,298),ShowBorders=FALSE})
+		win:AttachResource(menucommon.black_transparent)
+
+
+		options_create_controllerlayout()
+
+		activateparents()
+
+		menustate_options.controller_submenu=true
+
+		if menu_options_controller.options.wheel then
+			options_set_controllerlayout(4)
+		else
+			menustate_options.old_layout=Settings.Control.ControllerLayout
+			Menu:SetActiveItem(Settings.Control.ControllerLayout+1)
+		end
+	end,
+
+
+	deinit_function = function()
+		windows_reset()
+		
+		menustate_options.layoutbuttons=nil
+
+	end,
+
+
+	buttonchange_function = function(oldbutton,newbutton)
+		if not menu_options_controller.options.wheel then
+			options_set_controllerlayout(newbutton)
+		end
+	end,
+
+	items = {
+		{ OPTIONS_LAYOUT_1,noimage(),function() GUI:SetControllerLayout(0); EnterMenu("menu_options"); end },
+		{ OPTIONS_LAYOUT_2,noimage(),function() GUI:SetControllerLayout(1); EnterMenu("menu_options"); end },
+		{ OPTIONS_LAYOUT_3,noimage(),function() GUI:SetControllerLayout(2); EnterMenu("menu_options"); end },
+	},
+
+}

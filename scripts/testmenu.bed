@@ -1,0 +1,71 @@
+
+
+
+
+
+
+
+t= {
+
+
+	{
+
+		Type = ButtonGroup,
+		Position = POS(32,32),
+		Size = SIZE(128,256),
+		
+		onInit = function(self)
+			LOG("T onInit called")
+		end,
+		
+		onShow = function(self)
+			wm.SetExclusive(self)
+		end,
+		
+		onHide = function(self)
+			wm.SetExclusive(nil)
+		end,
+		
+		
+		Childs = {
+					{
+								Title="Back",
+								Type=Button,
+								Position=POS(16,16),
+								Size=SIZE(64,16),
+								Font=SYSTEMFONT(),
+								
+								onAction=function(self)
+										wm.DeactivateMenu(menuself)
+										wm.ActivateMenu("internal")
+								end
+					},
+					
+					{
+								Title="Quit",
+								Type=Button,
+								Position=POS(16,32),
+								Size=SIZE(64,16),
+								Font=SYSTEMFONT(),
+								
+								onAction=function(self)
+									GlobalState:SetState(GAME_QUIT)
+									wm.QuitMenu(0)
+								end
+					},
+				},
+	},
+}
+					
+					
+				
+t=wm.GenerateMenu("testmenu",t)
+
+			
+						
+					
+						
+								
+								
+
+

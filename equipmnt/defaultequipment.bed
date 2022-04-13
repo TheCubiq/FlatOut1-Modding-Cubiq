@@ -1,0 +1,180 @@
+--# --# default equipment for AI players
+
+Players = {
+	[1] = {
+		Body = "Car1",
+		Suspension = "Car1Suspension1",
+		Engine = "Car1Engine1",
+		Tires = "Car1Tire1",
+		Gearbox = "Car1Gearbox1",
+	},
+	[2] = {
+		Body = "Car2",
+		Suspension = "Car2Suspension1",
+		Engine = "Car2Engine1",
+		Tires = "Car2Tire1",
+		Gearbox = "Car2Gearbox1",
+	},
+	
+	[3] = {
+		Body = "Car3",
+		Suspension = "Car3Suspension1",
+		Engine = "Car3Engine1",
+		Tires = "Car3Tire1",
+		Gearbox = "Car3Gearbox1",
+	},
+	[4] = {
+		Body = "Car4",
+		Suspension = "Car4Suspension1",
+		Engine = "Car4Engine1",
+		Tires = "Car4Tire1",
+		Gearbox = "Car4Gearbox1",
+	},
+	[5] = {
+		Body = "Car5",
+		Suspension = "Car5Suspension1",
+		Engine = "Car5Engine1",
+		Tires = "Car5Tire1",
+		Gearbox = "Car5Gearbox1",
+	},
+	[6] = {
+		Body = "Car6",
+		Suspension = "Car6Suspension1",
+		Engine = "Car6Engine1",
+		Tires = "Car6Tire1",
+		Gearbox = "Car6Gearbox1",
+	},
+	[7] = {
+		Body = "Car7",
+		Suspension = "Car7Suspension1",
+		Engine = "Car7Engine1",
+		Tires = "Car7Tire1",
+		Gearbox = "Car7Gearbox1",
+	},
+	[8] = {
+		Body = "Car8",
+		Suspension = "Car8Suspension1",
+		Engine = "Car8Engine1",
+		Tires = "Car8Tire1",
+		Gearbox = "Car8Gearbox1",
+	},
+	[9] = {
+		Body = "Car9",
+		Suspension = "Car9Suspension1",
+		Engine = "Car9Engine1",
+		Tires = "Car9Tire1",
+		Gearbox = "Car9Gearbox1",
+	},
+	[10] = {
+		Body = "Car10",
+		Suspension = "Car10Suspension1",
+		Engine = "Car10Engine1",
+		Tires = "Car10Tire1",
+		Gearbox = "Car10Gearbox1",
+	},
+	[11] = {
+		Body = "Car11",
+		Suspension = "Car11Suspension1",
+		Engine = "Car11Engine1",
+		Tires = "Car11Tire1",
+		Gearbox = "Car11Gearbox1",
+	},
+	[12] = {
+		Body = "Car12",
+		Suspension = "Car12Suspension1",
+		Engine = "Car12Engine1",
+		Tires = "Car12Tire1",
+		Gearbox = "Car12Gearbox1",
+	},
+	[13] = {
+		Body = "Car13",
+		Suspension = "Car13Suspension1",
+		Engine = "Car13Engine1",
+		Tires = "Car13Tire1",
+		Gearbox = "Car13Gearbox1",
+	},	
+	[14] = {
+		Body = "Car14",
+		Suspension = "Car14Suspension1",
+		Engine = "Car14Engine1",
+		Tires = "Car14Tire1",
+		Gearbox = "Car14Gearbox1",
+	},	
+	[15] = {
+		Body = "Car15",
+		Suspension = "Car15Suspension1",
+		Engine = "Car15Engine1",
+		Tires = "Car15Tire1",
+		Gearbox = "Car15Gearbox1",
+	},	
+	[16] = {
+		Body = "Car16",
+		Suspension = "Car16Suspension1",
+		Engine = "Car16Engine1",
+		Tires = "Car16Tire1",
+		Gearbox = "Car16Gearbox1",
+	},
+	[17] = {
+		Body = "Car17",
+		Suspension = "Car17Suspension1",
+		Engine = "Car17Engine1",
+		Tires = "Car17Tire1",
+		Gearbox = "Car17Gearbox1",
+	},		
+}
+
+-- Percent is between 0 and 1
+local function CreateSettingsMeta(Settings, MaxSettings, Percent)
+	local tbl={}
+	tbl.mt={}
+	setmetatable(tbl, tbl.mt)
+	tbl.mt.__index=function (table, key)
+		if type(Settings[key]) == "table" then
+			if MaxSettings~=nil and MaxSettings[key]~=nil then
+				return CreateSettingsMeta(Settings[key], MaxSettings[key], Percent)
+			else 
+				return Settings[key]
+			end
+		elseif MaxSettings~=nil and MaxSettings[key]~=nil then
+			return Settings[key]+((MaxSettings[key]-Settings[key])*Percent)
+		else
+			return Settings[key]
+		end
+	end
+	return tbl
+end
+
+
+local i,j
+for i,j in pairs(Players) do
+	local tbl=Car.Body[j.Body]
+	local settings=tbl.Settings
+	local maxSettings=tbl.MaxSettings
+	tbl.SettingsMedium=CreateSettingsMeta(settings, maxSettings, 0.5)
+	tbl.SettingsFull=CreateSettingsMeta(settings, maxSettings, 1.0)
+
+	tbl=Car.Suspension[j.Suspension]
+	settings=tbl.Settings
+	maxSettings=tbl.MaxSettings
+	tbl.SettingsMedium=CreateSettingsMeta(settings, maxSettings, 0.5)
+	tbl.SettingsFull=CreateSettingsMeta(settings, maxSettings, 1.0)
+
+	tbl=Car.Engine[j.Engine]
+	settings=tbl.Settings
+	maxSettings=tbl.MaxSettings
+	tbl.SettingsMedium=CreateSettingsMeta(settings, maxSettings, 0.5)
+	tbl.SettingsFull=CreateSettingsMeta(settings, maxSettings, 1.0)
+	
+	tbl=Car.Tires[j.Tires]
+	settings=tbl.Settings
+	maxSettings=tbl.MaxSettings
+	tbl.SettingsMedium=CreateSettingsMeta(settings, maxSettings, 0.5)
+	tbl.SettingsFull=CreateSettingsMeta(settings, maxSettings, 1.0)
+	
+	tbl=Car.Gearbox[j.Gearbox]
+	settings=tbl.Settings
+	maxSettings=tbl.MaxSettings
+	tbl.SettingsMedium=CreateSettingsMeta(settings, maxSettings, 0.5)
+	tbl.SettingsFull=CreateSettingsMeta(settings, maxSettings, 1.0)
+end
+

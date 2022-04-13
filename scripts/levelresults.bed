@@ -1,0 +1,277 @@
+--///////////////////////////////////////////////////////////////////////////
+--// LevelResults.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2003 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// @date 27.5.2003 16:46:53
+--// 
+--// @Author Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+FormattedPosition = {
+			[1] = "1st",
+			[2] = "2nd",
+			[3] = "3rd",
+			[4] = "4th",
+}
+
+
+
+
+	wmNewFrame(nil,"LevelResultsWindow");
+
+	wmNewButton(LevelResultsWindow,"ResultPositionText");	
+	wmNewButton(LevelResultsWindow,"ResultsMoneyWindow");
+	wmNewButton(LevelResultsWindow,"ResultInfoText");
+
+	LevelResultsWindow.onInit = function()
+			LevelResultsWindow:SetPosition(159,63);
+			LevelResultsWindow:SetSize(352,320);
+			LevelResultsWindow:AttachResource(wmGetResource(FontSmall));
+			LevelResultsWindow:SetTitle("");
+			LevelResultsWindow:SetTitleCentering(TITLE_CENTER_NONE);
+
+
+			ResultPositionText:AttachResource(wmGetResource(FontLarge));
+			ResultPositionText:SetPosition(0,78);
+			ResultPositionText:SetSize(300,80);
+			ResultPositionText:SetTitleCentering(TITLE_CENTER_X);
+------------			ResultPositionText:SetTitleCentering(TITLE_CENTER_NONE);
+			ResultPositionText:SetTitle("");			
+
+			ResultInfoText:AttachResource(wmGetResource(FontSmall));
+			ResultInfoText:SetPosition(50,209);
+			ResultInfoText:SetSize(320,80);
+			ResultInfoText:SetTitleCentering(TITLE_CENTER_NONE);
+			ResultInfoText:SetTitle("");
+
+			ProcessLevelInfo();
+	end
+
+	LevelResultsWindow.onShow = function()
+		ConfirmWindow.EnableButtons(LevelResultsOk,nil);
+	end
+
+
+
+	wmNewButton(ResultsMoneyWindow,"ResultsCurrentMoney");
+	wmNewButton(ResultsMoneyWindow,"ResultsCurrentMoneyStatic");
+	wmNewButton(ResultsMoneyWindow,"ResultsLevelWinnings");
+	wmNewButton(ResultsMoneyWindow,"ResultsLevelWinningsStatic");
+	wmNewButton(ResultsMoneyWindow,"ResultsLevelPrice");
+	wmNewButton(ResultsMoneyWindow,"ResultsLevelPriceStatic");
+	wmNewButton(ResultsMoneyWindow,"ResultsMoneySum");
+	wmNewButton(ResultsMoneyWindow,"ResultsMoneySumStatic");
+
+	ResultsMoneyWindow.onInit = function()
+			ResultsMoneyWindow:AttachResource(wmNewResource(BITMAP,"GameResultsMoneyBackground",DataPath.."ScoreWindow_background.tga"));
+			ResultsMoneyWindow:SetPosition(46,112);
+			ResultsMoneyWindow:SetSize(256,64);
+
+			ResultsCurrentMoneyStatic:AttachResource(wmGetResource(FontSmall));
+			ResultsLevelWinningsStatic:AttachResource(wmGetResource(FontSmall));
+			ResultsLevelPriceStatic:AttachResource(wmGetResource(FontSmall));
+			ResultsMoneySumStatic:AttachResource(wmGetResource(FontSmall));
+
+			ResultsCurrentMoneyStatic:SetPosition(4,2);
+			ResultsCurrentMoneyStatic:SetSize(142,16);
+			ResultsCurrentMoneyStatic:SetTitleCentering(TITLE_CENTER_NONE);
+			ResultsCurrentMoneyStatic:SetTitle("Current money");
+
+			ResultsLevelWinningsStatic:SetPosition(4,22);
+			ResultsLevelWinningsStatic:SetSize(142,16);
+			ResultsLevelWinningsStatic:SetTitleCentering(TITLE_CENTER_NONE);
+			ResultsLevelWinningsStatic:SetTitle("Race prize");
+
+			ResultsLevelPriceStatic:SetPosition(4,42);
+			ResultsLevelPriceStatic:SetSize(142,16);
+			ResultsLevelPriceStatic:SetTitleCentering(TITLE_CENTER_NONE);
+			ResultsLevelPriceStatic:SetTitle("");
+			------ResultsLevelPriceStatic:SetTitle("Race fee");
+
+			ResultsMoneySumStatic:SetPosition(4,42);
+			ResultsMoneySumStatic:SetSize(142,16);
+			ResultsMoneySumStatic:SetTitleCentering(TITLE_CENTER_NONE);
+			ResultsMoneySumStatic:SetTitle("Total");
+
+
+			ResultsCurrentMoney:AttachResource(wmGetResource(FontSmall));
+			ResultsCurrentMoney:SetPosition(142,2);
+			ResultsCurrentMoney:SetSize(110,16);
+			ResultsCurrentMoney:SetTitleCentering(TITLE_CENTER_NONE);
+
+			ResultsLevelWinnings:AttachResource(wmGetResource(FontSmall));
+			ResultsLevelWinnings:SetPosition(142,22);
+			ResultsLevelWinnings:SetSize(110,16);
+			ResultsLevelWinnings:SetTitleCentering(TITLE_CENTER_NONE);
+
+			ResultsLevelPrice:AttachResource(wmGetResource(FontSmall));
+			ResultsLevelPrice:SetPosition(142,42);
+			ResultsLevelPrice:SetSize(110,16);
+			ResultsLevelPrice:SetTitleCentering(TITLE_CENTER_NONE);
+
+			ResultsMoneySum:AttachResource(wmGetResource(FontSmall));
+			ResultsMoneySum:SetPosition(142,42);
+			ResultsMoneySum:SetSize(110,16);
+			ResultsMoneySum:SetTitleCentering(TITLE_CENTER_NONE);
+	end
+
+
+
+function ProcessLevelInfo()
+
+	if CompletedLevel == nil then
+		return
+	end
+
+	local position=CompletedLevel.Position;
+	local level=CompletedLevel.Level;
+	local winnings=CompletedLevel.Winnings or 0;
+	local price=CompletedLevel.Price;
+	local unlocked=CompletedLevel.UnlockedLevels;
+	local bonuslevels=CompletedLevel.BonusLevels;
+	local racetime=CompletedLevel.Racetime;
+
+	local money=GetPlayerMoney();
+
+	if level > 16 then
+		if racetime < 0 then
+			ResultPositionText:SetTitle("");
+		else
+			ResultPositionText:SetTitle(format("Your time was %d:%d",floor(racetime/(1000*60)),mod(racetime/1000,60)));
+		end
+	else
+		ResultPositionText:SetTitle(format("You finished %s.",FormattedPosition[position]));
+	end
+
+
+	local infotext="";
+
+	if position == 1 and level < 17 then
+
+		if level == 16 then
+			infotext = infotext..format("You won the championship!\n");
+		end
+
+		if CompletedLevel.PreviousPosition == 0 then
+			infotext = infotext..format("You got a new trophy!\n");
+		end
+		if winnings == 0 then
+			infotext = infotext..format("Your truck is repaired for free!\n");
+			RepairAll();
+		end
+
+	end
+
+	if unlocked > 0 then
+		infotext = infotext..format("You unlocked %d new ",unlocked);
+		if unlocked == 1 then
+			infotext = infotext..format("race!\n");
+		else
+			infotext = infotext..format("races!\n");
+		end
+	end
+
+	if bonuslevels > 0 then
+		infotext = infotext..format("You unlocked a Bonus race!\n");
+	end
+
+	---bonuslevel
+	if level > 16 then
+		if position == 1 then
+			infotext = infotext..format("Your Nitro has been refilled!\n");
+			FillNitro();
+		else
+			if racetime > 0 then
+				infotext = infotext..format("You failed to beat the timelimit.\n");
+			else
+				infotext = infotext..format("You failed to complete all jumps.\n");
+			end
+		end 
+	end
+
+	ResultInfoText:SetTitle(infotext);
+
+
+	ResultsCurrentMoney:SetTitle(format("  $ %d",money));
+	ResultsLevelWinnings:SetTitle(format("  $ %d",winnings));
+	ResultsLevelPrice:SetTitle("");
+--------	ResultsLevelPrice:SetTitle(format("- $ %d",price)); 
+
+	SetPlayerMoney(money + winnings);
+	Money:SetMoney(GetPlayerMoney());
+
+	money=GetPlayerMoney();
+		
+	if money < 0 then
+		ResultsMoneySum:SetTitle(format("- $ %d",abs(money)));
+	else
+		ResultsMoneySum:SetTitle(format("  $ %d",money));
+	end
+
+
+	-------adjust level winnings
+	if level < 17 then
+		
+		Levels[level].Winnings[1] = floor(Levels[level].Winnings[1] - CompletedLevel.Winnings);
+		Levels[level].Winnings[2] = floor(Levels[level].Winnings[1] / 2);
+		Levels[level].Winnings[3] = floor(Levels[level].Winnings[1] / 3);
+
+		local i
+		for i=1,3 do
+			if Levels[level].Winnings[i] < 0 then 
+				Levels[level].Winnings[i] = 0
+			end
+		end
+	end
+	
+
+end
+
+function LevelResultsOk()
+
+		if GetPlayerMoney() < 0 then
+			if ConfirmDialog("Game over","You ran out of money") ~= nil then
+				CurrentGarageMode=GAMEOVER;
+				ExitLevelResults();
+			end
+		else
+			CurrentGarageMode=OFFICE_CAMERA;
+			ExitLevelResults();
+		end
+end
+
+
+
+function EnterLevelResults()
+		Exit_door:HideWindow();
+		Computer:HideWindow();
+		Filing_cabinet:HideWindow();
+		LevelsWindow:HideWindow();
+		Office_door:HideWindow();
+		
+		LevelResultsWindow:ShowWindow();
+
+----		ProcessLevelInfo();
+end
+
+function ExitLevelResults()
+		LevelResultsWindow:HideWindow();
+		ConfirmWindow.DisableButtons();
+
+		CompletedLevel = nil;
+
+		SwitchGarageMenu(CurrentGarageMode);
+end
+
+
+
+
+
+wmActivateWindow(LevelResultsWindow);
+LevelResultsWindow:HideWindow();

@@ -1,0 +1,945 @@
+--///////////////////////////////////////////////////////////////////////////
+--// Cardealer.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2004 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// Created on 24.3.2004 13:55:48
+--// 
+--// @Author Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+cardealer_data = {
+
+	images={
+		infobox=image("car_selection_infobox.tga"),
+		colorbox=image("car_selection_colorblock.tga"),
+--//		color1=image("car_selection_color1.tga"),
+--//		color2=image("car_selection_color2.tga"),
+--//		color3=image("car_selection_color3.tga"),
+--//		color4=image("car_selection_color4.tga"),
+	},
+
+	car_data = {
+		
+--//class c 
+		{ car=3, name="PEPPER", image="car3a.tga", class=1,colors = { 
+				{ GetPaletteColor(21),GetPaletteColor(41), },
+				{ GetPaletteColor(22),GetPaletteColor(42), },
+				{ GetPaletteColor(23),GetPaletteColor(43), },
+				{ GetPaletteColor(24),GetPaletteColor(44), },
+				{ GetPaletteColor(25),GetPaletteColor(45), },
+			},
+		},
+		{ car=12, name="BLOCKER", image="car12a.tga", class=1,colors = { 
+				{ GetPaletteColor(26),GetPaletteColor(46), },
+				{ GetPaletteColor(27),GetPaletteColor(47), },
+				{ GetPaletteColor(28),GetPaletteColor(48), },
+				{ GetPaletteColor(29),GetPaletteColor(49), },
+				{ GetPaletteColor(30),GetPaletteColor(50), },
+			},
+		},
+		{ car=8, name="GRINDER", image="car8a.tga", class=1,colors = { 
+				{ GetPaletteColor(25),GetPaletteColor(45), },
+				{ GetPaletteColor(31),GetPaletteColor(51), },
+				{ GetPaletteColor(24),GetPaletteColor(44), },
+				{ GetPaletteColor(30),GetPaletteColor(50), },
+				{ GetPaletteColor(29),GetPaletteColor(49), },
+			},
+		},
+		{ car=9, name="BLOCKHEAD", image="car9a.tga", class=1,colors = { 
+				{ GetPaletteColor(32),GetPaletteColor(52), },
+				{ GetPaletteColor(33),GetPaletteColor(53), },
+				{ GetPaletteColor(34),GetPaletteColor(54), },
+				{ GetPaletteColor(24),GetPaletteColor(44), },
+				{ GetPaletteColor(35),GetPaletteColor(55), },
+			},
+		},
+		{ car=15, name="BULLET", image="car15a.tga", class=1,colors = { 
+				{ GetPaletteColor(26),GetPaletteColor(46), },
+				{ GetPaletteColor(24),GetPaletteColor(44), },
+				{ GetPaletteColor(36),GetPaletteColor(56), },
+				{ GetPaletteColor(35),GetPaletteColor(55), },
+				{ GetPaletteColor(37),GetPaletteColor(57), },
+			},
+		},
+
+--//class b
+
+		{ car=4, name="OVERRUNNER", image="car4a.tga", class=2,colors = { 
+				{ GetPaletteColor(38),GetPaletteColor(58), },
+				{ GetPaletteColor(39),GetPaletteColor(59), },
+				{ GetPaletteColor(32),GetPaletteColor(52), },
+				{ GetPaletteColor(36),GetPaletteColor(56), },
+				{ GetPaletteColor(24),GetPaletteColor(44), },
+			},
+		},
+		{ car=11, name="SLIDER", image="car11a.tga",class=2, colors = { 
+				{ GetPaletteColor(39),GetPaletteColor(59), },
+				{ GetPaletteColor(25),GetPaletteColor(45), },
+				{ GetPaletteColor(28),GetPaletteColor(48), },
+				{ GetPaletteColor(30),GetPaletteColor(50), },
+				{ GetPaletteColor(36),GetPaletteColor(56), },
+			},
+		},
+		{ car=10, name="ROAD KING", image="car10a.tga", class=2,colors = { 
+				{ GetPaletteColor(30),GetPaletteColor(50), },
+				{ GetPaletteColor(29),GetPaletteColor(49), },
+				{ GetPaletteColor(33),GetPaletteColor(53), },
+				{ GetPaletteColor(35),GetPaletteColor(55), },
+				{ GetPaletteColor(28),GetPaletteColor(48), },
+			},
+		},
+		{ car=6, name="FASTHAMMER", image="car6a.tga", class=2,colors = { 
+				{ GetPaletteColor(26),GetPaletteColor(46), },
+				{ GetPaletteColor(38),GetPaletteColor(58), },
+				{ GetPaletteColor(21),GetPaletteColor(41), },
+				{ GetPaletteColor(30),GetPaletteColor(50), },
+				{ GetPaletteColor(25),GetPaletteColor(45), },
+			},
+		},
+		{ car=1, name="SPEEDEVIL", image="car1a.tga", class=2,colors = { 
+				{ GetPaletteColor(24),GetPaletteColor(44), },
+				{ GetPaletteColor(30),GetPaletteColor(50), },
+				{ GetPaletteColor(33),GetPaletteColor(53), },
+				{ GetPaletteColor(37),GetPaletteColor(57), },
+				{ GetPaletteColor(35),GetPaletteColor(55), },
+			},
+		},
+		
+--//class a
+		{ car=5, name="THUNDERBOLT", image="car5a.tga", class=3,colors = { 
+				{ GetPaletteColor(40),GetPaletteColor(60), },
+				{ GetPaletteColor(33),GetPaletteColor(53), },
+				{ GetPaletteColor(25),GetPaletteColor(45), },
+				{ GetPaletteColor(36),GetPaletteColor(56), },
+				{ GetPaletteColor(28),GetPaletteColor(48), },
+			},
+		},
+		{ car=7, name="TRASHER", image="car7a.tga", class=3,colors = { 
+				{ GetPaletteColor(24),GetPaletteColor(44), },
+				{ GetPaletteColor(35),GetPaletteColor(55), },
+				{ GetPaletteColor(33),GetPaletteColor(53), },
+				{ GetPaletteColor(38),GetPaletteColor(58), },
+				{ GetPaletteColor(30),GetPaletteColor(50), },
+			},
+		},
+		{ car=14, name="MACHINE", image="car14a.tga", class=3,colors = { 
+				{ GetPaletteColor(36),GetPaletteColor(56), },
+				{ GetPaletteColor(24),GetPaletteColor(44), },
+				{ GetPaletteColor(33),GetPaletteColor(53), },
+				{ GetPaletteColor(31),GetPaletteColor(51), },
+				{ GetPaletteColor(26),GetPaletteColor(46), },
+			},
+		},
+		{ car=13, name="BONECRACKER", image="car13a.tga", class=3,colors = { 
+				{ GetPaletteColor(30),GetPaletteColor(50), },
+				{ GetPaletteColor(33),GetPaletteColor(53), },
+				{ GetPaletteColor(38),GetPaletteColor(58), },
+				{ GetPaletteColor(24),GetPaletteColor(44), },
+				{ GetPaletteColor(35),GetPaletteColor(55), },
+			},
+		},
+		{ car=16, name="RANKER1", image="car16a.tga", class=3,colors = { 
+				{ GetPaletteColor(23),GetPaletteColor(43), },
+				{ GetPaletteColor(39),GetPaletteColor(59), },
+				{ GetPaletteColor(24),GetPaletteColor(44), },
+				{ GetPaletteColor(28),GetPaletteColor(48), },
+				{ GetPaletteColor(36),GetPaletteColor(56), },
+			},
+		},
+		{ car=2, name="BLADE", image="car2a.tga", class=3,colors = { 
+				{ GetPaletteColor(24),GetPaletteColor(44), },
+				{ GetPaletteColor(35),GetPaletteColor(55), },
+				{ GetPaletteColor(33),GetPaletteColor(53), },
+				{ GetPaletteColor(30),GetPaletteColor(50), },
+				{ GetPaletteColor(32),GetPaletteColor(52), },
+			},
+		},
+
+	},
+
+	confirm_text=CARDEALER_CONFIRM,
+}
+
+
+cardealer_state = {}
+
+function cardealer_settradeinfo()
+
+	local oldcar=cardealer_data.car_data[cardealer_state.oldcar].car
+	local newcar=cardealer_data.car_data[cardealer_state.carnum].car
+	
+	local win
+	local tbl
+	local eq
+
+	tbl=Player.Equipment
+
+
+
+	eq=tbl.Engine
+
+	win=GetWindow("old_power")
+	win:SetTitle(ConvertToWString(string.format("%dhp",eq.Settings.Horsepower)))
+
+--//	win=GetWindow("old_torque")
+--//	win:SetTitle(ConvertToWString(string.format("%dNm",eq.Settings.TorqueMax)))
+
+	win=GetWindow("old_engine")
+	win:SetTitle(ConvertToWString(eq.Name))
+
+	eq=tbl.Body
+
+	win=GetWindow("old_weight")
+	win:SetTitle(ConvertToWString(string.format("%dkg",eq.Settings.Mass)))
+
+	win=GetWindow("old_price")
+	win:SetTitle(ConvertToWString(string.format("$%d",PlayerProfile:GetCarPrice()/2)))
+
+
+	--//new data
+
+	tbl=Players[cardealer_state.car]
+
+	--//body
+	eq=Car.Engine[tbl.Engine]
+
+	win=GetWindow("new_power")
+	win:SetTitle(ConvertToWString(string.format("%dhp",eq.Settings.Horsepower)))
+
+	--//engine
+--//	win=GetWindow("new_torque")
+--//	win:SetTitle(ConvertToWString(string.format("%dhp",eq.Settings.TorqueMax)))
+
+	win=GetWindow("new_engine")
+	win:SetTitle(ConvertToWString(eq.Name))
+
+	eq=Car.Body[tbl.Body]
+
+	win=GetWindow("new_weight")
+	win:SetTitle(ConvertToWString(string.format("%dkg",eq.Settings.Mass)))
+
+
+	win=GetWindow("new_price")
+	win:SetTitle(ConvertToWString(string.format("$%d",eq.Price)))
+
+
+	GetWindow("total_price"):SetTitle(ConvertToWString(string.format("$%d",eq.Price-(PlayerProfile:GetCarPrice()/2))))
+
+end
+
+
+
+function cardealer_setcar(carnum)
+	
+	
+	cardealer_state.carnum=carnum
+	cardealer_state.car=cardealer_data.car_data[carnum].car
+	cardealer_state.carclass=cardealer_data.car_data[carnum].class
+
+
+--[[--/*	
+
+
+	local r=wm.GetResource("car_image")
+	local w=GetWindow("car_image")
+	if r then
+		w:FreeResource(r)
+		wm.DeleteResource(r)
+	end
+
+	w:HideWindow()
+
+	if cardealer_data.car_data[carnum].image then
+		r=wm.NewResource(BITMAP,"car_image","data/menu/"..cardealer_data.car_data[carnum].image)
+		w:AttachResource(r)
+		GUI:UploadTextures()
+	end
+--]]--*/
+--[[--/*
+	local v=Startpoints[cardealer_state.carnum].Position
+
+	local pos = { v[1], v[2], v[3] }
+	MenuScene:SetCameraTarget(pos)
+
+	pos[2] = pos[2] + 1.0
+	pos[3] = pos[3] - 5
+
+	MenuScene:SetCameraPosition(pos)
+--]]--*/
+
+	
+	GUI:LoadBackground()
+	MenuScene:LoadCar(cardealer_state.car)
+	SetMenuCamera(cardealer_state.carnum)
+	MenuScene:ResetCar(Startpoints[cardealer_state.carnum].Position,Startpoints[cardealer_state.carnum].Orientation)
+	GUI:SetRenderScene(TRUE)
+	MenuScene:StartFadeOn()
+	
+	--//get car info
+	--//kludge at the moment
+	local win
+	local tbl=Players[cardealer_state.car]
+
+	--//body
+	local eq=Car.Body[tbl.Body]
+	win=GetWindow("enginetype")
+	win:SetTitle(ConvertToWString(cardealer_data.car_data[carnum].name))
+
+	win=GetWindow("weight")
+	win:SetTitle(ConvertToWString(string.format("%dkg",eq.Settings.Mass)))
+	
+	win=GetWindow("price")
+	win:SetTitle(ConvertToWString(string.format("$%d",eq.Price)))
+
+	cardealer_state.carprice=eq.Price
+
+	--//engine
+	eq=Car.Engine[tbl.Engine]
+	win=GetWindow("power")
+	win:SetTitle(ConvertToWString(string.format("%dhp",eq.Settings.Horsepower)))
+
+--//	win=GetWindow("torque")
+--//	win:SetTitle(ConvertToWString(string.format("%dNm",eq.Settings.TorqueMax)))
+
+end
+
+
+
+menu_cardealer = {
+
+	options = {
+	
+		title = nil, --//ConvertToWString("CAR DEALER"),
+		background = noimage(),
+		orientation = MENU_HORIZONTAL,
+		position = POS(280,380), 
+		padding = { 30,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		back_action=function() GetWindow("colorbox"):onEscape() end,
+	},
+
+
+	update_function = function()
+		if cardealer_state.update_function then
+			cardealer_state.update_function()
+		end
+		cardealer_update()
+
+	end,
+
+	init_function = function()
+		GUI:LoadBackground()
+		cardealer_real_init(cardealer_state.back_action,cardealer_state.forward_action,cardealer_state.useprice,cardealer_state.istrade, cardealer_state.enabled_cars, cardealer_state.restrict_car, cardealer_state.restrict_class, cardealer_state.update_function)
+	end,
+
+	deinit_function = function()
+		menu_cardealer.options.title=nil --//ConvertToWString("CAR DEALER")
+		cardealer_deinit()
+	end,
+
+	up_function = function()
+		GetWindow("colorbox"):onMoveUp()
+	end,
+
+	down_function = function()
+		GetWindow("colorbox"):onMoveDown()
+	end,
+
+	buttonchange_function = function(oldb,newbutton)
+		--//cardealer_setcar(newbutton)
+		cardealer_setcar(cardealer_state.enabled_cars[newbutton])
+		GetWindow("colorbox"):ResetSkin()
+
+	end,
+
+	items = {
+
+	},
+
+}
+
+function cardealer_init(backaction,forwardaction,useprice,istrade, restrict_car, restrict_class, update_function)
+
+		menu_cardealer.items={}
+		cardealer_state={}
+		cardealer_state.enabled_cars={}
+		local classes = { PlayerProfile:GetEnabledClasses() }
+		local i
+		for i=1,table.getn(cardealer_data.car_data) do
+			local f=function() 
+				GetWindow("colorbox"):onAction()
+		    end
+			local t={  car_icons[string.format("car%d",cardealer_data.car_data[i].car)],car_icons.circle,f }
+
+			if GameFlow.GetGameMode() == "SINGLEPLAYER" or GameFlow.GetGameMode() == "SPLITSCREEN" or GameFlow.IsCareerMode() then
+				if classes[cardealer_data.car_data[i].class] then
+					table.insert(cardealer_state.enabled_cars,i)
+					table.insert(menu_cardealer.items,t)
+				end
+			else
+				if restrict_car~=nil and cardealer_data.car_data[i].car==restrict_car then
+					table.insert(cardealer_state.enabled_cars, i)
+					table.insert(menu_cardealer.items,t)
+				elseif restrict_class~=nil and cardealer_data.car_data[i].class==restrict_class then
+					table.insert(cardealer_state.enabled_cars, i)
+					table.insert(menu_cardealer.items,t)
+				elseif restrict_class==nil and restrict_car==nil then 
+					table.insert(cardealer_state.enabled_cars, i)
+					table.insert(menu_cardealer.items,t)
+				end
+			end
+		end
+		
+
+		cardealer_state.forward_action=forwardaction
+		cardealer_state.back_action=backaction
+		cardealer_state.useprice=useprice
+		cardealer_state.istrade=istrade
+		cardealer_state.restrict_car=restrict_car
+		cardealer_state.restrict_class=restrict_class
+		cardealer_state.update_function=update_function
+
+		if not menu_cardealer.options.title then
+			menu_cardealer.options.title=CARDEALER_TITLE --//ConvertToWString("CAR DEALER")
+		end
+
+		EnterMenu("menu_cardealer")
+end
+
+
+function cardealer_real_init(backaction,forwardaction,useprice,istrade, enabled_cars, restrict_car, restrict_class, update_function)
+
+
+	cardealer_state={}
+	cardealer_state.back_action=backaction
+	cardealer_state.forward_action=forwardaction
+	cardealer_state.trading=istrade
+	cardealer_state.use_price=useprice
+	cardealer_state.enabled_cars=enabled_cars
+	cardealer_state.restrict_car=restrict_car
+	cardealer_state.restrict_class=restrict_class
+	cardealer_state.update_function=update_function
+
+	if istrade then
+		--//find old car
+		local k,v,i
+		i=1
+		for k,v in ipairs(cardealer_data.car_data) do
+			if v.car == GameFlow:GetPlayerCar()+1 then
+				cardealer_state.oldcar=i
+			end
+			i = i +1
+		end
+		cardealer_state.carnum=cardealer_state.oldcar
+	end
+
+	GUI:LoadBackground(nil)
+
+	if not cardealer_state.carnum then
+		cardealer_state.carnum=cardealer_state.enabled_cars[1]
+	end
+
+
+	windows_reset()
+
+	StandardUpperBalk(useprice)
+	StandardLowerBalk(false,false,false)
+
+
+
+
+	--//car image window
+--//	addparent(Button{Name="car_image",Position=POS(194.5,129.5),Size=SIZE(512,256) }):HideWindow()
+
+	--//info window
+	local parentpos
+	local font=font14()
+
+	parentpos=POS(0,0) --//61+36)
+
+	local statictext=function(text,pos,parent,name,color)
+		return StaticText{ Name=name,Title=text, Position=RELATIVEPOS(pos,parentpos), Size=SIZE(16,16), Parent=parent, Font=font, Color=color}
+	end
+
+	--//cartrading
+	local parent=addparent(Frame{ Name="car_tradingbox",Position=POS(0,0),Layer=5,Size=SIZE(640,480),ShowBorders=FALSE })
+	parent:AttachResource(menucommon.black_transparent)
+	--//parent:SetColor(0,0,0,180)
+
+
+	--//48,36	
+	addchild(statictext(CARDEALER_YOURCAR,POS(39+145,97+36),parent)):AttachResource(font)
+	addchild(statictext(CARDEALER_NEWCAR,POS(39+323,97+36),parent)):AttachResource(font)
+
+	font=font10()
+
+	addchild(statictext(CARDEALER_ENGINE,POS(40+48,129+36),parent)):AttachResource(font)
+	addchild(statictext(CARDEALER_POWER,POS(40+48,153+36),parent)):AttachResource(font)
+--//	addchild(statictext(CARDEALER_TORQUE,POS(40+48,177+36),parent)):AttachResource(font)
+	addchild(statictext(CARDEALER_WEIGHT,POS(40+48,177+36),parent)):AttachResource(font)
+	addchild(statictext(CARDEALER_VALUE,POS(40+48,202+36),parent)):AttachResource(font)
+
+	addchild(Button{Position=RELATIVEPOS(POS(261+48,132+36),parentpos),Size=GetResourceSize(menucommon.mininuolioikea),Parent=parent}):AttachResource(menucommon.nuolioikea)
+	addchild(Button{Position=RELATIVEPOS(POS(261+48,156+36),parentpos),Size=GetResourceSize(menucommon.mininuolioikea),Parent=parent}):AttachResource(menucommon.nuolioikea)
+	addchild(Button{Position=RELATIVEPOS(POS(261+48,180+36),parentpos),Size=GetResourceSize(menucommon.mininuolioikea),Parent=parent}):AttachResource(menucommon.nuolioikea)
+	addchild(Button{Position=RELATIVEPOS(POS(261+48,206+36),parentpos),Size=GetResourceSize(menucommon.mininuolioikea),Parent=parent}):AttachResource(menucommon.nuolioikea)
+
+
+	font=font12()
+
+	addchild(StaticText{Position=RELATIVEPOS(POS(136+48,127+36),parentpos),Color=GetPaletteColor(18),Size=SIZE(132,16),TitleCentering=0,Parent=parent,Font=font,Name="old_engine"})
+	addchild(StaticText{Position=RELATIVEPOS(POS(136+48,151+36),parentpos),Color=GetPaletteColor(18),Size=SIZE(132,16),TitleCentering=0,Parent=parent,Font=font,Name="old_power"})
+--//	addchild(StaticText{Position=RELATIVEPOS(POS(136+48,175+36),parentpos),Color=GetPaletteColor(18),Size=SIZE(132,16),TitleCentering=0,Parent=parent,Font=font,Name="old_torque"})
+	addchild(StaticText{Position=RELATIVEPOS(POS(136+48,175+36),parentpos),Color=GetPaletteColor(18),Size=SIZE(132,16),TitleCentering=0,Parent=parent,Font=font,Name="old_weight"})
+
+--// hyvitys
+	addchild(StaticText{Position=RELATIVEPOS(POS(136+48,202+36),parentpos),Color=GetPaletteColor(18),Size=SIZE(132,16),TitleCentering=0,Parent=parent,Font=font,Name="old_price"})
+--//	addchild(statictext(CARDEALER_CHANGE),POS(136+48,202+36),parent)):AttachResource(font)
+
+	addchild(StaticText{Position=RELATIVEPOS(POS(312+48,127+36),parentpos),Color=GetPaletteColor(18),Size=SIZE(132,16),TitleCentering=0,Parent=parent,Font=font,Name="new_engine"})
+	addchild(StaticText{Position=RELATIVEPOS(POS(312+48,151+36),parentpos),Color=GetPaletteColor(18),Size=SIZE(132,16),TitleCentering=0,Parent=parent,Font=font,Name="new_power"})
+--//	addchild(StaticText{Position=RELATIVEPOS(POS(312+48,175+36),parentpos),Color=GetPaletteColor(18),Size=SIZE(132,16),TitleCentering=0,Parent=parent,Font=font,Name="new_torque"})
+	addchild(StaticText{Position=RELATIVEPOS(POS(312+48,175+36),parentpos),Color=GetPaletteColor(18),Size=SIZE(132,16),TitleCentering=0,Parent=parent,Font=font,Name="new_weight"})
+
+--// uusi hinta
+	addchild(StaticText{Position=RELATIVEPOS(POS(312+48,202+36),parentpos),Color=GetPaletteColor(18),Size=SIZE(132,16),TitleCentering=0,Parent=parent,Font=font,Name="new_price"})
+--//	addchild(statictext(CARDEALER_NEWPRICE),POS(312+48,202+36),parent)):AttachResource(font)
+
+	font=font14()
+
+	addchild(statictext(CARDEALER_TOTALPRICE,POS(200+48,230+36),parent)):AttachResource(font)
+	addchild(StaticText{Name="total_price",Position=RELATIVEPOS(POS(225+48,255+36),parentpos),Size=SIZE(32,32),Parent=parent,Font=font})
+
+	font=font12()
+
+	addchild(StaticText{Position=RELATIVEPOS(POS(63+48,290+36),parentpos),Size=SIZE(370,16),Font=font12(),Parent=parent, Title=cardealer_data.confirm_text}):WordWrap()
+
+	parentpos=POS(47,130)
+
+	--//normal carinfo
+	parent=addparent(Frame{ Name="car_infobox", Position=parentpos, Size=SIZE(256,256), ShowBorders=FALSE, Layer=0})
+	parent:AttachResource(cardealer_data.images.infobox)
+	--//parent:AttachResource(cardealer_data.images.info_background)
+
+	font=font10()
+
+	addchild(statictext(CARDEALER_POWER,POS(60,184),parent))
+--//	addchild(statictext(CARDEALER_TORQUE,POS(60,234),parent))
+	addchild(statictext(CARDEALER_WEIGHT,POS(60,234),parent))
+	addchild(statictext(CARDEALER_PRICE,POS(60,284),parent))
+
+	font=font18()
+
+	addchild(statictext(ConvertToWString("2.0l"),POS(60,133),parent,"enginetype"))
+	
+	font=font12()
+
+	addchild(statictext(ConvertToWString("75hp"),POS(130,197),parent,"power"))
+--//	addchild(statictext(ConvertToWString("400Nm"),POS(130,247),parent,"torque"))
+	addchild(statictext(ConvertToWString("720kg"),POS(130,247),parent,"weight"))
+
+
+	font=font14()
+
+	addchild(statictext(ConvertToWString("$0"),POS(130,297),parent,"price"))
+
+	--//colorbox.. handles car changes too
+	ppos=SPOS(511,142)
+	parent=addparent(Frame{Position=ppos,Size=SIZE(128,128),Layer=0,ShowBorders=FALSE})
+
+	--//parent:AttachResource(cardealer_data.images.colorbox)
+
+	--//nuolet
+	addchild(Button{Position=RELATIVEPOS(SPOS(516,142),ppos),Size=GetResourceSize(menucommon.nuoliylos),Parent=parent, Layer=11}):AttachResource(menucommon.nuoliylos)
+	addchild(Button{Position=RELATIVEPOS(SPOS(516,266),ppos),Size=GetResourceSize(menucommon.nuolialas),Parent=parent, Layer=11}):AttachResource(menucommon.nuolialas)
+	addchild(Button{Position=RELATIVEPOS(SPOS(516,147),ppos),Size=SIZE(128,128),Parent=parent, Layer=10}):AttachResource(cardealer_data.images.colorbox)
+addchild(Button{Position=RELATIVEPOS(SPOS(516,142),ppos),Size=GetResourceSize(common.color_glassblock),Parent=parent, Layer=0}):AttachResource(common.color_glassblock)
+
+	parent=addchild(ButtonGroup{Name="colorbox",Position=POS(0,0),Layer=0,Size=SIZE(128,128),ShowBorders=FALSE,Parent=parent})
+	parent.childs={}
+
+
+	--//boxes
+	local b=addchild(Button{Position=RELATIVEPOS(SPOS(512,160),ppos),Size=SIZE(28,14),Parent=parent,DrawBackgroundColor=TRUE})
+	table.insert(parent.childs,b)
+	
+	addchild(Button{Position=RELATIVEPOS(SPOS(509,159),ppos),Size=SIZE(33,16),Parent=parent}):AttachResource(menucommon.color_glassblock)
+
+
+
+	b=addchild(Button{Position=RELATIVEPOS(SPOS(512,183),ppos),Size=SIZE(28,14),Parent=parent,DrawBackgroundColor=TRUE})
+	table.insert(parent.childs,b)
+
+	addchild(Button{Position=RELATIVEPOS(SPOS(509,182),ppos),Size=SIZE(33,16),Parent=parent}):AttachResource(menucommon.color_glassblock)
+
+
+
+	b=addchild(Button{Position=RELATIVEPOS(SPOS(512,205),ppos),Size=SIZE(28,14),Parent=parent,DrawBackgroundColor=TRUE})
+	table.insert(parent.childs,b)
+
+	addchild(Button{Position=RELATIVEPOS(SPOS(509,204),ppos),Size=SIZE(33,16),Parent=parent}):AttachResource(menucommon.color_glassblock)
+
+
+
+	b=addchild(Button{Position=RELATIVEPOS(SPOS(512,226),ppos),Size=SIZE(28,14),Parent=parent,DrawBackgroundColor=TRUE})
+	table.insert(parent.childs,b)
+
+	addchild(Button{Position=RELATIVEPOS(SPOS(509,225),ppos),Size=SIZE(33,16),Parent=parent}):AttachResource(menucommon.color_glassblock)
+
+
+
+	b=addchild(Button{Position=RELATIVEPOS(SPOS(512,248),ppos),Size=SIZE(28,14),Parent=parent,DrawBackgroundColor=TRUE})
+	table.insert(parent.childs,b)
+
+	addchild(Button{Position=RELATIVEPOS(SPOS(509,247),ppos),Size=SIZE(33,16),Parent=parent}):AttachResource(menucommon.color_glassblock)
+
+	
+
+	local func_selected = function(self)
+		cardealer_state.skin=self.number
+		MenuScene:SetCarSkin(self.number)
+	end
+
+	parent.SetButtonColors = function(self)
+		local colors=cardealer_data.car_data[cardealer_state.carnum].colors
+
+		local i
+		for i=1,5 do
+			self.childs[i]:SetInactiveColor(colors[i][1])
+			self.childs[i]:SetActiveColor(colors[i][2])
+		end
+
+	end
+
+	parent.ResetSkin = function(self)
+		cardealer_state.skin=1
+		MenuScene:SetCarSkin(cardealer_state.skin)
+		self:SetButtonColors()
+		self:SetSelected(self.childs[cardealer_state.skin])
+	end
+
+	parent.onMoveUp = function(self)
+		local c=cardealer_state.skin
+		if c > 1 then
+			c = c - 1
+		end
+		cardealer_state.skin = c
+		MenuScene:SetCarSkin(cardealer_state.skin)
+		self:SetSelected(self.childs[c])
+	end
+
+	parent.onMoveDown = function(self)
+		local c=cardealer_state.skin
+		if c < 5 then
+			c = c + 1
+		end
+		cardealer_state.skin = c
+		MenuScene:SetCarSkin(cardealer_state.skin)
+		self:SetSelected(self.childs[c])
+	end
+--[[--/*
+	local first
+	first=addchild(Button{Position=RELATIVEPOS(POS(572,203),ppos),Size=SIZE(16,16),Parent=parent})
+	--//first:SetColor(128,128,0,255)
+    first.onSelected = func_selected
+	first.number=1
+
+	local b=addchild(Button{Position=RELATIVEPOS(POS(572,223),ppos),Size=SIZE(16,16),Parent=parent})
+	--//b:SetColor(128,128,0,255)
+	b.onSelected = func_selected
+	b.number=2
+
+	b=addchild(Button{Position=RELATIVEPOS(POS(572,243),ppos),Size=SIZE(16,16),Parent=parent})
+	--//b:SetColor(0,128,0,255)
+    b.onSelected = func_selected
+	b.number=3
+
+	b=addchild(Button{Position=RELATIVEPOS(POS(572,263),ppos),Size=SIZE(16,16),Parent=parent})
+	--//b:SetColor(255,0,0,255)
+    b.onSelected = func_selected
+	b.number=4
+
+	b=addchild(Button{Position=RELATIVEPOS(POS(572,283),ppos),Size=SIZE(16,16),Parent=parent})
+	--//b:SetColor(128,0,255,255)
+    b.onSelected = func_selected
+	b.number=5
+
+
+	parent.first=first
+
+	parent.ResetChild = function(self)
+		self:SetSelectedChild(self.first)
+	end
+--]]--*/
+--[[--/*
+	parent.onMoveLeft = function(self)
+		--//move another car
+		if cardealer_state.istrading then return end
+			
+		LOG("cardealer:onmoveleft")
+		self:ResetChild()
+
+		local c=cardealer_state.carnum
+		if c > 1 then
+			c = c - 1
+		else
+			c = table.getn(cardealer_data.car_data) --//GameFlow.GetNumCars()
+		end
+		cardealer_setcar(c)
+	end
+
+	parent.onMoveRight = function(self)
+		--//move car
+		if cardealer_state.istrading then return end
+
+		LOG("cardealer:onmoveright")
+		local c=cardealer_state.carnum
+		if c < table.getn(cardealer_data.car_data) then --//GameFlow.GetNumCars() then
+			c = c + 1
+		else
+			c = 1
+		end
+		cardealer_setcar(c)
+
+		self:ResetChild()
+	end
+--]]--*/
+	parent.onEscape = function(self)
+		if cardealer_state.trading and cardealer_state.istrading then
+			local w=GetWindow("car_infobox")
+			w:ShowWindow()
+			w=GetWindow("car_tradingbox")
+			w:HideWindow()
+			--//HideYesNoBox()
+			ResetBalkButtonsText()
+			Menu:UnlockButtonChange()
+			playmenusound_back()
+			cardealer_state.istrading=false
+
+			
+		elseif cardealer_state.back_action then
+			cardealer_state.back=true
+			playmenusound_back()
+			cardealer_state.back_action()
+		end
+	end
+
+	parent.onInit = function(self)
+--//		self:SetFocus()
+--//		self:ResetChild()
+	end
+
+	parent.onAction = function(self)
+		
+		--[[--/*local child=self:GetSelected()    E3 DEMO
+		if child.onAction then
+			child:onAction()
+		end
+		--]]-- E3 DEMO */
+		if cardealer_state.trading then
+
+			if cardealer_state.istrading then
+				cardealer_state.istrading=false
+				PlayerProfile:SetCarType(cardealer_state.car-1)
+				GameFlow.SetPlayerCar(PlayerProfile:GetCarType())
+				PlayerProfile:SetCarClass(cardealer_state.carclass)
+				tuning_setplayerequipment(cardealer_state.car)
+				GameFlow.SetPlayerCarSkin(cardealer_state.skin or 1)
+				PlayerProfile:AddMoney(PlayerProfile:GetCarPrice()/2)
+				PlayerProfile:SubtractMoney(cardealer_state.carprice)
+				PlayerProfile:ResetCarPrice()
+				PlayerProfile:ResetUpgrades()
+				PlayerProfile:AddToCarPrice(cardealer_state.carprice)
+			    UpdateBalkMoney()
+				playmenusound_action()
+				cardealer_state.forward=true
+				cardealer_state.forward_action()
+				ResetBalkButtonsText()
+				Menu:UnlockButtonChange()
+--//				HideYesNoBox()
+			else
+				if (PlayerProfile:GetMoney()+PlayerProfile:GetCarPrice()/2) >= cardealer_state.carprice then
+					cardealer_state.istrading=true
+					Menu:LockButtonChange()
+					local w=GetWindow("car_infobox");
+					w:HideWindow()
+					w=GetWindow("car_tradingbox")
+					w:ShowWindow()
+					cardealer_settradeinfo()
+--//					ShowYesNoBox()
+					SetBalkButtonsText(CARDEALER_YES,CARDEALER_NO)
+					ShowForwardButton()
+					ShowBackButton()
+				else
+					--//HideBackButton()
+					SetBalkButtonsText(PROFILE_OK)
+					PurchaseConfirmation(CARDEALER_NOTENOUGHMONEY,ConvertToWString(cardealer_data.car_data[cardealer_state.carnum].name),cardealer_state.carprice,nil,
+						PROFILE_OK, function() ResetBalkButtonsText(); ShowBalkButtons(); end
+					)			
+				end
+			end
+		elseif cardealer_state.forward_action then
+			if not cardealer_state.use_price then 
+				--//set player equipment
+				GameFlow.SetPlayerCar(cardealer_state.car-1)
+				tuning_setplayerequipment(cardealer_state.car)
+				GameFlow.SetPlayerCarSkin(cardealer_state.skin or 1)
+
+				cardealer_state.forward=true
+				playmenusound_action()
+				cardealer_state.forward_action()
+			elseif PlayerProfile:EnoughMoney(cardealer_state.carprice) then
+				if cardealer_state.use_price then
+					PlayerProfile:SubtractMoney(cardealer_state.carprice)
+					cardealer_state.undo={ 
+						money=cardealer_state.carprice,
+						car=GameFlow.GetPlayerCar()+1,
+						skin=GameFlow.GetPlayerCarSkin(),
+					}					
+					PlayerProfile:SetCarType(cardealer_state.car-1)
+					GameFlow.SetPlayerCar(cardealer_state.car-1)
+					PlayerProfile:ResetCarPrice()
+					PlayerProfile:AddToCarPrice(cardealer_state.carprice)
+					tuning_setplayerequipment(cardealer_state.car)
+					GameFlow.SetPlayerCarSkin(cardealer_state.skin or 1)
+					UpdateBalkMoney()
+					playmenusound_action()
+					cardealer_state.forward=true
+					cardealer_state.forward_action()
+				end
+			else		
+				playmenusound_error()
+			end
+		end
+	end
+
+	activateparents()
+
+	Menu:SetMenuTitle(menu_cardealer.options.title)
+	GetWindow("car_tradingbox"):HideWindow()
+
+--//	cardealer_setcar(cardealer_state.carnum)
+
+end
+
+function cardealer_update()
+--[[--/*
+	local w=GetWindow("car_image")
+
+	if w:IsVisible() then return end
+
+	if GUI:BackgroundVisible() then
+		w:ShowWindow()
+	end
+--]]--*/
+
+	--//MenuScene:SetCameraPositionOffset(GetCameraSplinePoint())
+
+end
+
+function cardealer_deinit()
+	
+	windows_reset()
+
+end
+
+
+menu_cardealer_transmissionselect = {
+
+	options = {
+	
+		title = CARDEALER_TRANSMISSION,
+		background = noimage(), 
+		orientation = MENU_HORIZONTAL,
+		position = POS(260,396),
+		padding = { 6,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		back_action=function()
+			if cardealer_state.undo then
+				PlayerProfile:AddMoney(cardealer_state.undo.money)
+				tuning_setplayerequipment(cardealer_state.car)
+				GameFlow.SetPlayerCar(cardealer_state.undo.car-1)
+				GameFlow.SetPlayerCarSkin(cardealer_state.undo.skin)
+				PlayerProfile:ResetCarPrice()
+				cardealer_state.undo=nil
+			end
+			cardealer_state.forward=nil
+			cardealer_state.back=nil
+
+			cardealer_init(cardealer_state.back_action,cardealer_state.forward_action,cardealer_state.use_price,cardealer_state.trading, cardealer_state.restrict_car, cardealer_state.restrict_class, cardealer_state.update_function)
+	
+		end,
+
+	},
+
+	init_function = function()
+		windows_reset()
+
+		StandardUpperBalk()
+		StandardLowerBalk()
+
+		local k,v,i
+		i=1
+		local carnum
+		for k,v in ipairs(cardealer_data.car_data) do
+			if v.car == GameFlow:GetPlayerCar()+1 then
+				carnum=i
+			end
+			i = i +1
+		end
+
+
+		MenuScene:LoadCar(GameFlow.GetPlayerCar()+1,GameFlow.GetPlayerCarSkin())
+		SetMenuCamera(carnum)
+		MenuScene:ResetCar(Startpoints[carnum].Position,Startpoints[carnum].Orientation)
+		GUI:SetRenderScene(TRUE)
+		MenuScene:StartFadeOn()
+		activateparents()
+	end,
+
+	deinit_function = function()
+		windows_reset()
+		
+
+	end,
+
+	update_function = function()
+		if cardealer_state.update_function then
+			cardealer_state.update_function()
+		end
+		--//MenuScene:SetCameraPositionOffset(GetCameraSplinePoint())
+
+	end,
+
+
+	items = {
+		{ CARDEALER_TRANSMISSION_AUTO, noimage(), function() GameFlow.SetAutoTransmission(TRUE); cardealer_state.trans_forward_action(true) end},
+		{ CARDEALER_TRANSMISSION_MANUAL, noimage(), function() GameFlow.SetAutoTransmission(FALSE); cardealer_state.trans_forward_action(false) end},
+	},
+
+}
+
+
+function cardealer_transmissionselect(forwardaction)
+
+	local f=function()
+		cardealer_state.trans_forward_action=forwardaction
+		
+		EnterMenu("menu_cardealer_transmissionselect")
+	end
+
+	return f
+end
+

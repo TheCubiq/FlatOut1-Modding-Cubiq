@@ -1,0 +1,460 @@
+--///////////////////////////////////////////////////////////////////////////
+--// ResultsMenu.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2004 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// Created on 11.7.2004 18:20:38
+--// 
+--// @Author Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+
+results_data = {
+	window = image("endgame_window.tga"),
+
+	bg = {
+		[1] = "data/menu/bg/class_c_finish.tga",
+		[2] = "data/menu/bg/class_b_finish.tga",
+		[3] = "data/menu/bg/class_a_finish.tga",
+	},
+
+
+	texts = {
+		[1] = RESULTS_BRONZE,
+		[2] = RESULTS_SILVER,
+		[3] = RESULTS_GOLD,
+	},
+
+	trophies = {
+		[1] = small_trophies.bronze,
+		[2] = small_trophies.silver,
+		[3] = small_trophies.gold,
+	},
+}
+
+
+function results_setclasscompleted(cls)
+
+	if cls == 1 then
+		menu_classfinish.completed_class=RESULTS_BRONZE
+	end
+	if cls == 2 then
+		menu_classfinish.completed_class=RESULTS_SILVER
+	end
+
+	menu_smashresult.items[1] = { RESULTS_CONTINUE,noimage(),entermenu("menu_classfinish") }
+
+	if cls == 3 then
+		menu_classfinish.completed_class=RESULTS_GOLD
+		menu_classfinish.items[1] = { RESULTS_CONTINUE,noimage(),entermenu("menu_gamecompleted") }
+	end
+
+	raceresults_completed_class=cls
+end
+
+menu_raceresults = {
+
+	options = {
+	
+		title = RESULTS_TITLE,
+		background = noimage(), 
+		orientation = MENU_HORIZONTAL,
+		position = DEFAULTBUTTONPOS(),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+	},
+
+
+	init_function = function()
+		windows_reset()
+
+		StandardUpperBalk()
+		StandardLowerBalk()
+
+		local place=PlayerProfile:GetLastRacePosition() --//fetch result
+		AUDIO.PlayTitleMusic()
+
+		if place < 4 then
+			if raceresult_unlockedlevel then
+				addparent(StaticText{Position=SPOS(128,283),Size=SIZE(344,48),TitleCentering=TITLE_CENTER_XY,Title=RESULTS_UNLOCK,Font=font14()})
+				addparent(StaticText{Position=SPOS(128,302),Size=SIZE(344,48),TitleCentering=TITLE_CENTER_XY,Title=raceresult_unlockedlevel,Font=font14()})
+			end
+			local trophypics={
+				trophies.goldtrophy,
+				trophies.silvertrophy,
+				trophies.bronzetrophy
+			}
+
+			addparent(Button{Position=SPOS(10,74),Size=GetResourceSize(trophypics[place])}):AttachResource(trophypics[place])
+			addparent(StaticText{Position=SPOS(188,70),Size=SIZE(64,64),Title=RESULTS_CONGRATULATIONS,Color=GetPaletteColor(18),Font=font18()})
+		end
+
+		local places = {
+			"st PLACE",
+			"nd PLACE",
+			"rd PLACE",
+			"th PLACE",
+		}
+
+
+	
+		if place > 4 then
+			place = 4
+		end
+		
+		local placetext=ConvertToWString(string.format("%d%s",PlayerProfile:GetLastRacePosition(),places[place]))
+
+		addparent(StaticText{Position=SPOS(188,100),Size=SIZE(64,64),Title=placetext,Font=font18()})
+
+		local prize=PlayerProfile:GetLastRaceWinning()  --//fetch prize
+
+		addparent(StaticText{Position=SPOS(188,165),Size=SIZE(64,64),Title=RESULTS_AWARD,Color=GetPaletteColor(18),Font=font18()})
+
+		addparent(StaticText{Position=SPOS(188,196),Size=SIZE(64,64),Title=ConvertToWString(string.format("$%d",prize)),Font=font18()})
+
+
+		local not_unlocked
+		if not raceresult_unlockedlevel then
+			local c=PlayerProfile:GetCurrentClass()
+			local k,v
+			for k,v in ipairs(Classes[c].Courses) do
+				for i=1,3 do
+					local pos=PlayerProfile:GetLevelPosition(v[i].Level)
+					if pos > 3 and pos ~= 255 and v[i+1] then
+						if PlayerProfile:GetLevelPosition(v[i+1].Level) == 255 then
+							not_unlocked=true
+						end
+					end
+				end
+			end
+		end
+
+		if place > 3 and not GameFlow.IsArenaMode() and not_unlocked then
+
+			addparent(StaticText{Position=SPOS(128,235),Size=SIZE(344,48),WordWrap=1,Title=RESULTS_QUALIFY,Font=font14()})
+		end
+
+		if place > 3 and not GameFlow.IsArenaMode() then
+			addparent(StaticText{Position=SPOS(188,70),Size=SIZE(64,64),Title=RESULTS_OVER,Color=GetPaletteColor(18),Font=font18()})
+		end
+
+			
+
+
+		raceresult_unlockedlevel=nil
+		--// TO QUALIFY FOR THE NEXT RACE,\nYOU MUST PLACE IN THE TOP THREE
+		
+--[[--/*
+		local p=addparent(InputHandler{Name="InputHandler"})
+
+		p.onKeyPressed = function(self, character, virtualkey, scancode)
+			if virtualkey == KeyCodes.BUTTON_A then
+				EnterMenu("menu_careermode_garage")
+			end
+		end
+--]]--*/
+		GameFlow.SetArenaMode(nil)
+
+		GUI:LoadBackground("data/menu/bg/race_finish.tga")
+
+		activateparents()
+
+	end,
+
+
+	deinit_function = function()
+		windows_reset()
+
+
+	end,
+
+	items = {
+		{ RESULTS_CONTINUE,noimage(),entermenu("menu_smashresult") },
+
+	}
+}
+
+
+function smashyblock(position,iconname,numobjects,moneytotal)
+
+	local parent=addparent(Frame{Position=position,Size=SIZE(160,50),ShowBorders=FALSE})
+
+
+	--//icon
+	addchild(Button{Position=POS(0,0),Size=GetResourceSize(smashysmash[iconname]),Parent=parent,Layer=0}):AttachResource(smashysmash[iconname])
+
+	--// #
+	addchild(StaticText{Position=POS(62,9),Size=SIZE(16,16),Font=font10(),Title=ConvertToWString("#"),Color=GetPaletteColor(18),Parent=parent,Layer=0})
+
+	--// TOTAL
+	addchild(StaticText{Position=POS(105,9),Size=SIZE(16,16),Font=font10(),Title=RESULTS_TOTAL,Color=GetPaletteColor(18),Parent=parent,Layer=0})
+
+	--//num objects
+	addchild(StaticText{Position=POS(62,30),Size=SIZE(16,16),Font=font12(),Title=ConvertToWString(string.format("%d",numobjects)),Parent=parent,Layer=0})
+
+	--//money
+	addchild(StaticText{Position=POS(105,30),Size=SIZE(16,16),Font=font12(),Title=ConvertToWString(string.format("$%d",moneytotal)),Parent=parent,Layer=0})
+
+	--//balk
+	addchild(Button{Position=POS(-27,8),Size=SIZE(190,42),Parent=parent, Layer=5}):AttachResource(smashysmash.balk)
+
+	return parent
+end
+
+
+
+
+
+
+menu_smashresult = {
+
+	options = {
+	
+		title = RESULTS_TITLE,
+		background = noimage(), 
+		orientation = MENU_HORIZONTAL,
+		position = DEFAULTBUTTONPOS(),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+	},
+
+
+	init_function = function()
+		windows_reset()
+
+		StandardUpperBalk()
+		StandardLowerBalk()
+
+		--//note: GetLastRaceSmashScore returns two numbers
+
+--[[--/*   bonustypes are in this order
+BONUSTYPE_ROADBLOCK 1
+BONUSTYPE_FENCE 2
+BONUSTYPE_MACHINERY	3
+BONUSTYPE_SIGN 4
+BONUSTYPE_ACCESSORY 5
+BONUSTYPE_NATURE 6
+BONUSTYPE_STRUCTURE 7
+BONUSTYPE_TIRE	8
+--]]--*/
+
+
+		smashyblock(SPOS(20,92),"bonus_roadblock",PlayerProfile:GetLastRaceSmashScore(1))
+		smashyblock(SPOS(188,92),"bonus_fence",PlayerProfile:GetLastRaceSmashScore(2))
+		smashyblock(SPOS(369,92),"bonus_machinery",PlayerProfile:GetLastRaceSmashScore(3))
+
+		smashyblock(SPOS(20,156),"bonus_signs",PlayerProfile:GetLastRaceSmashScore(4))
+		smashyblock(SPOS(188,156),"bonus_accessory",PlayerProfile:GetLastRaceSmashScore(5))
+		smashyblock(SPOS(369,156),"bonus_nature",PlayerProfile:GetLastRaceSmashScore(6))
+
+		smashyblock(SPOS(20,222),"bonus_structure",PlayerProfile:GetLastRaceSmashScore(7))
+		smashyblock(SPOS(188,222),"bonus_tire",PlayerProfile:GetLastRaceSmashScore(8))
+
+		addparent(StaticText{Title=RESULTS_SMASHY,Font=font14(),Color=GetPaletteColor(18),Position=SPOS(160,292),Size=SIZE(16,16)})
+		addparent(StaticText{Title=ConvertToWString(string.format("$%d",PlayerProfile:GetLastRaceSmashTotalMoney())),Font=font14(),Position=SPOS(160,313),Size=SIZE(16,16)})
+
+
+		activateparents()
+	end,
+
+	deinit_function = function()
+		windows_reset()
+
+	end,
+
+
+	items = {
+		{ RESULTS_CONTINUE,noimage(),entermenu("menu_careermode_garage") },
+	},
+
+}
+
+
+menu_gamecompleted = {
+	options = {
+	
+		title = ConvertToWString(""),
+		background = noimage(), 
+		orientation = MENU_HORIZONTAL,
+		position = POS(260,396),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+	},
+
+
+	init_function = function()
+		windows_reset()
+		GUI:CheckControllerDisconnect(FALSE)
+
+		GUI:LoadBackground()
+		AUDIO.StopMusic()
+		GUI:PlayVideo("data/video/trophy")
+		GUI:PlayCredits()
+		AUDIO.PlayTitleMusic()
+
+
+		EnterMenu("menu_careermode_garage")
+	end,
+
+
+	deinit_function = function()
+		windows_reset()
+
+		GUI:CheckControllerDisconnect(TRUE)
+	end,
+
+	items = {
+	},
+
+}
+
+
+
+menu_classfinish = {
+
+
+	options = {
+	
+		title = RESULTS_CONGRATULATIONS,
+		background = noimage(), 
+		orientation = MENU_HORIZONTAL,
+		position = POS(260,396),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+	},
+
+
+	init_function = function()
+		windows_reset()
+
+		StandardUpperBalk()
+		StandardLowerBalk()
+
+		local parentpos=SPOS(170,74)
+		local p=addparent(Button{Position=parentpos,Size=GetResourceSize(results_data.window)})
+		p:AttachResource(results_data.window)
+
+		addparent(Button{Position=SPOS(311,93),Size=GetResourceSize(results_data.trophies[raceresults_completed_class])}):AttachResource(results_data.trophies[raceresults_completed_class])
+
+		local w=addchild(StaticText{Position=POS(30,86),Title=menu_classfinish.completed_class,Size=SIZE(320,177),Font=font10(),Parent=p})
+		w:WordWrap()
+
+		addparent(StaticText{Position=SPOS(300,264),Name="class_prize",Title=ConvertToWString(string.format("$ %d",PlayerProfile:GetClassCompletionPrize())),Color=GetPaletteColor(18),Font=font18()})
+
+
+		GUI:LoadBackground(results_data.bg[raceresults_completed_class])
+
+		activateparents()
+
+	end,
+
+
+	deinit_function = function()
+		windows_reset()
+		menu_classfinish.completed_class=nil
+		PlayerProfile:PossibleToFinishClass(0) 
+	end,
+
+
+
+
+	items = {
+		{ RESULTS_CONTINUE,noimage(),entermenu("menu_careermode_garage") },
+	}
+
+}
+
+
+menu_stuntresults = {
+
+	options = {
+	
+		title = RESULTS_STUNT,
+		background = noimage(), 
+		orientation = MENU_HORIZONTAL,
+		position = DEFAULTBUTTONPOS(),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+	},
+
+	init_function = function()
+		windows_reset()
+
+		StandardUpperBalk()
+		StandardLowerBalk()
+
+
+		local place=PlayerProfile:GetLastRacePosition() --//fetch result
+		AUDIO.PlayTitleMusic()
+
+
+		local title
+		local award
+		if GameFlow.GetEventType() == "STUNT" then
+			title=RESULTS_STUNT
+			award=RESULTS_STUNT_AWARD
+		end
+		if GameFlow.GetEventType() == "DERBY" then
+			title=RESULTS_DERBY
+			award=RESULTS_DERBY_AWARD
+		end
+
+		addparent(StaticText{Position=SPOS(208,84),Size=SIZE(64,64),Title=title,Color=GetPaletteColor(18),Font=font18()})
+		
+		local placetext=PlayerProfile:GetLastStuntScore()
+
+		addparent(StaticText{Position=SPOS(208,119),Size=SIZE(64,64),Title=placetext,Font=font18()})
+
+		local prize=PlayerProfile:GetLastRaceWinning()  --//fetch prize
+
+		
+
+		addparent(StaticText{Position=SPOS(208,200),Size=SIZE(64,64),Title=award,Color=GetPaletteColor(18),Font=font18()})
+
+		addparent(StaticText{Position=SPOS(208,235),Size=SIZE(64,64),Title=ConvertToWString(string.format("$%d",prize)),Font=font18()})
+
+
+--[[--/*
+		local p=addparent(InputHandler{Name="InputHandler"})
+
+		p.onKeyPressed = function(self, character, virtualkey, scancode)
+			if virtualkey == KeyCodes.BUTTON_A then
+				EnterMenu("menu_careermode_garage")
+			end
+		end
+--]]--*/
+		GUI:LoadBackground("data/menu/bg/race_finish.tga")
+
+
+		activateparents()
+	end,
+
+
+	deinit_function = function()
+		windows_reset()
+
+	end,
+
+	items = {
+		{ RESULTS_CONTINUE,noimage(),entermenu("menu_careermode_garage") },
+	}
+
+
+
+}

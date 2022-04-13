@@ -1,0 +1,56 @@
+--///////////////////////////////////////////////////////////////////////////
+--// TimeTrialMenu.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2004 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// Created on 20.5.2004 19:57:26
+--// 
+--// @Author Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+
+
+timetrial_state = {}
+
+
+
+menu_timetrial_carselect = {
+
+	options = {
+	
+		title = TIMETRIAL_CARDEALER,
+		background = noimage(), --//background("bg-mainmenu_alpha.tga"),
+		orientation = MENU_HORIZONTAL,
+		position = DEFAULTBUTTONPOS(),
+		padding = { 6,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		back_action=entermenu("menu_singleplayer"),
+	},
+	
+	init_function = function()
+		GameFlow.SetEventType("RACE")
+		GameFlow.SetSubEventType("RACE_TIMETRIAL")
+		cardealer_init(entermenu("menu_singleplayer"),cardealer_transmissionselect(enter_trackselection("menu_timetrial_carselect", race)))
+		
+	end,
+
+	deinit_function = function()
+		if cardealer_state.forward then
+			GameFlow.SetPlayerCar(cardealer_state.car-1)
+		end
+		cardealer_deinit()
+	end,
+	
+	update_function = function()
+		cardealer_update()
+	end,
+
+	items = {
+	},
+}
+
+

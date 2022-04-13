@@ -1,0 +1,84 @@
+
+----#  Engine settings for car8 (Grinder) 
+Car.Engine.Car8_1 = {
+
+	--# --------------------------------------------------------------------
+	----#  Default Engine Settings
+	--# --------------------------------------------------------------------
+	
+	Name 			= 	"Grinder",
+	Price  			= 	10,
+	
+	Mesh			=	1,
+	
+	Settings = {
+	
+		----#  Car mass = body mass + engine mass
+		Mass			=	200,
+		-- turbo acceleration in G's
+		TurboAcceleration		=	0.00, 	
+		-- nitro acceleration in G's
+		NitroAcceleration		=	1.20,
+		-- storage for nitro in seconds
+		NitroStorage		=	5.00,
+		
+		----#  --- Differential ---
+		----#  Locking system: 0 = spool differential, 1 = open differential
+		DifferentialLock		=	0.15,		
+		DifferentialBias		=	1.0,
+	
+		InertiaEngine		=	0.12,	
+		InertiaDriveShaft		=	0.06,	
+		EngineFriction		=	0.055,	
+
+		----#  Engine
+		IdleRpm			=	950.0,	
+	
+		TorqueMax             	=      	118.0,	
+		TorqueCurveParams	=	16,
+
+		-- torque peak at 3200, power 5000
+		Torque00		=	{500,	0.200},
+		Torque01		=	{1000,	0.491},
+		Torque02		=	{1500,	0.735},
+		Torque03		=	{2000,	0.854},
+		Torque04		=	{2500,	0.937},
+		Torque05		=	{3000,	0.986},
+		Torque06		=	{3500,	1.000},
+		Torque07		=	{4000,	0.979},
+		Torque08		=	{4500,	0.935},
+		Torque09		=	{5000,	0.840},
+		Torque10		=	{5500,	0.764},
+		Torque11		=	{6000,	0.659},
+		Torque12		=	{6500,	0.554},
+		Torque13		=	{7000,	0.456},
+		Torque14		=	{7500,	0.220},
+		Torque15		=	{8000,	0.000},
+		Torque16		=	{8500,	0.000},
+		Torque17		=	{9000,	0.000},
+		Torque18		=	{9500,	0.000},
+		Torque19		=	{10000,	0.000},
+	
+		----#  ---- EXHAUST VISUALS ----
+		ExhaustPeakRpm		=	4000,
+
+		----#  --- HORSEPOWER VISUAL ---
+		Horsepower		= 	124.0, 	
+
+	},
+
+
+	MaxSettings = {
+
+		TurboAcceleration	=	0.20,	 			 
+		InertiaEngine		=	0.10,	
+		InertiaDriveShaft	=	0.048,	
+		EngineFriction		=	0.039,	
+		TorqueMax             	=     	166.0,
+		Horsepower		= 	205.0, 	
+
+	},
+
+	
+}   ----# --# ----#  ENGINE1 END
+

@@ -1,0 +1,856 @@
+
+
+Upgrades = enum(1,{
+
+
+
+				"ENGINEBALANCING",
+				"PORTANDPOLISH",
+				"FILTERKIT",
+				"TURBO",
+				"SUPERCHARGER",			
+--//6				
+--//7				
+--//8				
+--//9				
+				"TUNINGKIT1",
+				"TUNINGKIT2",
+				"TUNINGKIT3",
+
+				"CLUTCH1",
+				"CLUTCH2",
+				"CLUTCH3",
+				"FLYWHEEL1",
+				"FLYWHEEL2",
+				"FLYWHEEL3",
+				"TRANSMISSION1",
+				"TRANSMISSION2",
+				"TRANSMISSION3",
+--//22				
+--//23				
+--//24				
+				"CARBURATORANDMANIFOLD1",
+				"CARBURATORANDMANIFOLD2",
+				"CARBURATORANDMANIFOLD3",
+
+				"EXHAUST1",
+				"EXHAUST2",
+				"EXHAUST3",
+				"EXHAUSTMANIFOLD1",
+				"EXHAUSTMANIFOLD2",
+				"EXHAUSTMANIFOLD3",
+
+--//28				
+--//29				
+--//30				
+
+				"BODYUPGRADE1",
+				"BODYUPGRADE2",
+				"BODYUPGRADE3",
+
+				"SHOCKS1",
+				"SHOCKS2",
+				"SHOCKS3",
+
+				"TIRESANDBRAKES1",
+				"TIRESANDBRAKES2",
+				"TIRESANDBRAKES3",
+		})
+
+tuning_data = {
+
+	submenus = {
+
+		engine = {
+			title = TUNING_ENGINE,
+			
+			Description = TUNING_ENGINE_DESC,
+
+			Title = TUNING_ENGINE,
+			items = {
+				{ TUNING_TUNINGKIT, noimage(), Upgrade=Upgrades.TUNINGKIT1,Dummy=1, Fov=25.000000, Icon="tuningkit_1",
+
+					Description = TUNING_TUNINGKIT_USED,
+					Engine={ 
+						TorqueMax	= 0.05,
+						TurboAcceleration	= 0.10,  
+						Horsepower	= 0.10,
+				
+					},
+
+
+					Price = {
+						700,
+						1000,
+						2000,
+					},
+
+				},
+				{ TUNING_TUNINGKIT, noimage(), RequiredUpgrade=Upgrades.TUNINGKIT1, Upgrade=Upgrades.TUNINGKIT2, Dummy=2, Fov=25.000000, Icon="tuningkit_2",
+					Description = TUNING_TUNINGKIT_REGULAR,
+					Engine={
+						TorqueMax	= 0.05, 
+						TurboAcceleration 	= 0.10,  
+						Horsepower	= 0.10,
+					},
+
+
+					Price = {
+						1500,
+						2000,
+						4000,
+					},
+
+
+				},
+				{ TUNING_TUNINGKIT, noimage(), RequiredUpgrade=Upgrades.TUNINGKIT2, Upgrade=Upgrades.TUNINGKIT3, Dummy=3, Fov=25.000000, Icon="tuningkit_3",
+					Description = TUNING_TUNINGKIT_RACING,
+					Engine={
+						TorqueMax	= 0.05, 
+						TurboAcceleration 	= 0.10,  
+						Horsepower	= 0.10,
+					
+					},
+
+
+					Price = {
+						2500,
+						3500,
+						7000,
+					},
+
+
+				},
+				{ TUNING_TURBO, noimage(),Upgrade=Upgrades.TURBO, UpgradeLevel=GARAGE_RACING, Dummy=4, Fov=20.000000, Icon="turbo",
+					Description = TUNING_TURBO_DESC,
+					Engine={
+						TurboAcceleration	= 0.35,  
+						Horsepower	= 0.24,
+					
+					},
+
+
+					Price = {
+						4000,
+						0,
+						0,
+
+					},
+
+
+				},
+				{ TUNING_SUPERCHARGER, noimage(),Upgrade=Upgrades.SUPERCHARGER, UpgradeLevel=GARAGE_RACING, Dummy=5, Fov=25.000000, Icon="supercharger", 
+									Description = TUNING_SUPERCHARGER_DESC,
+					Engine={
+						TurboAcceleration 	= 0.35,  
+						Horsepower	= 0.24,
+
+
+					},
+
+					Price = {
+						0,
+						6000,
+						12000,
+					
+									
+					},
+
+
+				},
+				{ TUNING_PORT, noimage(), Upgrade=Upgrades.PORTANDPOLISH, UpgradeLevel=GARAGE_RACING, Dummy=6, Fov=25.000000, Icon="portpolish",
+									Description = TUNING_PORT_DESC,
+					Engine={
+						TorqueMax	= 0.03, 
+						EngineFriction 	= 0.30, 
+						Horsepower	= 0.01,
+					
+					},
+
+
+					Price = {
+						400,
+						600,
+						1200,
+					
+									
+					},
+
+				},
+				{ TUNING_BALANCE, noimage(),Upgrade=Upgrades.ENGINEBALANCING, UpgradeLevel=GARAGE_RACING, Dummy=7, Fov=25.000000, Icon="enginebalancing",
+					Description = TUNING_BALANCE_DESC,
+					Engine={
+						TorqueMax	= 0.05, 
+						EngineFriction 	= 0.50, 
+						Horsepower	= 0.02,
+					
+					},
+
+
+					Price = {
+						600,
+						800,
+						1500,
+					
+									
+					},
+
+				},			
+				{ TUNING_FILTER, noimage(),Upgrade=Upgrades.FILTERKIT, UpgradeLevel=GARAGE_RACING, Dummy=8, Fov=25.000000, Icon="filterkit", 
+					Description = TUNING_FILTER_DESC,
+					Engine={
+						TorqueMax	= 0.02, 
+						EngineFriction 	= 0.20,  
+						Horsepower	= 0.01,
+					
+					},
+				
+
+					Price = {
+						300,
+						500,
+						1000,
+					
+									
+					},
+
+				},				
+				{ TUNING_CARBURETOR, noimage(),Upgrade=Upgrades.CARBURATORANDMANIFOLD1, Dummy=9, Fov=25.000000, Icon="carburator_intakemanifold_1",  
+					Description = TUNING_CARBURETOR_USED,
+					Engine={
+						TorqueMax	= 0.10, 
+						TurboAcceleration 	= 0.05,  
+						Horsepower	= 0.08,
+					
+					},
+
+
+					Price = {
+						500,
+						1000,
+						2000,
+					
+									
+					},
+
+				
+				},				
+				{ TUNING_CARBURETOR, noimage(), RequiredUpgrade=Upgrades.CARBURATORANDMANIFOLD1, Upgrade=Upgrades.CARBURATORANDMANIFOLD2, Dummy=10, Fov=25.000000, Icon="carburator_intakemanifold_2",
+					Description = TUNING_CARBURETOR_REGULAR,
+					Engine={
+						TorqueMax	= 0.10, 
+						TurboAcceleration 	= 0.05,  
+						Horsepower	= 0.08,
+					
+					},
+
+
+					Price = {
+						800,
+						1500,
+						3000,
+					
+									
+					},
+
+				},				
+				{ TUNING_CARBURETOR, noimage(),RequiredUpgrade=Upgrades.CARBURATORANDMANIFOLD2, Upgrade=Upgrades.CARBURATORANDMANIFOLD3, Dummy=11, Fov=25.000000, Icon="carburator_intakemanifold_3", 
+					Description = TUNING_CARBURETOR_RACING,
+
+					Engine={
+						TorqueMax	= 0.10, 
+						TurboAcceleration 	= 0.05, 
+						Horsepower	= 0.08, 
+					
+					},
+
+
+					Price = {
+						1300,
+						2000,
+						4000,
+					
+									
+					},
+
+				},
+				
+			},
+
+		},
+
+		drivetrain = {
+			title = TUNING_DRIVETRAIN,
+			Description = TUNING_DRIVETRAIN_DESC,
+			Title = TUNING_DRIVETRAIN,
+			items = {
+				{ TUNING_CLUTCH, noimage(),Upgrade=Upgrades.CLUTCH1, Dummy=12, Fov=25.000000, Icon="clutch_1",
+					Description = TUNING_CLUTCH_USED,
+					Engine={
+						InertiaEngine = 0.05, 
+
+					},
+			
+					Gearbox={
+
+						ClutchTorque 	= 0.30,
+						ClutchReleaseTime 	= 0.30,  	
+						ClutchEngageTime 	= 0.30,
+					},
+
+
+					Price = {
+						200,
+						500,
+						1000,
+					
+									
+					},
+ 
+	
+				},
+
+				{ TUNING_CLUTCH, noimage(),RequiredUpgrade=Upgrades.CLUTCH1, Upgrade=Upgrades.CLUTCH2, Dummy=13, Fov=25.000000, Icon="clutch_2",
+					Description = TUNING_CLUTCH_REGULAR,
+					Engine={
+						InertiaEngine = 0.05,  
+
+					},
+
+					Gearbox={
+
+						ClutchTorque 	= 0.35,
+						ClutchReleaseTime 	= 0.35,  	
+						ClutchEngageTime 	= 0.35,
+
+					},
+
+
+					Price = {
+						400,
+						800,
+						1500,
+					
+									
+					},
+
+
+				},
+				{ TUNING_CLUTCH, noimage(), RequiredUpgrade=Upgrades.CLUTCH2, Upgrade=Upgrades.CLUTCH3, Dummy=14, Fov=25.000000, Icon="clutch_3",
+					Description = TUNING_CLUTCH_RACING,
+					Engine={
+						InertiaEngine = 0.05,  
+
+					},
+
+					Gearbox={
+
+						ClutchTorque 	= 0.35,
+						ClutchReleaseTime 	= 0.35,  	
+						ClutchEngageTime 	= 0.35,
+					},
+
+
+					Price = {
+						600,
+						1000,
+						2000,
+					
+									
+					},
+
+
+				},
+				{ TUNING_FLYWHEEL, noimage(),Upgrade=Upgrades.FLYWHEEL1, Dummy=15, Fov=25.000000, Icon="flywheel_1",
+					Description = TUNING_FLYWHEEL_USED,
+					Engine={
+						InertiaEngine = 0.25,  
+						InertiaDriveShaft = 0.25,  
+
+					},
+
+					
+					Price = {
+						200,
+						500,
+						1000,
+		
+					},
+
+
+				},
+				{ TUNING_FLYWHEEL, noimage(), RequiredUpgrade=Upgrades.FLYWHEEL1,  Upgrade=Upgrades.FLYWHEEL2, Dummy=16, Fov=25.000000, Icon="flywheel_2",
+					Description = TUNING_FLYWHEEL_REGULAR,
+					Engine={
+						InertiaEngine = 0.30,  
+						InertiaDriveShaft = 0.25,  
+
+					},
+
+
+					Price = {
+						300,
+						600,
+						1200,
+					
+									
+					},
+
+
+				},
+				{ TUNING_FLYWHEEL, noimage(), RequiredUpgrade=Upgrades.FLYWHEEL2, Upgrade=Upgrades.FLYWHEEL3, Dummy=17, Fov=25.000000, Icon="flywheel_3",
+					Description = TUNING_FLYWHEEL_RACING,
+					Engine={
+						InertiaEngine = 0.30,  
+						InertiaDriveShaft = 0.25,  
+
+					},
+
+
+					Price = {
+						400,
+						800,
+						1500,
+					
+									
+					},
+
+
+				},
+				{ TUNING_TRANSMISSION, noimage(),Upgrade=Upgrades.TRANSMISSION1, Dummy=18, Fov=25.000000, Icon="transmission_1",
+					Description = TUNING_TRANSMISSION_USED,
+					Engine={
+						TurboAcceleration = 0.04,  
+						InertiaDriveShaft = 0.05,
+
+					},
+
+					Gearbox={
+
+						EndRatio	= 0.3,
+
+					},
+
+
+					Price = {
+						500,
+						1000,
+						2000,
+					
+									
+					},
+
+
+				},
+				{ TUNING_TRANSMISSION, RequiredUpgrade=Upgrades.TRANSMISSION1,  noimage(),Upgrade=Upgrades.TRANSMISSION2, Dummy=19, Fov=25.000000, Icon="transmission_2",
+					Description = TUNING_TRANSMISSION_REGULAR,
+					Engine={
+						TurboAcceleration = 0.03,  
+						InertiaDriveShaft = 0.10,
+ 
+					},
+
+					Gearbox={
+
+						EndRatio	= 0.35,
+
+					},
+
+
+					Price = {
+						800,
+						1500,
+						3000,
+											
+					},
+
+
+				},
+				{ TUNING_TRANSMISSION, noimage(), RequiredUpgrade=Upgrades.TRANSMISSION2, Upgrade=Upgrades.TRANSMISSION3, Dummy=20, Fov=25.000000, Icon="transmission_3",
+					Description = TUNING_TRANSMISSION_RACING,
+					Engine={
+						TurboAcceleration = 0.03,  
+						InertiaDriveShaft = 0.10,
+				
+					},
+
+
+					Gearbox={
+
+						EndRatio	= 0.35,
+
+					},
+
+
+					Price = {
+						1000,
+						1800,
+						3500,
+					
+									
+					},
+
+
+				},
+			},
+		},
+
+		exhaust = { 
+			title = TUNING_EXHAUST,
+			Description = TUNING_EXHAUST_DESC,
+			Title = TUNING_EXHAUST,
+			items = {
+				{ TUNING_EXHAUST, noimage(),Upgrade=Upgrades.EXHAUST1, Dummy=21, Fov=25.000000, Icon="exhaust_1",
+					Description = TUNING_EXHAUST_USED,
+					Engine={
+						TorqueMax	= 0.05, 
+						Horsepower	= 0.02,
+			
+					},
+
+
+					Price = {
+						200,
+						500,
+						1000,
+					
+									
+					},
+
+
+				},
+				{ TUNING_EXHAUST, noimage(), RequiredUpgrade=Upgrades.EXHAUST1, Upgrade=Upgrades.EXHAUST2, Dummy=22, Fov=25.000000, Icon="exhaust_2",
+					Description = TUNING_EXHAUST_REGULAR,
+					Engine={
+						TorqueMax	= 0.05, 
+						Horsepower	= 0.02,
+			
+					},
+
+
+					Price = {
+						400,
+						800,
+						1500,
+					
+									
+					},
+
+				},
+				{ TUNING_EXHAUST, noimage(), RequiredUpgrade=Upgrades.EXHAUST2, Upgrade=Upgrades.EXHAUST3, Dummy=23, Fov=25.000000, Icon="exhaust_3",
+					Description = TUNING_EXHAUST_RACING,
+					Engine={
+						TorqueMax	= 0.05, 
+						Horsepower	= 0.02,
+			
+					},
+
+
+					Price = {
+						600,
+						1000,
+						2000,
+					
+									
+					},
+
+				},
+				{ TUNING_EXHAUSTMANI, noimage(),Upgrade=Upgrades.EXHAUSTMANIFOLD1, Dummy=24, Fov=25.000000, Icon="exhaustmanifold_1",
+					Description = TUNING_EXHAUSTMANI_USED,
+					Engine={
+						TorqueMax	= 0.10, 
+						Horsepower	= 0.04,
+			
+					},
+
+
+					Price = {
+						200,
+						500,
+						1000,
+					
+									
+					},
+
+
+				},
+				{ TUNING_EXHAUSTMANI, noimage(), RequiredUpgrade=Upgrades.EXHAUSTMANIFOLD1, Upgrade=Upgrades.EXHAUSTMANIFOLD2, Dummy=25, Fov=25.000000, Icon="exhaustmanifold_2",
+					Description = TUNING_EXHAUSTMANI_REGULAR,
+					Engine={
+						TorqueMax	= 0.10, 
+						Horsepower	= 0.04,
+
+					},
+
+
+					Price = {
+						500,
+						1000,
+						2000,
+					
+									
+					},
+
+
+				},
+				{ TUNING_EXHAUSTMANI, noimage(), RequiredUpgrade=Upgrades.EXHAUSTMANIFOLD2, Upgrade=Upgrades.EXHAUSTMANIFOLD3, Dummy=26, Fov=25.000000, Icon="exhaustmanifold_3",
+					Description = TUNING_EXHAUSTMANI_RACING,
+					Engine={
+						TorqueMax	= 0.10, 
+						Horsepower	= 0.04,	
+		
+					},
+
+
+					Price = {
+						800,
+						1500,
+						3000,
+					
+									
+					},
+				},
+
+			},
+		},
+
+		body = {
+			title = TUNING_BODY,
+			Description = TUNING_BODY_DESC,
+			Title = TUNING_BODY,
+			items = {
+				{ TUNING_BODYUPGRADE, noimage(),Upgrade=Upgrades.BODYUPGRADE1, Dummy=27, Fov=38.000000, Icon="bodyupgrade_1",
+
+			Description = TUNING_BODYUPGRADE_USED,
+			
+					Body={
+						Durability		= 0.30, 
+		
+					},
+
+
+					Price = {
+						200,
+						600,
+						1200,
+					
+									
+					},
+
+				},
+				{ TUNING_BODYUPGRADE, noimage(), RequiredUpgrade=Upgrades.BODYUPGRADE1, Upgrade=Upgrades.BODYUPGRADE2, Dummy=28, Fov=43.000000, Icon="bodyupgrade_2",
+					Description = TUNING_BODYUPGRADE_REGULAR,
+					Body={
+						Durability		= 0.35, 
+		
+					},
+
+					Price = {
+						400,
+						900,
+						1800,
+					
+									
+					},
+
+				},
+				{ TUNING_BODYUPGRADE, noimage(), RequiredUpgrade=Upgrades.BODYUPGRADE2, Upgrade=Upgrades.BODYUPGRADE3, Dummy=29, Fov=38.000000, Icon="bodyupgrade_3",
+					Description = TUNING_BODYUPGRADE_RACING,
+					Body={
+						Durability		= 0.35, 
+		
+					},
+
+					Price = {
+						600,
+						1200,
+						2500,
+					
+									
+					},
+
+				},
+			},
+		},
+	
+		suspension = {
+			title = TUNING_SUSPENSION,
+			Description = TUNING_SUSPENSION_DESC,
+			Title = TUNING_SUSPENSION,
+			items = {
+				{ TUNING_SHOCKS, noimage(),Upgrade=Upgrades.SHOCKS1, Dummy=30, Fov=28.000000, Icon="shocks_1",
+					Description = TUNING_SHOCKS_USED,
+					Suspension={
+						Front = {
+						RestLength		= 0.25,
+						DefaultCompression	  = 0.25, 
+						BumpDamp = 0.25,  
+						ReboundDamp = 0.25,
+						BumperRestitution = 0.25, 
+						RollBarStiffness = 0.25, 
+						}, 
+						Rear = {
+						RestLength		= 0.25,
+						DefaultCompression	  = 0.25, 
+						BumpDamp= 0.25, 
+						ReboundDamp = 0.25,  
+						BumperRestitution = 0.25, 
+						RollBarStiffness = 0.25, 
+						},
+					},
+
+
+					Price = {
+						200,
+						500,
+						1000,
+					
+									
+					},
+
+				},
+				{ TUNING_SHOCKS, noimage(), RequiredUpgrade=Upgrades.SHOCKS1, Upgrade=Upgrades.SHOCKS2, Dummy=31, Fov=28.000000, Icon="shocks_2",
+					Description = TUNING_SHOCKS_REGULAR,
+					Suspension={
+						Front = {
+						RestLength		= 0.35,
+						DefaultCompression	  = 0.35, 
+						BumpDamp = 0.35, 
+						ReboundDamp = 0.35, 
+						BumperRestitution = 0.35,
+						RollBarStiffness = 0.35,
+						}, 
+						Rear = {
+						RestLength		= 0.35,
+						DefaultCompression	  = 0.35, 
+						BumpDamp = 0.35, 
+						ReboundDamp = 0.35,
+						BumperRestitution = 0.35,
+						RollBarStiffness = 0.35,
+						},
+					},
+
+					Price = {
+						300,
+						600,
+						1200,
+					
+									
+					},
+
+
+				},
+				{ TUNING_SHOCKS, noimage(), RequiredUpgrade=Upgrades.SHOCKS2, Upgrade=Upgrades.SHOCKS3, Dummy=32, Fov=28.000000, Icon="shocks_3",
+					Description = TUNING_SHOCKS_RACING,
+					Suspension={
+						Front = {
+						RestLength		= 0.35,
+						DefaultCompression	  = 0.35, 
+						BumpDamp = 0.35, 
+						ReboundDamp = 0.35,
+						BumperRestitution = 0.35,
+						RollBarStiffness = 0.35,
+						},
+						Rear = {
+						RestLength		= 0.35,
+						DefaultCompression	  = 0.35, 
+						BumpDamp = 0.35, 
+						ReboundDamp = 0.35,
+						BumperRestitution = 0.35,
+						RollBarStiffness = 0.35,
+						},
+					},
+
+					Price = {
+						400,
+						800,
+						1500,
+					
+									
+					},
+
+				},
+			},
+		},
+		
+		tires = {
+			title = TUNING_TIRES,
+			Description = TUNING_TIRES_DESC,
+			Title = TUNING_TIRES,
+			items = {
+				{ TUNING_TIRES, noimage(),Upgrade=Upgrades.TIRESANDBRAKES1, Dummy=33, Fov=25.000000, Icon="tires_1", 
+					Description = TUNING_TIRES_USED,
+					Engine={
+						TurboAcceleration	  = 0.04, 
+			
+					},
+
+
+					Body={
+						BrakePower	  = 0.30, 
+		
+					},
+
+					Price = {
+						200,
+						500,
+						1000,
+					
+									
+					},
+					
+				},
+				{ TUNING_TIRES, noimage(), RequiredUpgrade=Upgrades.TIRESANDBRAKES1, Upgrade=Upgrades.TIRESANDBRAKES2, Dummy=34, Fov=25.000000, Icon="tires_2", 
+					Description = TUNING_TIRES_REGULAR,
+
+					Engine={
+						TurboAcceleration	  = 0.03, 
+			
+					},
+
+
+					Body={
+						BrakePower	  = 0.30, 
+		
+					},
+
+
+
+					Price = {
+						400,
+						900,
+						1800,
+
+					},
+
+
+				},
+				{ TUNING_TIRES, noimage(), RequiredUpgrade=Upgrades.TIRESANDBRAKES2, Upgrade=Upgrades.TIRESANDBRAKES3, Dummy=35, Fov=25.000000, Icon="tires_3", 
+
+					Description = TUNING_TIRES_RACING,
+					Engine={
+						TurboAcceleration	  = 0.03, 
+			
+					},
+
+					Body={
+						BrakePower	  = 0.40,
+		
+					},
+
+
+					Price = {
+						600,
+						1200,
+						2500,
+
+					},
+
+
+
+				},
+			},
+		},
+	},
+
+}

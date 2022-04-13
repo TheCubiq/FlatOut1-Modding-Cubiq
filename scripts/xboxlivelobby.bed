@@ -1,0 +1,519 @@
+--///////////////////////////////////////////////////////////////////////////
+--// XBoxLiveLobby.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2004 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// Created on 11.6.2004 18:47:10
+--// 
+--// Authors: Fred Sundvik (fred.sundvik@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+local LobbyImages={
+	BigBox=image("big_box.tga"),
+}
+
+local Layout={
+	--BigBoxPos=POS(18,92),
+	LabelTop=63,
+	LabelHeight=16,
+	LabelWidth=10,
+
+	LabelFont=font10(),
+	LabelColor={255, 200, 0, 255},
+	
+	LineColor={255, 200, 0, 255},
+	LineThickness=2,
+	Line1Top=80,
+	Line2Top=324,
+
+	VoiceLeft=0,
+	NameLeft=77,
+	CarLeft=258,
+	SkillLeft=388,
+	ReadyLeft=502,
+	
+	ListLeft=0,
+	ListTop=85,
+	RowHeight=30,
+	
+	ListFont=font10(),
+	ListFontColor={255, 255, 255, 255},
+	
+	GameSettingsFont=font10(),
+	GameSettingsLabelColor={255, 200, 0, 255},
+	GameSettingsTextColor={255, 255, 255, 255},
+
+	
+	GameTypeLabelPos=POS(0, 335),
+	TrackLabelPos=POS(180, 335),
+	LapsLabelPos=POS(498, 335),
+	--GameTypeTextPos=POS(24, 230),
+	--TrackTextPos=POS(204, 230),
+	--LapsTextPos=POS(421, 230),
+}
+
+local LineColor=wm.NewResource(COLOR, "LobbyLineColor", "",  Layout.LineColor)
+
+local function SetNumRows(NumRows)
+	wm.GetWindow("list"):SetNumRows(NumRows)
+end
+
+local function GetCarName(CarNum)
+	local table=cardealer_data.car_data
+	for i,j in pairs(table) do
+		if j.car==CarNum then
+			return ConvertToWString(j.name)
+		end
+	end
+	return ConvertToWString("")
+end
+
+local function GetGameType()
+	local sessionInfo=Session:GetSessionInfo()
+	if sessionInfo.EventType==EventType.RACE and sessionInfo.SubEventType==SubEventType.RACE_NORMAL then
+		return ConvertToWString("QUICK RACE")
+	elseif sessionInfo.EventType==EventType.RACE and sessionInfo.SubEventType==SubEventType.RACE_DOUBLESMASH then
+		return ConvertToWString("DOUBLE SMASH")
+	elseif sessionInfo.EventType==EventType.DERBY and sessionInfo.SubEventType==SubEventType.DERBY_LASTMANSTANDING then
+		return ConvertToWString("DERBY")
+	elseif sessionInfo.EventType==EventType.RACE and sessionInfo.SubEventType==SubEventType.RACE_TAG then	
+		return ConvertToWString("TAG")
+	end
+end
+
+local function GetTrackName()
+	local info=Session:GetSessionInfo()
+	return ConvertToWString(Levels[info.StageNr].Name)
+end
+
+local function GetNumLapsText()
+	local sessionInfo=Session:GetSessionInfo()
+	local numLaps=string.format("%i", sessionInfo.Laps)
+	return ConvertToWString(numLaps)
+end
+
+local function StartGameWithoutReadyPlayers()
+	--KLUDGE: should remove the players
+	Session:StartRace()
+	wm.QuitMenu(GAME_RACE)
+end
+
+local Error=false
+local GameTypeWin=nil
+local TrackWin=nil
+local LapsWin=nil
+
+menu_xboxlive_lobby = {
+
+	init_function = function()
+
+		windows_reset()
+
+
+		StandardUpperBalk()
+		if GameFlow.GetGameMode()=="HOST" then
+			XBoxLiveLowerBalk(
+				ConvertToWString("START GAME"),
+				ConvertToWString("BACK"),
+				ConvertToWString("FRIENDS MENU"),
+				ConvertToWString("PLAYERS MENU"),
+				ConvertToWString("MY SETTINGS"),
+				ConvertToWString("GAME SETTINGS")
+			)
+		else
+			XBoxLiveLowerBalk(
+				nil,
+				ConvertToWString("BACK"),
+				ConvertToWString("FRIENDS MENU"),
+				ConvertToWString("PLAYERS MENU"),
+				ConvertToWString("MY SETTINGS"),
+				ConvertToWString("GAME SETTINGS")
+			)
+		end		
+
+		--local bigbox=addparent(Frame{Position = MakeSafePos(Layout.BigBoxPos), Size=GetResourceSize(LobbyImages.BigBox), ShowBorders=FALSE})
+		--bigbox:AttachResource(LobbyImages.BigBox)
+	
+		local labelTemplate={
+			Font=Layout.LabelFont,
+			Position=POS(0, Layout.LabelTop), 
+			Size=SIZE(Layout.LabelWidth, Layout.LabelHeight),
+			ShowBorders=FALSE,
+			TitleCentering=TITLE_CENTER_Y,
+		}
+			
+		labelTemplate.Title=ConvertToWString("NAME")
+		labelTemplate.Position=SAFEPOS(Layout.NameLeft, Layout.LabelTop)
+		addparent(StaticText(labelTemplate)):SetColor(Layout.LabelColor)
+
+		labelTemplate.Title=ConvertToWString("CAR")
+		labelTemplate.Position=SAFEPOS(Layout.CarLeft, Layout.LabelTop)
+		addparent(StaticText(labelTemplate)):SetColor(Layout.LabelColor)
+
+		labelTemplate.Title=ConvertToWString("SKILL LEVEL")
+		labelTemplate.Position=SAFEPOS(Layout.SkillLeft, Layout.LabelTop)
+		addparent(StaticText(labelTemplate)):SetColor(Layout.LabelColor)
+
+		labelTemplate.Title=ConvertToWString("READY")
+		labelTemplate.Position=SAFEPOS(Layout.ReadyLeft, Layout.LabelTop)
+		addparent(StaticText(labelTemplate)):SetColor(Layout.LabelColor)
+
+		local t_y = TITLESAFE_Y or 0
+		local line=addparent(Frame{Position=POS(0, t_y+Layout.Line1Top), Size=SIZE(640, Layout.LineThickness), ShowBorders=FALSE})
+		line:AttachResource(LineColor)
+		line=addparent(Frame{Position=POS(0, t_y+Layout.Line2Top), Size=SIZE(640, Layout.LineThickness), ShowBorders=FALSE})
+		line:AttachResource(LineColor)
+
+		local listboxParams={
+		ListBoxTemplate={Name="list", ShowBorders=FALSE},
+		Left=Layout.ListLeft,
+		Top=Layout.ListTop,
+		LeftPadding=0,
+		RightPadding=0,
+		TopPadding=0,
+		BottomPadding=0,
+		RowWidth=GetResourceSize(LobbyImages.BigBox)[1],
+		RowHeight=Layout.RowHeight,
+		RowPadding=0,
+		RowTemplate={Font=Layout.ListFont, DrawBackgroundColor=TRUE, TitleCentering=TITLE_CENTER_NONE},
+		RowTemplateType="Button",
+		RowTemplateCust=function(Row, RowNr)
+			Row:SetColor(Layout.ListFontColor)
+			Row:SetActiveColor({0, 0, 0, 0})
+			Row:SetInactiveColor({0, 0, 0, 0})
+		end,
+		NumRows=8,
+		Coloumns={
+				[1]={
+				Name="voiceicon", -- _row# is added
+				ColoumnTemplate={Position=POS(Layout.VoiceLeft, 0), Size=wm.GetResourceSize(menucommon.voice_through_speakers), ShowBorders=FALSE},
+				ColoumnTemplateType="Frame",
+				ColoumnTemplateCust=function(Coloumn, RowNr, ColoumnNr)
+					Coloumn:AttachResource(menucommon.voice_through_speakers)
+				end
+				},		
+				[2]={
+				Name="gamertag", -- _row# is added
+				ColoumnTemplate={Position=POS(Layout.NameLeft, 0), Size=SIZE(Layout.LabelWidth, Layout.RowHeight), Font=Layout.ListFont, DrawBackgroundColor=FALSE, TitleCentering=TITLE_CENTER_NONE},
+				ColoumnTemplateType="StaticText",
+				ColoumnTemplateCust=function(Coloumn, RowNr, ColoumnNr)
+					Coloumn:SetColor(Layout.ListFontColor)
+				end
+				},		
+
+				[3]={
+				Name="car", -- _row# is added
+				ColoumnTemplate={Position=POS(Layout.CarLeft, 0), Size=SIZE(Layout.LabelWidth, Layout.RowHeight), Font=Layout.ListFont, DrawBackgroundColor=FALSE, TitleCentering=TITLE_CENTER_NONE},
+				ColoumnTemplateType="StaticText",
+				ColoumnTemplateCust=function(Coloumn, RowNr, ColoumnNr)
+					Coloumn:SetColor(Layout.ListFontColor)
+				end
+				},
+				[4]={
+				Name="skill", -- _row# is added
+				ColoumnTemplate={Position=POS(Layout.SkillLeft, 0), Size=SIZE(Layout.LabelWidth, Layout.RowHeight), Font=Layout.ListFont, DrawBackgroundColor=FALSE, TitleCentering=TITLE_CENTER_NONE},
+				ColoumnTemplateType="StaticText",
+				ColoumnTemplateCust=function(Coloumn, RowNr, ColoumnNr)
+					Coloumn:SetColor(Layout.ListFontColor)
+				end
+				},		
+				[5]={
+				Name="readyicon", -- _row# is added
+				ColoumnTemplate={Position=POS(Layout.ReadyLeft, 0), Size=SIZE(20, 20), ShowBorders=FALSE},
+				ColoumnTemplateType="Frame",
+				ColoumnTemplateCust=function(Coloumn, RowNr, ColoumnNr)
+					Coloumn:AttachResource(menucommon.checked)
+				end
+				},		
+						
+			}
+		}
+
+		local list=addparent(CreateMultiColoumnListBox(listboxParams))
+		list.onNeedData=function(Self, RowObject, RowNr, ControlRowNr)
+			local player=Session:GetPlayer(RowNr)
+			local userId=player:GetUserId()
+			local headsetConnected=false
+			local isTalking=false
+			local voiceThroughSpeakers=false
+			local isGuest=XBoxLive.UserIsGuest(userId)
+			if isGuest==false then
+				local voiceManagerPlayer=XBoxLive.GetVoiceManager():GetPlayer(userId)
+				headsetConnected=voiceManagerPlayer:GetHeadsetConnected()
+				voiceThroughSpeakers=voiceManagerPlayer:GetVoiceThroughSpeakers()
+				isTalking=voiceManagerPlayer:IsTalking()
+			end	
+			
+			local isReady=player:GetReady()
+			
+			local voice=wm.GetWindow(string.format("voiceicon_row%i", RowNr))
+			local name=wm.GetWindow(string.format("gamertag_row%i", RowNr))
+			local car=wm.GetWindow(string.format("car_row%i", RowNr))
+			local skill=wm.GetWindow(string.format("skill_row%i", RowNr))
+			local ready=wm.GetWindow(string.format("readyicon_row%i", RowNr))
+			
+			local numLocalPlayers=XBoxLive.Auth.GetNumSignedInUsers()
+			local muted=false
+			for i=1, numLocalPlayers do
+				local localUserId=XBoxLive.Auth.GetSignedInUserId(i)
+				if localUserId~=userId and XBoxLive.UserIsGuest(localUserId)==false then
+					local localVoicePlayer=XBoxLive.GetVoiceManager():GetPlayer(localUserId)
+					if localVoicePlayer:PlayerIsMuted(userId) then
+						muted=true
+					end
+				end
+			end
+			
+			local icon=nil
+			if headsetConnected then
+				if voiceThroughSpeakers then
+					if muted then
+						icon=menucommon.voice_muted
+					else
+						if isTalking then
+							icon=menucommon.voice_through_speakers_talking
+						else
+							icon=menucommon.voice_through_speakers
+						end
+						
+					end		
+				else
+					if muted then
+						icon=menucommon.voice_muted
+					else
+						if isTalking then
+								icon=menucommon.voice_talking
+						else						
+							icon=menucommon.voice
+						end
+					end		
+				end	
+				local size=wm.GetResourceSize(icon)
+				voice:SetSize(size[1], size[2])
+				voice:AttachResource(icon)
+				voice:ShowWindow()
+			else
+				voice:HideWindow()
+			end
+			if isGuest then
+				local guestNum=XBoxLive.GetGuestNum(userId)
+				local guestString=string.format(" ( GUEST %i )", guestNum)
+				name:SetTitle(WStringConcat(player:GetName(), ConvertToWString(guestString)))
+			else
+				name:SetTitle(player:GetName())
+			end
+			car:SetTitle(GetCarName(player:GetCarNum()+1))
+			skill:SetTitle(ConvertToWString("N/A"))
+			if isReady then
+				ready:ShowWindow()
+			else
+				ready:HideWindow()
+			end
+		end
+		
+		list:SetNumRows(0)
+
+		labelTemplate={
+			Font=Layout.GameSettingsFont,
+			Size=SIZE(Layout.LabelWidth, Layout.LabelHeight),
+			ShowBorders=FALSE,
+			TitleCentering=TITLE_CENTER_NONE,
+		}
+		
+		labelTemplate.Title=ConvertToWString("GAME TYPE:")
+		labelTemplate.Position=MakeSafePos(Layout.GameTypeLabelPos)
+		addparent(StaticText(labelTemplate)):SetColor(Layout.GameSettingsLabelColor)
+		
+
+		labelTemplate.Title=ConvertToWString("TRACK:")
+		labelTemplate.Position=MakeSafePos(Layout.TrackLabelPos)
+		addparent(StaticText(labelTemplate)):SetColor(Layout.GameSettingsLabelColor)
+
+		labelTemplate={
+			Name="lapslabel",
+			Font=Layout.GameSettingsFont,
+			Size=SIZE(Layout.LabelWidth, Layout.LabelHeight),
+			ShowBorders=FALSE,
+			TitleCentering=TITLE_CENTER_NONE,
+		}
+		labelTemplate.Title=ConvertToWString("LAPS:")
+		labelTemplate.Position=MakeSafePos(Layout.LapsLabelPos)
+		local lapslabel=addparent(StaticText(labelTemplate))
+		lapslabel:SetColor(Layout.GameSettingsLabelColor)
+
+
+
+		labelTemplate.Title=ConvertToWString("")
+		labelTemplate.Name="gametype"
+		local textWidth=wm.GetTextWidth(ConvertToWString("GAME TYPE:"), Layout.GameSettingsFont)
+		labelTemplate.Position=MakeSafePos(AddPos(Layout.GameTypeLabelPos, POS(textWidth+5, 0)))
+		GameTypeWin=addparent(StaticText(labelTemplate))
+		GameTypeWin:SetColor(Layout.GameSettingsTextColor)
+		
+
+		labelTemplate.Name="track"
+		textWidth=wm.GetTextWidth(ConvertToWString("TRACK:"), Layout.GameSettingsFont)
+		labelTemplate.Position=MakeSafePos(AddPos(Layout.TrackLabelPos, POS(textWidth+5, 0)))
+		TrackWin=addparent(StaticText(labelTemplate))
+		TrackWin:SetColor(Layout.GameSettingsTextColor)
+
+
+		labelTemplate.Position=Layout.LapsTextPos
+		labelTemplate.Name="laps"
+		textWidth=wm.GetTextWidth(ConvertToWString("LAPS:"), Layout.GameSettingsFont)	
+		labelTemplate.Position=MakeSafePos(AddPos(Layout.LapsLabelPos, POS(textWidth+5, 0)))
+		LapsWin=addparent(StaticText(labelTemplate))
+		LapsWin:SetColor(Layout.GameSettingsTextColor)
+
+
+		--local win=ButtonGroup{ Position = POS(192,112), Size=SIZE(256,256), ShowBorders=FALSE }
+		--menu_xboxlive_lobby.playerlist=win
+		
+		--win.onEscape = function(self)
+		--	Menu:EnableButtons()
+		--end
+		
+		--win.onShow = function(self)
+		--end
+
+		--win.onAction = function(self)
+		--	Menu:EnableButtons()		
+		--end
+
+
+		--menu_xboxlive_lobby.playerlistbuttons=ButtonList:Create(8, 1, 256, 16, menu_xboxlive_lobby.playerlist)
+		--menu_xboxlive_lobby.playerlistbuttons:SetNumButtons(1)
+		--win:SetSelectedChild(menu_xboxlive_lobby.playerlistbuttons.Buttons[1])
+		--wm.ActivateWindow(win)
+		
+		--menu_xboxlive_lobby.errormessage=StaticText{ Title="status", Font=SYSTEMFONT(), Position = POS(192,112), Size=SIZE(256,256), TitleCentering=1 }
+		--wm.ActivateWindow(menu_xboxlive_lobby.errormessage)
+		--menu_xboxlive_lobby.errormessage:HideWindow()
+		for i=1, XBoxLive.Auth.GetNumSignedInUsers() do
+			local player=Session:GetLocalPlayer(i)
+			player:SetName(XBoxLive.Auth.GetSignedInUserName(i))
+			player:SetCarNum(GameFlow.GetPlayerCar())
+			player:SetReady(true)
+		end
+		
+		local handler=addparent(InputHandler{Name="inputhandler"})
+		handler.onKeyPressed=function(Self, Character, VirtualKey, ScanCode)
+			if VirtualKey==KeyCodes["BUTTON_START"] then
+				if GameFlow.GetGameMode()=="HOST" then
+					local ready=true
+					for i=1, Session:GetNumPlayers() do
+						if Session:GetPlayer(i):GetReady()==false then
+							ready=false
+						end
+					end
+					if ready==false then
+						ShowMessageBox(SAFEPOS(154, 70), 
+							ConvertToWString("Some players are not ready, press A to start the game without them or B to Cancel"), 
+							ConvertToWString("Start Game"), 
+							function()StartGameWithoutReadyPlayers()end,
+							ConvertToWString("Cancel"), 
+							function()wm.GetWindow("inputhandler"):SetFocus()end
+						)
+					else
+						Session:StartRace()
+						wm.QuitMenu(GAME_RACE)
+					end
+				end
+			elseif VirtualKey==KeyCodes["BUTTON_SELECT"] then
+				menu_xboxlive_lobby.options.back_action()
+			elseif VirtualKey==KeyCodes["BUTTON_X"] then
+				for i=1, Session:GetNumLocalPlayers() do
+					Session:GetLocalPlayer(i):SetReady(false)
+				end
+				ShowFriendsList(ScanCode, true, entermenu("menu_xboxlive_lobby"))
+			elseif VirtualKey==KeyCodes["BUTTON_Y"] then
+				for i=1, Session:GetNumLocalPlayers() do
+					Session:GetLocalPlayer(i):SetReady(false)
+				end
+				ShowPlayersList(ScanCode, entermenu("menu_xboxlive_lobby"))
+			elseif VirtualKey==KeyCodes["BUTTON_EXTRA1"] then
+				for i=1, Session:GetNumLocalPlayers() do
+					Session:GetLocalPlayer(i):SetReady(false)
+				end
+				ShowXBoxLiveOptions(ScanCode, entermenu("menu_xboxlive_lobby"))
+			end
+		end
+		
+		activateparents()
+		handler:SetFocus()
+		Error=false
+	end,
+	
+	deinit_function = function()
+		windows_reset()
+		--//menu_xboxlive_lobby.playerlistbuttons:Destroy()
+		--//wm.DeactivateWindow(menu_xboxlive_lobby.playerlist)
+		--//wm.DeactivateWindow(menu_xboxlive_lobby.errormessage)
+		--//menu_xboxlive_lobby.errormessage=nil
+		--//menu_xboxlive_lobby.playerlistbuttons=nil
+		--menu_xboxlive_lobby.playerlist:HideWindow()
+		--menu_xboxlive_lobby.errormessage:HideWindow()
+	end,
+	
+	update_function = function(time)
+		if CheckXBoxLiveErrors() then
+			EnterMenu("menu_xboxlive_error")
+			return
+		end
+		if Session:HostIsConnected() then
+			SetNumRows(Session:GetNumPlayers())
+			
+			GameTypeWin:SetTitle(GetGameType())
+			TrackWin:SetTitle(GetTrackName())
+			local sessionInfo=Session:GetSessionInfo()
+			if sessionInfo.EventType==EventType.RACE and sessionInfo.SubEventType==SubEventType.RACE_NORMAL then
+				LapsWin:SetTitle(GetNumLapsText())
+				LapsWin:ShowWindow()
+				wm.GetWindow("lapslabel"):ShowWindow()
+			else
+				LapsWin:HideWindow()
+				wm.GetWindow("lapslabel"):HideWindow()
+			end	
+			
+			--menu_xboxlive_lobby.playerlistbuttons:SetNumButtons(Session:GetNumPlayers())
+			--for i=1, Session:GetNumPlayers() do
+		--		local player=Session:GetPlayer(i)
+		--		menu_xboxlive_lobby.playerlistbuttons:SetTitle(i, player:GetName())
+		--	end
+			local raceStart=Session:GetRaceStarted()
+			if raceStart==true then
+				--GameFlow.SetCurrentLevel(Session:GetTrackNum())
+				wm.QuitMenu(GAME_RACE)
+			end
+		elseif Error==false then
+			ShowMessageBox(SAFEPOS(154, 70), ConvertToWString("Connection lost, press a to quit"), ConvertToWString("Quit"), function()menu_xboxlive_lobby.options.back_action()end)
+			Error=true
+			--//wm.DeactivateWindow(menu_xboxlive_lobby.playerlist)
+			--menu_xboxlive_lobby.playerlist:HideWindow()
+			--menu_xboxlive_lobby.errormessage:SetTitle(ConvertToWString("Connection lost"))
+			--menu_xboxlive_lobby.errormessage:ShowWindow()
+			--//wm.ActivateWindow(menu_xboxlive_lobby.errormessage)
+		end
+	end,
+
+	options = {
+	
+		title = ConvertToWString("Lobby"), --GetPhrase(MENU_xboxlive_LOBBY_TITLE),
+		background = image("bg/game_background.tga"),
+		orientation = MENU_HORIZONTAL,
+		position = { 256,400 },
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		back_action=function()
+			Network:StopXBoxLive()
+			EnterMenu("menu_xboxlive")
+		end,
+	},
+	
+	items = { },
+}
+

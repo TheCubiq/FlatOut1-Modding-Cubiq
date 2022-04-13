@@ -1,0 +1,114 @@
+
+menucommon_size = { 1024,256 }
+menucommon = {
+	
+	upperbalk = {  0,0,640,64 },
+	upperbalk_shading = {  0,127,640,64 },
+	lowerbalk = {  0,65,640,64 },
+
+	speclistborder_y = {  0, 208, 3, 16 },
+	speclistborder_x = {  3, 208, 16, 16 },
+
+	white_transparent = {  16, 192, 16, 16 },
+	black_transparent = {  0, 227, 16, 16 },
+
+	ps2_nelio = {  32, 192, 18, 18 },
+	ps2_risti = {  50, 192, 18, 18 },
+	ps2_ympyra = {  68, 192, 18, 18 },
+	ps2_kolmio = {  86, 192, 18, 18 },
+
+	ps2_l1 = {  71, 212, 16, 17 },
+	ps2_l2 = {  71, 229, 16, 17 },
+	ps2_r1 = {  88, 212, 16, 17 },
+	ps2_r2 = {  88, 229, 16, 17 },
+
+	stick_left = {  223, 230, 20, 20 },
+	stick_right = {  244, 230, 20, 20 },
+	cross_controller = {  265, 230, 20, 20 },
+
+	xbox_a = {  105, 193, 18, 18 },
+	xbox_b = {  124, 193, 18, 18 },
+	xbox_x = {  143, 193, 18, 18 },
+	xbox_y = {  162, 193, 18, 18 },
+
+	xbox_Ltrig = {  107, 229, 16, 17 },
+	xbox_Rtrig = {  123, 228, 16, 17 },
+
+	xbox_black = {  105, 213, 17, 15 },
+	xbox_white = {	123, 213, 17, 15 },
+
+	xbox_start = {  143, 214, 38, 13 },
+	xbox_dpad = {  144, 229, 41, 14 },
+
+	xboxlive_online = {  24, 212, 22, 21 },
+	xboxlive_offline = {  46, 212, 22, 21 },
+	xboxlive_mail = {  186, 221, 36, 28 },
+
+	nuolivasen = {  180, 192, 16, 29 },
+	nuolioikea = {  196, 192, 16, 29 },
+	nuoliylos = {  212, 192, 21, 14 },
+	nuolialas = {  212, 208, 21, 14 },
+	mininuolivasen = {  238, 215, 9, 13 },
+	mininuolioikea = {  249, 215, 9, 13 },	
+
+	pieni_nuolivasen = {  234, 192, 14, 21 },
+	pieni_nuolioikea = {  248, 192, 14, 21 },
+
+	rahaikoni = {  263, 192, 23, 25 },
+
+--// keyboard
+
+	nappi_HL = {  642, 27, 30, 30 },
+	nappi = {  642, 61, 30, 30 },
+	isonappi_HL = {  676, 26, 126, 30 },
+	isonappi = {  677, 62, 126, 30 },
+	spacebar_HL = {  641, 95, 319, 30 },
+	spacebar = {  641, 129, 319, 30 },
+	nuolinappi_HL = {  808, 26, 63, 30 },
+	nuolinappi = {  808, 62, 63, 30 },
+
+--// XBox Live
+
+	checked = {  0, 192, 16, 16 },
+
+	login_empty = { 568, 224, 32, 32 },
+	login_full = { 600, 224, 32, 32 },
+	speaking = {  315, 195, 32, 30 },
+	voice = {  348, 193, 32, 30 },
+	voice_talking = {  348, 193, 32, 30 },
+	voice_through_speakers = {  382, 193, 32, 30 },
+	voice_through_speakers_talking= {  382, 193, 32, 30 },
+	voice_muted = {  414, 193, 32, 30 },
+	invitation_sent = {  447, 193, 32, 30 },
+	invitation_received = {  480, 193, 32, 30 },
+	friend = {  579, 193, 32, 30 },
+	friend_wannabe = {  546, 193, 32, 30 },
+	friend_want = { 513, 193, 32, 30 },
+
+	star = {  49, 233, 18, 17 },
+
+--// career elements
+	
+--//	lock = {  311, 192, 34, 22 },
+--//	lippu = {  349, 192, 34, 23 },
+--//	kulta = {  387, 192, 34, 23 },
+--//	pronssi = {  429, 192, 34, 23 },
+--//	hopea = {  473, 192, 34, 23 },
+
+	first = {  490, 224, 24, 24 },
+	second = {  515, 224, 24, 24 },
+	third = {  540, 224, 24, 24 },	
+
+	kulta = {  578, 193, 29, 28 },
+	hopea = {  608, 193, 29, 28 },
+	pronssi = {  638, 193, 29, 28 },
+	lock = {  668, 193, 29, 28 },
+	lippu = {  578, 223, 29, 28 },
+
+	course1 = {  512, 192, 21, 21 },
+	course2 = {  533, 192, 21, 21 },
+	course3 = {  554, 192, 21, 21 },
+
+	track_balk = {  640, 0, 270, 22 },
+
+}

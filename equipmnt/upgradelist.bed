@@ -1,0 +1,457 @@
+
+UpgradeList = {
+	--cars
+	[1] = {
+		Engine = {
+			[1] = "Car1Engine1",
+			[2] = "Car1Engine1",
+			[3] = "Car1Engine1",
+			[4] = "Car1Engine1",
+		},
+		Suspension = {
+			[1] = "Car1Suspension1",
+			[2] = "Car1Suspension1",
+			[3] = "Car1Suspension1",
+			[4] = "Car1Suspension1",
+		},
+		Gearbox = {
+			[1] = "Car1Gearbox1",
+			[2] = "Car1Gearbox1",
+			[3] = "Car1Gearbox1",
+			[4] = "Car1Gearbox1",
+		},
+		Tires = {
+			[1] = "Car1Tire1",
+			[2] = "Car1Tire1",
+			[3] = "Car1Tire1",
+			[4] = "Car1Tire1",
+		},
+	},
+
+	[2] = {
+		Engine = {
+			[1] = "Car2Engine1",
+			[2] = "Car2Engine1",
+			[3] = "Car2Engine1",
+			[4] = "Car2Engine1",
+		},
+		Suspension = {
+			[1] = "Car2Suspension1",
+			[2] = "Car2Suspension1",
+			[3] = "Car2Suspension1",
+			[4] = "Car2Suspension1",
+		},
+		Gearbox = {
+			[1] = "Car2Gearbox1",
+			[2] = "Car2Gearbox1",
+			[3] = "Car2Gearbox1",
+			[4] = "Car2Gearbox1",
+		},
+		Tires = {
+			[1] = "Car2Tire1",
+			[2] = "Car2Tire1",
+			[3] = "Car2Tire1",
+			[4] = "Car2Tire1",
+		},
+	},
+	[3] = {
+		Engine = {
+			[1] = "Car3Engine1",
+			[2] = "Car3Engine1",
+			[3] = "Car3Engine1",
+			[4] = "Car3Engine1",
+		},
+		Suspension = {
+			[1] = "Car3Suspension1",
+			[2] = "Car3Suspension1",
+			[3] = "Car3Suspension1",
+			[4] = "Car3Suspension1",
+		},
+		Gearbox = {
+			[1] = "Car3Gearbox1",
+			[2] = "Car3Gearbox1",
+			[3] = "Car3Gearbox1",
+			[4] = "Car3Gearbox1",
+		},
+		Tires = {
+			[1] = "Car3Tire1",
+			[2] = "Car3Tire1",
+			[3] = "Car3Tire1",
+			[4] = "Car3Tire1",
+		},
+	},
+	[4] = {
+		Engine = {
+			[1] = "Car4Engine1",
+			[2] = "Car4Engine1",
+			[3] = "Car4Engine1",
+			[4] = "Car4Engine1",
+		},
+		Suspension = {
+			[1] = "Car4Suspension1",
+			[2] = "Car4Suspension1",
+			[3] = "Car4Suspension1",
+			[4] = "Car4Suspension1",
+		},
+		Gearbox = {
+			[1] = "Car4Gearbox1",
+			[2] = "Car4Gearbox1",
+			[3] = "Car4Gearbox1",
+			[4] = "Car4Gearbox1",
+		},
+		Tires = {
+			[1] = "Car4Tire1",
+			[2] = "Car4Tire1",
+			[3] = "Car4Tire1",
+			[4] = "Car4Tire1",
+		},
+	},
+	[5] = {
+		Engine = {
+			[1] = "Car5Engine1",
+			[2] = "Car5Engine1",
+			[3] = "Car5Engine1",
+			[4] = "Car5Engine1",
+		},
+		Suspension = {
+			[1] = "Car5Suspension1",
+			[2] = "Car5Suspension1",
+			[3] = "Car5Suspension1",
+			[4] = "Car5Suspension1",
+		},
+		Gearbox = {
+			[1] = "Car5Gearbox1",
+			[2] = "Car5Gearbox1",
+			[3] = "Car5Gearbox1",
+			[4] = "Car5Gearbox1",
+		},
+		Tires = {
+			[1] = "Car5Tire1",
+			[2] = "Car5Tire1",
+			[3] = "Car5Tire1",
+			[4] = "Car5Tire1",
+		},
+	},
+	[6] = {
+		Engine = {
+			[1] = "Car6Engine1",
+			[2] = "Car6Engine1",
+			[3] = "Car6Engine1",
+			[4] = "Car6Engine1",
+		},
+		Suspension = {
+			[1] = "Car6Suspension1",
+			[2] = "Car6Suspension1",
+			[3] = "Car6Suspension1",
+			[4] = "Car6Suspension1",
+		},
+		Gearbox = {
+			[1] = "Car6Gearbox1",
+			[2] = "Car6Gearbox1",
+			[3] = "Car6Gearbox1",
+			[4] = "Car6Gearbox1",
+		},
+		Tires = {
+			[1] = "Car6Tire1",
+			[2] = "Car6Tire1",
+			[3] = "Car6Tire1",
+			[4] = "Car6Tire1",
+		},
+	},
+	[7] = {
+		Engine = {
+			[1] = "Car7Engine1",
+			[2] = "Car7Engine1",
+			[3] = "Car7Engine1",
+			[4] = "Car7Engine1",
+		},
+		Suspension = {
+			[1] = "Car7Suspension1",
+			[2] = "Car7Suspension1",
+			[3] = "Car7Suspension1",
+			[4] = "Car7Suspension1",
+		},
+		Gearbox = {
+			[1] = "Car7Gearbox1",
+			[2] = "Car7Gearbox1",
+			[3] = "Car7Gearbox1",
+			[4] = "Car7Gearbox1",
+		},
+		Tires = {
+			[1] = "Car7Tire1",
+			[2] = "Car7Tire1",
+			[3] = "Car7Tire1",
+			[4] = "Car7Tire1",
+		},
+	},
+	[8] = {
+		Engine = {
+			[1] = "Car8Engine1",
+			[2] = "Car8Engine1",
+			[3] = "Car8Engine1",
+			[4] = "Car8Engine1",
+		},
+		Suspension = {
+			[1] = "Car8Suspension1",
+			[2] = "Car8Suspension1",
+			[3] = "Car8Suspension1",
+			[4] = "Car8Suspension1",
+		},
+		Gearbox = {
+			[1] = "Car8Gearbox1",
+			[2] = "Car8Gearbox1",
+			[3] = "Car8Gearbox1",
+			[4] = "Car8Gearbox1",
+		},
+		Tires = {
+			[1] = "Car8Tire1",
+			[2] = "Car8Tire1",
+			[3] = "Car8Tire1",
+			[4] = "Car8Tire1",
+		},
+	},
+	[9] = {
+		Engine = {
+			[1] = "Car9Engine1",
+			[2] = "Car9Engine1",
+			[3] = "Car9Engine1",
+			[4] = "Car9Engine1",
+		},
+		Suspension = {
+			[1] = "Car9Suspension1",
+			[2] = "Car9Suspension1",
+			[3] = "Car9Suspension1",
+			[4] = "Car9Suspension1",
+		},
+		Gearbox = {
+			[1] = "Car9Gearbox1",
+			[2] = "Car9Gearbox1",
+			[3] = "Car9Gearbox1",
+			[4] = "Car9Gearbox1",
+		},
+		Tires = {
+			[1] = "Car9Tire1",
+			[2] = "Car9Tire1",
+			[3] = "Car9Tire1",
+			[4] = "Car9Tire1",
+		},
+	},
+	[10] = {
+		Engine = {
+			[1] = "Car10Engine1",
+			[2] = "Car10Engine1",
+			[3] = "Car10Engine1",
+			[4] = "Car10Engine1",
+		},
+		Suspension = {
+			[1] = "Car10Suspension1",
+			[2] = "Car10Suspension1",
+			[3] = "Car10Suspension1",
+			[4] = "Car10Suspension1",
+		},
+		Gearbox = {
+			[1] = "Car10Gearbox1",
+			[2] = "Car10Gearbox1",
+			[3] = "Car10Gearbox1",
+			[4] = "Car10Gearbox1",
+		},
+		Tires = {
+			[1] = "Car10Tire1",
+			[2] = "Car10Tire1",
+			[3] = "Car10Tire1",
+			[4] = "Car10Tire1",
+		},
+	},
+	[11] = {
+		Engine = {
+			[1] = "Car11Engine1",
+			[2] = "Car11Engine1",
+			[3] = "Car11Engine1",
+			[4] = "Car11Engine1",
+		},
+		Suspension = {
+			[1] = "Car11Suspension1",
+			[2] = "Car11Suspension1",
+			[3] = "Car11Suspension1",
+			[4] = "Car11Suspension1",
+		},
+		Gearbox = {
+			[1] = "Car11Gearbox1",
+			[2] = "Car11Gearbox1",
+			[3] = "Car11Gearbox1",
+			[4] = "Car11Gearbox1",
+		},
+		Tires = {
+			[1] = "Car11Tire1",
+			[2] = "Car11Tire1",
+			[3] = "Car11Tire1",
+			[4] = "Car11Tire1",
+		},
+	},
+	[12] = {
+		Engine = {
+			[1] = "Car12Engine1",
+			[2] = "Car12Engine1",
+			[3] = "Car12Engine1",
+			[4] = "Car12Engine1",
+		},
+		Suspension = {
+			[1] = "Car12Suspension1",
+			[2] = "Car12Suspension1",
+			[3] = "Car12Suspension1",
+			[4] = "Car12Suspension1",
+		},
+		Gearbox = {
+			[1] = "Car12Gearbox1",
+			[2] = "Car12Gearbox1",
+			[3] = "Car12Gearbox1",
+			[4] = "Car12Gearbox1",
+		},
+		Tires = {
+			[1] = "Car12Tire1",
+			[2] = "Car12Tire1",
+			[3] = "Car12Tire1",
+			[4] = "Car12Tire1",
+		},
+	},
+	[13] = {
+		Engine = {
+			[1] = "Car13Engine1",
+			[2] = "Car13Engine1",
+			[3] = "Car13Engine1",
+			[4] = "Car13Engine1",
+		},
+		Suspension = {
+			[1] = "Car13Suspension1",
+			[2] = "Car13Suspension1",
+			[3] = "Car13Suspension1",
+			[4] = "Car13Suspension1",
+		},
+		Gearbox = {
+			[1] = "Car13Gearbox1",
+			[2] = "Car13Gearbox1",
+			[3] = "Car13Gearbox1",
+			[4] = "Car13Gearbox1",
+		},
+		Tires = {
+			[1] = "Car13Tire1",
+			[2] = "Car13Tire1",
+			[3] = "Car13Tire1",
+			[4] = "Car13Tire1",
+		},
+	},
+	[14] = {
+		Engine = {
+			[1] = "Car14Engine1",
+			[2] = "Car14Engine1",
+			[3] = "Car14Engine1",
+			[4] = "Car14Engine1",
+		},
+		Suspension = {
+			[1] = "Car14Suspension1",
+			[2] = "Car14Suspension1",
+			[3] = "Car14Suspension1",
+			[4] = "Car14Suspension1",
+		},
+		Gearbox = {
+			[1] = "Car14Gearbox1",
+			[2] = "Car14Gearbox1",
+			[3] = "Car14Gearbox1",
+			[4] = "Car14Gearbox1",
+		},
+		Tires = {
+			[1] = "Car14Tire1",
+			[2] = "Car14Tire1",
+			[3] = "Car14Tire1",
+			[4] = "Car14Tire1",
+		},
+	},
+	[15] = {
+		Engine = {
+			[1] = "Car15Engine1",
+			[2] = "Car15Engine1",
+			[3] = "Car15Engine1",
+			[4] = "Car15Engine1",
+		},
+		Suspension = {
+			[1] = "Car15Suspension1",
+			[2] = "Car15Suspension1",
+			[3] = "Car15Suspension1",
+			[4] = "Car15Suspension1",
+		},
+		Gearbox = {
+			[1] = "Car15Gearbox1",
+			[2] = "Car15Gearbox1",
+			[3] = "Car15Gearbox1",
+			[4] = "Car15Gearbox1",
+		},
+		Tires = {
+			[1] = "Car15Tire1",
+			[2] = "Car15Tire1",
+			[3] = "Car15Tire1",
+			[4] = "Car15Tire1",
+		},
+	},
+	[16] = {
+		Engine = {
+			[1] = "Car16Engine1",
+			[2] = "Car16Engine1",
+			[3] = "Car16Engine1",
+			[4] = "Car16Engine1",
+		},
+		Suspension = {
+			[1] = "Car16Suspension1",
+			[2] = "Car16Suspension1",
+			[3] = "Car16Suspension1",
+			[4] = "Car16Suspension1",
+		},
+		Gearbox = {
+			[1] = "Car16Gearbox1",
+			[2] = "Car16Gearbox1",
+			[3] = "Car16Gearbox1",
+			[4] = "Car16Gearbox1",
+		},
+		Tires = {
+			[1] = "Car16Tire1",
+			[2] = "Car16Tire1",
+			[3] = "Car16Tire1",
+			[4] = "Car16Tire1",
+		},
+	},
+	[17] = {
+		Engine = {
+			[1] = "Car17Engine1",
+			[2] = "Car17Engine1",
+			[3] = "Car17Engine1",
+			[4] = "Car17Engine1",
+		},
+		Suspension = {
+			[1] = "Car17Suspension1",
+			[2] = "Car17Suspension1",
+			[3] = "Car17Suspension1",
+			[4] = "Car17Suspension1",
+		},
+		Gearbox = {
+			[1] = "Car17Gearbox1",
+			[2] = "Car17Gearbox1",
+			[3] = "Car17Gearbox1",
+			[4] = "Car17Gearbox1",
+		},
+		Tires = {
+			[1] = "Car17Tire1",
+			[2] = "Car17Tire1",
+			[3] = "Car17Tire1",
+			[4] = "Car17Tire1",
+		},
+	}
+
+}
+
+		
+		
+		
+		
+		
+	
+	
+	

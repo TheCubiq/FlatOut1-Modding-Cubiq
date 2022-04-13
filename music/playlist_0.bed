@@ -1,0 +1,135 @@
+Title	=	"data/music/04_Flat.ogg"
+Loop	= {
+	Count = 26,
+	[1] = {
+		File		= "data/music/01_Adren.ogg",
+		Artist 	= "Adrenaline",
+		Song		= "Adrenaline",
+	},
+	[2] = {
+		File 		= "data/music/18_Amp1.ogg",
+		Artist 	= "Amplifire",
+		Song		= "Drown Together",
+	},
+	[3] = {
+		File 		= "data/music/13_Subro.ogg",
+		Artist 	= "Subroc",
+		Song		= "Close The Windows",		
+	},
+	[4] = {
+		File 		= "data/music/03_Ready.ogg",
+		Artist 	= "Central Supply Chain",
+		Song		= "Are you ready",	
+	},
+	[5] = {
+		File 		= "data/music/17_Full2.ogg",
+		Artist 	= "Full Diesel",
+		Song		= "No Man's Land",
+	},
+	[6] = {
+		File 		= "data/music/09_Burni.ogg",
+		Artist 	= "No Connection",
+		Song		= "Burnin'",		
+	},
+	[7] = {
+		File 		= "data/music/14_Whit.ogg",
+		Artist 	= "Whitmore",
+		Song		= "Nine Bar Blues",		
+	},
+	[8] = {
+		File 		= "data/music/02_Dead.ogg",
+		Artist 	= "Adrenaline",
+		Song		= "Dead Inside",	
+	},
+	[9] = {
+		File 		= "data/music/19_Amp2.ogg",
+		Artist 	= "Amplifire",
+		Song		= "Heartless",
+	},
+	[10] = {
+		File 		= "data/music/15_April.ogg",
+		Artist 	= "The April Tears",
+		Song		= "Little Baby Is Coming",		
+	},
+	[11] = {
+		File 		= "data/music/23_hiss.ogg",
+		Artist 	= "The Hiss",
+		Song		= "Back On The Radio",	
+	},
+	[12] = {
+		File 		= "data/music/06_Alive.ogg",
+		Artist 	= "Circa",
+		Song		= "Alive!",	
+	},
+	[13] = {
+		File 		= "data/music/11_LTHTL.ogg",
+		Artist 	= "No Connection",
+		Song		= "Love To Hate To Love",		
+	},
+	[14] = {
+		File 		= "data/music/16_Full1.ogg",
+		Artist 	= "Full Diesel",
+		Song		= "King of Defeat",		
+	},
+	[15] = {
+		File 		= "data/music/08_Tick.ogg",
+		Artist 	= "Deponeye",
+		Song		= "Tick Tock",	
+	},
+	[16] = {
+		File 		= "data/music/10_Ameri.ogg",
+		Artist 	= "No Connection",
+		Song		= "Living American",
+	},
+	[17] = {
+		File 		= "data/music/22_lab.ogg",
+		Artist 	= "LAB",
+		Song		= "Beat The Boys",		
+	},
+	[18] = {
+		File 		= "data/music/20_Amp3.ogg",
+		Artist 	= "Amplifire",
+		Song		= "Perfect Goodbyes",
+	},
+	[19] = {
+		File 		= "data/music/27_barb2.ogg",
+		Artist 	= "Killer Barbies",
+		Song		= "Down The Street",	
+	},
+	[20] = {
+		File 		= "data/music/05_Ever.ogg",
+		Artist 	= "Central Supply Chain",
+		Song		= "The Ever Lasting",	
+	},
+	[21] = {
+		File 		= "data/music/07_Anger.ogg",
+		Artist 	= "Deponeye",
+		Song		= "Anger Management 101",	
+	},
+	[22] = {
+		File 		= "data/music/21_Splat.ogg",
+		Artist 	= "Splatterheads",
+		Song		= "Fish Biscuit",	
+	},
+	[23] = {
+		File 		= "data/music/24_blue.ogg",
+		Artist 	= "Agent Blue",
+		Song		= "Something Else",	
+	},
+	[24] = {
+		File 		= "data/music/25_kid.ogg",
+		Artist 	= "Kid Symphony",
+		Song		= "Hands On The Money",	
+	},
+	[25] = {
+		File 		= "data/music/26_barb1.ogg",
+		Artist 	= "Killer Barbies",
+		Song		= "Baby With Two Heads",	
+	},
+	[26] = {
+		File 		= "data/music/28_tokyo.ogg",
+		Artist 	= "Tokyo Dragons",
+		Song		= "Teenage Screamers",	
+	},
+
+}

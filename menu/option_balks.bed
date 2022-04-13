@@ -1,0 +1,13 @@
+option_balks_size = { 256,128 }
+option_balks = {
+	
+	big_balk_active = {  0, 0, 256, 28 },
+	small_balk_active = {  0, 29, 188, 28 },
+
+	big_balk_inactive = {  0, 58, 256, 28 },
+	small_balk_inactive = {  0, 87, 188, 28 },
+
+	balk_bg = {  0, 115, 177, 8 },
+	progress_bar = {  1, 122, 175, 6 },
+
+}

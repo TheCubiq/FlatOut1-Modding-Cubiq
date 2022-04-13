@@ -1,0 +1,182 @@
+--///////////////////////////////////////////////////////////////////////////
+--// multiplayer.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2003 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// Created on 3.12.2003 12:10:48
+--// 
+--// @Author Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+
+
+function CheckLanErrors()
+	return false
+end
+
+local ShouldJoinCommandLine=false
+local FromCommandLine=false
+
+
+function CheckMultiplayerCommandLine()
+	if FromCommandLine then
+		return
+	end
+	ShouldJoinCommandLine=false
+	if CommandLine then
+		if CommandLine["-join"] then
+			ShouldJoinCommandLine=true
+			EnterMenu("menu_multiplayer_modeselect")
+		elseif CommandLine["-host"] then
+			FromCommandLine=true
+			EnterMenu("menu_lan_creategame")
+		end
+	end
+end
+
+
+function JoinCommandLineSession()
+	FromCommandLine=true
+	ShouldJoinCommandLine=false
+	Network:StartSystemLink()
+	Session:AddLocalPlayer(nil, 1)
+	local player=Session:GetLocalPlayer(1)
+	player:SetName(PlayerProfile:GetName())
+	player:SetReady(false)	
+	player:GenerateUserId()
+	Session:JoinSessionFromCommandLine()
+	
+	local emptyFunc=function() end
+	
+	local isJoinFailed=function()
+		return Session:GetProgress()=="FAILED"
+	end
+	local isJoinCompleted=function()
+		return Session:GetProgress()=="SUCCESS"
+	end
+	local onJoinFailed=function()
+		HideThinkingWindow()
+		ShowMessageBox(
+			SAFEPOS(154, 70),
+			LINKRESULTS_NOTJOIN, 
+			LINKRESULTS_TRY,
+			JoinCommandLineSession,
+			MAINMENU_QUIT, 
+			quitgame
+		) 
+	end
+
+	ShowThinkingWindow()
+	MultiplayerWaitState=FSM()
+	FSM_init_state(MultiplayerWaitState)	
+	FSM_add_wait_for_event(MultiplayerWaitState, 1, emptyFunc, isJoinCompleted, isJoinFailed, onJoinFailed, 10)
+	FSM_add_function(MultiplayerWaitState, GameFlow.SetGameMode, false, {"JOIN"})
+	FSM_add_function(MultiplayerWaitState, ShowLanLobby, false, {})
+	FSM_add_function(MultiplayerWaitState, HideThinkingWindow, false, {})
+end
+
+--------------------------------systemlink mode select------------------
+-------------------------------------------------------------------------
+menu_multiplayer_modeselect = {
+	
+	options = {
+	
+		title = MULTIPLAYER_TITLE,
+		background = noimage(),
+		orientation = MENU_HORIZONTAL,
+		position = DEFAULTBUTTONPOS(),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		back_action=entermenu("menu_mainmenu"),
+	},
+	
+	init_function = function()
+		windows_reset()
+
+		StandardUpperBalk()
+		StandardLowerBalk()
+
+		activateparents()
+
+		GUI:LoadBackground()
+		--//GUI:LoadBackground("data/menu/bg/multiplayer_background.tga")
+		SetMenuCamera(20)
+		GUI:SetRenderScene(TRUE)
+		MenuScene:StartFadeOn()
+
+		if FromCommandLine then
+			quitgame()
+		end
+		if ShouldJoinCommandLine then
+			JoinCommandLineSession()
+		end
+	end,
+
+	deinit_function = function()
+		windows_reset()
+	end,
+	
+	items = {
+	
+		{ MULTIPLAYER_JOIN, noimage(),entermenu("menu_lan_results") },
+		{ MULTIPLAYER_HOST, noimage(),entermenu("menu_lan_creategame") },
+		
+	},
+}
+
+
+menu_multiplayer = {
+	options = {
+		title = MULTIPLAYER_TITLE,
+		background = noimage(),
+		orientation = MENU_HORIZONTAL,
+		position = DEFAULTBUTTONPOS(),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		back_action = entermenu("menu_mainmenu"),
+	},
+
+	init_function = function()
+		windows_reset()
+
+		StandardUpperBalk()
+		StandardLowerBalk()
+
+		activateparents()
+
+		GUI:LoadBackground()
+		--//GUI:LoadBackground("data/menu/bg/multiplayer_background.tga")
+		SetMenuCamera(20)
+		GUI:SetRenderScene(TRUE)
+		MenuScene:StartFadeOn()
+	end,
+
+	deinit_function = function()
+		windows_reset()
+
+	end,
+
+
+	items = {
+		
+	},
+
+}
+
+if getplatform() == "PC" then
+	--//table.insert(menu_multiplayer.items,{ MULTIPLAYER_SPLIT,noimage(), entermenu("menu_multiplayer_splitscreen")})
+	table.insert(menu_multiplayer.items,{ MULTIPLAYER_HOT,noimage(), function() GameFlow.SetGameMode("SPLITSCREEN"); GameFlow.SetSubEventType("STUNT"); EnterMenu("menu_multiplayer_hotseat") end})
+	table.insert(menu_multiplayer.items,{ MULTIPLAYER_NETWORK,noimage(), entermenu("menu_multiplayer_modeselect") })
+else
+	table.insert(menu_multiplayer.items,{ MULTIPLAYER_SPLIT,noimage(), function() GameFlow.SetGameMode("SPLITSCREEN"); GameFlow.SetSubEventType("RACE_NORMAL") EnterMenu("menu_multiplayer_splitscreen") end})
+	table.insert(menu_multiplayer.items,{ MULTIPLAYER_HOT,noimage(), function() GameFlow.SetGameMode("SPLITSCREEN"); GameFlow.SetEventType("STUNT"); EnterMenu("menu_multiplayer_hotseat") end})
+end
+
+

@@ -1,0 +1,9 @@
+balks_size = { 512,256 }
+balks = {
+	
+	upperbalk = {  0, 193, 512, 63 },
+	upperbalk_ext = {0, 155, 512, 39  },
+
+	lowerbalk = {  0, 1, 512, 63 },
+	lowerbalk_ext = {  0, 48, 512, 58  },
+}

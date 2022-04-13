@@ -1,0 +1,64 @@
+common_size = { 256,128 }
+common = {
+	
+	speclistborder_y = {  0, 24, 4, 27 },
+	speclistborder_x = {  4, 24, 16, 27 },
+
+	white_transparent = {  16, 2, 15, 16 },
+	black_transparent = {  239, 60, 16, 16 },
+
+	ps2_nelio = {  32, 2, 18, 18 },
+	ps2_risti = {  50, 2, 18, 18 },
+	ps2_ympyra = {  68, 2, 18, 18 },
+	ps2_kolmio = {  86, 2, 18, 18 },
+
+	ps2_l1 = {  71, 21, 16, 17 },
+	ps2_l2 = {  71, 39, 16, 17 },
+	ps2_r1 = {  88, 21, 16, 17 },
+	ps2_r2 = {  88, 39, 16, 17 },
+	ps2_select = { 29, 44, 18, 18 },
+	ps2_start = { 28, 64, 18, 18 },
+
+	stick_left = {  144, 63, 20, 20 },
+	stick_right = {  165, 63, 20, 20 },
+	cross_controller = {  187, 63, 20, 20 },
+
+	xbox_a = {  105, 3, 18, 18 },
+	xbox_b = {  124, 3, 18, 18 },
+	xbox_x = {  143, 3, 18, 18 },
+	xbox_y = {  162, 3, 18, 18 },
+
+	xbox_Ltrig = {  106, 38, 16, 17 },
+	xbox_Rtrig = {  123, 38, 16, 17 },
+
+	xbox_black = {  52, 21, 18, 18 },
+	xbox_white = {	33, 21, 18, 18 },
+
+	xbox_start = {  142, 21, 18, 18 },
+	xbox_back = { 162, 21, 18, 18 },
+	xbox_dpad = {  144, 39, 41, 14 },
+
+	nuolivasen = {  183, 2, 16, 29 },
+	nuolioikea = {  201, 2, 16, 29 },
+	nuoliylos = {  219, 2, 21, 14 },
+	nuolialas = {  219, 17, 21, 14 },
+	mininuolivasen = {  188, 40, 9, 13 },
+	mininuolioikea = {  199, 40, 9, 13 },	
+
+	pieni_nuolivasen = {  210, 35, 14, 21 },
+	pieni_nuolioikea = {  225, 35, 14, 21 },
+
+	rahaikoni = {  209, 59, 25, 23 },
+	color_glassblock = {  0, 88, 42, 20 },
+
+--//	first = {  64, 61, 24, 24 },
+--//	second = {  89, 61, 24, 24 },
+--//	third = {  114, 61, 24, 24 },	
+	
+	first = {  55, 93, 30, 30 },
+	second = {  86, 93, 30, 30 },
+  third = {  116, 93, 30, 30 },
+ 
+ checked = {  5, 65, 16, 16 },
+  
+}

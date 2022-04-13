@@ -1,0 +1,9 @@
+
+-- Menu sounds
+MenuSfx = {
+	Move			= "GearShift/Menu_select_2.wav",
+	Select			= "GearShift/Menu_select.wav",
+	Back			= "GearShift/Menu_select.wav",
+	Error			= "GearShift/Menu_select.wav",
+}
+

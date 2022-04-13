@@ -1,0 +1,103 @@
+-- ENGINE 13 SOUND V85
+-- Minimum distance for 3d-sounds (below this at max volume)
+EngineMinDistance 		= 10.00
+GearShiftMinDistance 	= 5.00
+
+-- RPM is clamped to this range:
+MinRPM		=	900
+MaxRPM		=	10000
+
+-- Input damping
+RPMSmooth		=	0.12
+ThrottleSmooth	=	0.08
+
+-- Load system
+LoadSystem = {
+	-- Load when at steady state
+	SteadyState	=	0.40,
+	-- Throttle response to load: load += ThrottleScale * Damp(InputThrottle)
+	ThrottleScale	=	0.22,
+	-- Acceleration to load: load += AccelerationScale * ( dRPMdms )
+	-- ie. 0.50 will add 0.50 to load when RPM changes +1000 / second
+	AccelerationScale =	0.60,
+}
+
+
+-- Samples
+GearShiftSample = {
+	Wave	= "Gearshift/shift_ex_4.wav",
+	Gain	= 1.00,
+}
+IdleSample = {
+	Wave	= "Engine/v85_idle_ex.wav",
+	RPM		= 1000
+}
+
+Samples = {
+	-- samples are pitch-matched at this RPM (**UPDATE: not anymore - NEEDS CODE UPDATE)
+	--RPM	= 3999,
+	
+	OnLow		= "Engine/v85_onlow_ex.wav",
+	OnLow_RPM 	= 4000,
+	
+	OnMid		= "Engine/v85_onmid_ex.wav",
+	OnMid_RPM 	= 5000,
+	
+	OnHigh		= "Engine/v85_onhigh_ex.wav",
+	OnHigh_RPM	= 7000,
+	
+	OffLow		= "Engine/v85_offlow_ex.wav",
+	OffLow_RPM	= 4000,
+	
+	OffMid		= "Engine/v85_offmid_ex.wav",
+	OffMid_RPM	= 5000,
+		
+	OffHigh		= "Engine/v85_offhigh_ex.wav",
+	OffHigh_RPM	= 7000,
+}
+	
+AI_Samples = {
+	On		= "Engine/v85_onhigh_ex.wav",
+ 	Off 		= "Engine/v85_offhigh_ex.wav",
+ 	RPM 		= 7000,
+
+}
+
+
+-- RPM CrossFader
+RPMXFader = {
+	[1] = {
+		Gain	= 0.65,
+		Min		= 0,
+		Max		= 1880,
+	},
+	[2] = {
+		Gain	= 1.00,
+		Min		= 1197,
+		Max		= 3675,
+	},
+	[3] = {
+		Gain	= 1.00,
+		Min		= 2521,
+		Max		= 5791,
+	},
+	[4] = {
+		Gain	= 1.00,
+		Min		= 4615,
+		Max		= 10000,
+	}	
+}
+
+-- LOAD Crossfader
+LoadXFader = {
+	[1] = {
+		Gain	= 0.57,
+		Min		= 0.00,
+		Max		= 0.88,
+	},
+	[2] = {
+		Gain	= 1.00,
+		Min		= 0.58,
+		Max		= 1.00,
+	}
+}

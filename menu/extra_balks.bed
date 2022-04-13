@@ -1,0 +1,8 @@
+
+extra_balks_size = { 1024,128 }
+extra_balks = {
+	
+	extra_upperbalk = {  0, 0, 640, 36 },
+	extra_lowerbalk = {  0, 38, 640, 36 },
+
+}

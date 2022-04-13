@@ -1,0 +1,1150 @@
+
+BaseLevelPath = "data/Tracks/"
+
+Levels = {
+
+	[1] = {
+			Name = "WOODLAND HAVOC",
+
+			Winnings = {
+			[1] = 1000,
+			[2] = 500,
+			[3] = 300,
+			[4] = 200,
+			[5] = 150,
+			[6] = 100,
+			[7] = 50,
+			},	
+			
+			Laps = 4,
+			AIHandicapLevel = 1,
+			AIUpgradeLevel = 1,
+			
+			GfxSetPath	= BaseLevelPath.."Forest/",
+			TrackPath	= BaseLevelPath.."Forest/Forest1/",
+			StagePath	= BaseLevelPath.."Forest/Forest1/A/",
+
+			LevelPath = BaseLevelPath.."Forest/Forest1/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[2] = {
+			Name = "FINCHLEY TRIAL RUN",
+
+			Winnings = {
+			[1] = 1000,
+			[2] = 500,
+			[3] = 300,
+			[4] = 200,
+			[5] = 150,
+			[6] = 100,
+			[7] = 50,
+			},	
+			
+			Laps = 4,
+			AIHandicapLevel = 2,
+			AIUpgradeLevel = 2,	
+
+			GfxSetPath	= BaseLevelPath.."Forest/",
+			TrackPath	= BaseLevelPath.."Forest/Forest2/",
+			StagePath	= BaseLevelPath.."Forest/Forest2/A/",
+
+			LevelPath = BaseLevelPath.."Forest/Forest2/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[3] = {
+			Name = "PINEWOOD CRASHCUP",
+
+			Winnings = {
+			[1] = 2000,
+			[2] = 1000,
+			[3] = 500,
+			[4] = 250,
+			[5] = 150,
+			[6] = 100,
+			[7] = 50,
+			},	
+			
+			Laps = 4,
+			AIHandicapLevel = 4,
+			AIUpgradeLevel = 4,
+
+			GfxSetPath	= BaseLevelPath.."Forest/",
+			TrackPath	= BaseLevelPath.."Forest/Forest3/",
+			StagePath	= BaseLevelPath.."Forest/Forest3/A/",
+
+			LevelPath = BaseLevelPath.."Forest/Forest3/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[4] = {
+			Name = "BUNKER CHALLENGE",
+
+			Winnings = {
+			[1] = 1500,
+			[2] = 800,
+			[3] = 400,
+			[4] = 200,
+			[5] = 150,
+			[6] = 100,
+			[7] = 50,
+			},	
+			
+			Laps = 3,
+			AIHandicapLevel = 3,
+			AIUpgradeLevel = 3,
+
+			GfxSetPath	= BaseLevelPath.."Pit/",
+			TrackPath	= BaseLevelPath.."Pit/Pit1/",
+			StagePath	= BaseLevelPath.."Pit/Pit1/A/",
+
+			LevelPath = BaseLevelPath.."Pit/Pit1/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[5] = {
+			Name = "BRAD'S PIT CRASH",
+
+			Winnings = {
+			[1] = 1000,
+			[2] = 500,
+			[3] = 300,
+			[4] = 200,
+			[5] = 150,
+			[6] = 100,
+			[7] = 50,
+			},
+			
+			Laps = 3,
+			AIHandicapLevel = 1,
+			AIUpgradeLevel = 1,
+
+			GfxSetPath	= BaseLevelPath.."Pit/",
+			TrackPath	= BaseLevelPath.."Pit/Pit2/",
+			StagePath	= BaseLevelPath.."Pit/Pit2/A/",
+
+			LevelPath = BaseLevelPath.."Pit/Pit2/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[6] = {
+			Name = "MOUND MAYHEM",
+
+			Winnings = {
+			[1] = 3000,
+			[2] = 1500,
+			[3] = 700,
+			[4] = 400,
+			[5] = 200,
+			[6] = 150,
+			[7] = 100,
+			},
+			
+			Laps = 4,
+			AIHandicapLevel = 7,
+			AIUpgradeLevel = 5,
+
+			GfxSetPath	= BaseLevelPath.."Pit/",
+			TrackPath	= BaseLevelPath.."Pit/Pit3/",
+			StagePath	= BaseLevelPath.."Pit/Pit3/A/",
+
+			LevelPath = BaseLevelPath.."Pit/Pit3/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[7] = {
+			Name = "BAY AMATEUR RUN",
+
+			Winnings = {
+			[1] = 1000,
+			[2] = 500,
+			[3] = 300,
+			[4] = 200,
+			[5] = 150,
+			[6] = 100,
+			[7] = 50,
+			},	
+			
+			Laps = 3,
+			AIHandicapLevel = 1,
+			AIUpgradeLevel = 1,
+
+			GfxSetPath	= BaseLevelPath.."Racing/",
+			TrackPath	= BaseLevelPath.."Racing/Racing1/",
+			StagePath	= BaseLevelPath.."Racing/Racing1/A/",
+
+			LevelPath = BaseLevelPath.."Racing/Racing1/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[8] = {
+			Name = "FAIRGRASS CUP",
+
+			Winnings = {
+			[1] = 2500,
+			[2] = 1200,
+			[3] = 600,
+			[4] = 300,
+			[5] = 150,
+			[6] = 100,
+			[7] = 50,
+			},
+			
+			Laps = 4,
+			AIHandicapLevel = 6,
+			AIUpgradeLevel = 6,
+
+			GfxSetPath	= BaseLevelPath.."Racing/",
+			TrackPath	= BaseLevelPath.."Racing/Racing2/",
+			StagePath	= BaseLevelPath.."Racing/Racing2/A/",
+
+			LevelPath = BaseLevelPath.."Racing/Racing2/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[11] = {
+			Name = "WHATTAHOO WHAM",
+
+			Winnings = {
+			[1] = 3000,
+			[2] = 1500,
+			[3] = 700,
+			[4] = 400,
+			[5] = 200,
+			[6] = 150,
+			[7] = 100,
+			},	
+			
+			Laps = 5,
+			AIHandicapLevel = 5,
+			AIUpgradeLevel = 1,
+
+			GfxSetPath	= BaseLevelPath.."Town/",
+			TrackPath	= BaseLevelPath.."Town/Town2/",
+			StagePath	= BaseLevelPath.."Town/Town2/A/",
+
+			LevelPath = BaseLevelPath.."Town/Town2/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[12] = {
+			Name = "HAYVILLE HAVOC",
+
+			Winnings = {
+			[1] = 3000,
+			[2] = 1500,
+			[3] = 700,
+			[4] = 400,
+			[5] = 200,
+			[6] = 150,
+			[7] = 100,
+			},	
+			
+			Laps = 3,
+			AIHandicapLevel = 6,
+			AIUpgradeLevel = 5,
+
+			GfxSetPath	= BaseLevelPath.."Town/",
+			TrackPath	= BaseLevelPath.."Town/Town3/",
+			StagePath	= BaseLevelPath.."Town/Town3/A/",
+
+			LevelPath = BaseLevelPath.."Town/Town3/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[13] = {
+			Name = "REDPINE RACE DASH",
+
+			Winnings = {
+			[1] = 3000,
+			[2] = 1500,
+			[3] = 700,
+			[4] = 400,
+			[5] = 200,
+			[6] = 150,
+			[7] = 100,
+			},
+			
+			Laps = 3,
+			AIHandicapLevel = 5,
+			AIUpgradeLevel = 1,
+
+			GfxSetPath	= BaseLevelPath.."Winter/",
+			TrackPath	= BaseLevelPath.."Winter/Winter1/",
+			StagePath	= BaseLevelPath.."Winter/Winter1/A/",
+
+			LevelPath = BaseLevelPath.."Winter/Winter1/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[14] = {
+			Name = "WHITEFISH RALLY",
+
+			Winnings = {
+			[1] = 2000,
+			[2] = 1000,
+			[3] = 500,
+			[4] = 250,
+			[5] = 150,
+			[6] = 100,
+			[7] = 50,
+			},
+			
+			Laps = 3,
+			AIHandicapLevel = 5,
+			AIUpgradeLevel = 4,
+
+			GfxSetPath	= BaseLevelPath.."Winter/",
+			TrackPath	= BaseLevelPath.."Winter/Winter2/",
+			StagePath	= BaseLevelPath.."Winter/Winter2/A/",
+
+			LevelPath = BaseLevelPath.."Winter/Winter2/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[22] = {
+			Name = "DEMOLITION DASH",
+
+			Score = {
+			[1] = 180,
+			[2] = 300,
+			[3] = 420,
+			},
+
+			Winnings = {
+			[1] = 800,
+			[2] = 400,
+			[3] = 200,
+			},	
+			
+			Class = 1,
+			Laps = 0,
+			AIUpgradeLevel = 2,
+		
+			GfxSetPath	= BaseLevelPath.."Derby/",
+			TrackPath	= BaseLevelPath.."Derby/Derby1/",
+			StagePath	= BaseLevelPath.."Derby/Derby1/A/",
+
+			LevelPath = BaseLevelPath.."Derby/Derby1/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[23] = {
+			Name = "SUPER MUD MAYHEM",
+
+			Score = {
+			[1] = 180,
+			[2] = 240,
+			[3] = 360,
+			},
+
+			Winnings = {
+			[1] = 1000,
+			[2] = 500,
+			[3] = 300,
+			},	
+			
+			Class = 2,
+			Laps = 0,
+			AIUpgradeLevel = 3,	
+
+			GfxSetPath	= BaseLevelPath.."Derby/",
+			TrackPath	= BaseLevelPath.."Derby/Derby2/",
+			StagePath	= BaseLevelPath.."Derby/Derby2/A/",
+
+			LevelPath = BaseLevelPath.."Derby/Derby2/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[24] = {
+			Name = "DEMOLITION SANDPIT",
+
+			Score = {
+			[1] = 180,
+			[2] = 240,
+			[3] = 360,
+			},
+
+			Winnings = {
+			[1] = 2000,
+			[2] = 1000,
+			[3] = 500,
+			},	
+			
+			Class = 3,
+			Laps = 0,
+			AIUpgradeLevel = 4,	
+
+			GfxSetPath	= BaseLevelPath.."Derby/",
+			TrackPath	= BaseLevelPath.."Derby/Derby3/",
+			StagePath	= BaseLevelPath.."Derby/Derby3/A/",
+
+			LevelPath = BaseLevelPath.."Derby/Derby3/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[25] = {
+			Name = "CIRCLE OF EIGHT",
+
+			Winnings = {
+			[1] = 800,
+			[2] = 400,
+			[3] = 200,
+			},	
+			
+			Class = 1,
+			ArenaMode = 1,
+			Laps = 5,
+			AIHandicapLevel = 5,
+			AIUpgradeLevel = 6,			
+
+			GfxSetPath	= BaseLevelPath.."Arena/",
+			TrackPath	= BaseLevelPath.."Arena/Arena1/",
+			StagePath	= BaseLevelPath.."Arena/Arena1/A/",
+
+			LevelPath = BaseLevelPath.."Arena/Arena1/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[26] = {
+			Name = "ROUNDABOUT DASH",
+
+			Winnings = {
+			[1] = 1500,
+			[2] = 800,
+			[3] = 500,
+			},	
+			
+			Class = 2,
+			ArenaMode = 1,
+			Laps = 8,
+			AIHandicapLevel = 6,
+			AIUpgradeLevel = 4,
+
+			GfxSetPath	= BaseLevelPath.."Arena/",
+			TrackPath	= BaseLevelPath.."Arena/Arena2/",
+			StagePath	= BaseLevelPath.."Arena/Arena2/A/",
+
+			LevelPath = BaseLevelPath.."Arena/Arena2/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[27] = {
+			Name = "CRASHCOURSE ALLEY",
+
+			Winnings = {
+			[1] = 2000,
+			[2] = 1000,
+			[3] = 700,
+			},	
+			
+			Class = 3,
+			ArenaMode = 1,
+			Laps = 5,
+			AIHandicapLevel = 6,
+			AIUpgradeLevel = 4,
+
+			GfxSetPath	= BaseLevelPath.."Arena/",
+			TrackPath	= BaseLevelPath.."Arena/Arena3/",
+			StagePath	= BaseLevelPath.."Arena/Arena3/A/",
+
+			LevelPath = BaseLevelPath.."Arena/Arena3/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[28] = {
+			Name = "WOODLAND MAYHEM",
+
+			Winnings = {
+			[1] = 1000,
+			[2] = 500,
+			[3] = 300,
+			[4] = 200,
+			[5] = 150,
+			[6] = 100,
+			[7] = 50,
+			},	
+			
+			Laps = 3,
+			AIHandicapLevel = 3,
+			AIUpgradeLevel = 2,
+
+			GfxSetPath	= BaseLevelPath.."Forest/",
+			TrackPath	= BaseLevelPath.."Forest/Forest1/",
+			StagePath	= BaseLevelPath.."Forest/Forest1/B/",
+
+			LevelPath = BaseLevelPath.."Forest/Forest1/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[29] = {
+			Name = "FINCHLEY CHALLENGE",
+
+			Winnings = {
+			[1] = 4000,
+			[2] = 2000,
+			[3] = 1000,
+			[4] = 500,
+			[5] = 300,
+			[6] = 200,
+			[7] = 100,
+			},	
+			
+			Laps = 3,
+			AIHandicapLevel = 7,
+			AIUpgradeLevel = 6,
+
+			GfxSetPath	= BaseLevelPath.."Forest/",
+			TrackPath	= BaseLevelPath.."Forest/Forest2/",
+			StagePath	= BaseLevelPath.."Forest/Forest2/B/",
+
+			LevelPath = BaseLevelPath.."Forest/Forest2/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[30] = {
+			Name = "PINEWOOD QUALIFIER",
+
+			Winnings = {
+			[1] = 2500,
+			[2] = 1200,
+			[3] = 600,
+			[4] = 300,
+			[5] = 150,
+			[6] = 100,
+			[7] = 50,
+			},	
+			
+			Laps = 4,
+			AIHandicapLevel = 5,
+			AIUpgradeLevel = 5,
+
+			GfxSetPath	= BaseLevelPath.."Forest/",
+			TrackPath	= BaseLevelPath.."Forest/Forest3/",
+			StagePath	= BaseLevelPath.."Forest/Forest3/B/",
+
+			LevelPath = BaseLevelPath.."Forest/Forest3/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[31] = {
+			Name = "BUNKER HILL HAVOC",
+
+			Winnings = {
+			[1] = 1500,
+			[2] = 800,
+			[3] = 400,
+			[4] = 200,
+			[5] = 150,
+			[6] = 100,
+			[7] = 50,
+			},	
+			
+			Laps = 4,
+			AIHandicapLevel = 3,
+			AIUpgradeLevel = 3,
+
+			GfxSetPath	= BaseLevelPath.."Pit/",
+			TrackPath	= BaseLevelPath.."Pit/Pit1/",
+			StagePath	= BaseLevelPath.."Pit/Pit1/B/",
+
+			LevelPath = BaseLevelPath.."Pit/Pit1/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[32] = {
+			Name = "BRAD'S SANDRUN",
+
+			Winnings = {
+			[1] = 3000,
+			[2] = 1500,
+			[3] = 700,
+			[4] = 400,
+			[5] = 200,
+			[6] = 150,
+			[7] = 100,
+			},	
+			
+			Laps = 3,
+			AIHandicapLevel = 5,
+			AIUpgradeLevel = 1,
+
+			GfxSetPath	= BaseLevelPath.."Pit/",
+			TrackPath	= BaseLevelPath.."Pit/Pit2/",
+			StagePath	= BaseLevelPath.."Pit/Pit2/B/",
+
+			LevelPath = BaseLevelPath.."Pit/Pit2/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[33] = {
+			Name = "GRAVEL SUPERSMASH",
+
+			Winnings = {
+			[1] = 3000,
+			[2] = 1500,
+			[3] = 1000,
+			[4] = 700,
+			[5] = 400,
+			[6] = 300,
+			[7] = 200,
+			},	
+			
+			Laps = 4,
+			AIHandicapLevel = 7,
+			AIUpgradeLevel = 6,
+
+			GfxSetPath	= BaseLevelPath.."Pit/",
+			TrackPath	= BaseLevelPath.."Pit/Pit3/",
+			StagePath	= BaseLevelPath.."Pit/Pit3/B/",
+
+			LevelPath = BaseLevelPath.."Pit/Pit3/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[34] = {
+			Name = "BAY CUP RUN",
+
+			Winnings = {
+			[1] = 2000,
+			[2] = 1000,
+			[3] = 500,
+			[4] = 250,
+			[5] = 150,
+			[6] = 100,
+			[7] = 50,
+			},	
+			
+			Laps = 4,
+			AIHandicapLevel = 3,
+			AIUpgradeLevel = 4,
+
+			GfxSetPath	= BaseLevelPath.."Racing/",
+			TrackPath	= BaseLevelPath.."Racing/Racing1/",
+			StagePath	= BaseLevelPath.."Racing/Racing1/B/",
+
+			LevelPath = BaseLevelPath.."Racing/Racing1/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[35] = {
+			Name = "FAIRGRASS RUN",
+
+			Winnings = {
+			[1] = 1500,
+			[2] = 800,
+			[3] = 400,
+			[4] = 200,
+			[5] = 150,
+			[6] = 100,
+			[7] = 50,
+			},	
+			
+			Laps = 4,
+			AIHandicapLevel = 3,
+			AIUpgradeLevel = 3,
+
+			GfxSetPath	= BaseLevelPath.."Racing/",
+			TrackPath	= BaseLevelPath.."Racing/Racing2/",
+			StagePath	= BaseLevelPath.."Racing/Racing2/B/",
+
+			LevelPath = BaseLevelPath.."Racing/Racing2/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[36] = {
+			Name = "WHATTAHOO RUSH HOUR",
+
+			Winnings = {
+			[1] = 2000,
+			[2] = 1000,
+			[3] = 500,
+			[4] = 250,
+			[5] = 150,
+			[6] = 100,
+			[7] = 50,
+			},	
+			
+			Laps = 4,
+			AIHandicapLevel = 6,
+			AIUpgradeLevel = 6,
+
+			GfxSetPath	= BaseLevelPath.."Town/",
+			TrackPath	= BaseLevelPath.."Town/Town2/",
+			StagePath	= BaseLevelPath.."Town/Town2/B/",
+
+			LevelPath = BaseLevelPath.."Town/Town2/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[37] = {
+			Name = "HAYVILLE FARMDASH",
+
+			Winnings = {
+			[1] = 3000,
+			[2] = 1500,
+			[3] = 1000,
+			[4] = 700,
+			[5] = 400,
+			[6] = 300,
+			[7] = 200,
+			},	
+			
+			Laps = 4,
+			AIHandicapLevel = 7,
+			AIUpgradeLevel = 6,
+
+			GfxSetPath	= BaseLevelPath.."Town/",
+			TrackPath	= BaseLevelPath.."Town/Town3/",
+			StagePath	= BaseLevelPath.."Town/Town3/B/",
+
+			LevelPath = BaseLevelPath.."Town/Town3/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[38] = {
+			Name = "REDPINE RUN",
+
+			Winnings = {
+			[1] = 3000,
+			[2] = 1500,
+			[3] = 700,
+			[4] = 400,
+			[5] = 200,
+			[6] = 150,
+			[7] = 100,
+			},	
+			
+			Laps = 4,
+			AIHandicapLevel = 9,
+			AIUpgradeLevel = 2,
+
+			GfxSetPath	= BaseLevelPath.."Winter/",
+			TrackPath	= BaseLevelPath.."Winter/Winter1/",
+			StagePath	= BaseLevelPath.."Winter/Winter1/B/",
+
+			LevelPath = BaseLevelPath.."Winter/Winter1/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[39] = {
+			Name = "WHITEFISH RUN",
+
+			Winnings = {
+			[1] = 2000,
+			[2] = 1000,
+			[3] = 500,
+			[4] = 250,
+			[5] = 150,
+			[6] = 100,
+			[7] = 50,
+			},	
+			
+			Laps = 3,
+			AIHandicapLevel = 4,
+			AIUpgradeLevel = 4,
+
+			GfxSetPath	= BaseLevelPath.."Winter/",
+			TrackPath	= BaseLevelPath.."Winter/Winter2/",
+			StagePath	= BaseLevelPath.."Winter/Winter2/B/",
+
+			LevelPath = BaseLevelPath.."Winter/Winter2/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[40] = {
+			Name = "WOODLAND CHALLENGE",
+
+			Winnings = {
+			[1] = 3000,
+			[2] = 1500,
+			[3] = 700,
+			[4] = 400,
+			[5] = 200,
+			[6] = 150,
+			[7] = 100,
+			},	
+			
+			Laps = 5,
+			AIHandicapLevel = 5,
+			AIUpgradeLevel = 1,
+
+			GfxSetPath	= BaseLevelPath.."Forest/",
+			TrackPath	= BaseLevelPath.."Forest/Forest1/",
+			StagePath	= BaseLevelPath.."Forest/Forest1/C/",
+
+			LevelPath = BaseLevelPath.."Forest/Forest1/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[41] = {
+			Name = "FINCHLEY TIMBERDASH",
+
+			Winnings = {
+			[1] = 3000,
+			[2] = 1500,
+			[3] = 700,
+			[4] = 400,
+			[5] = 200,
+			[6] = 150,
+			[7] = 100,
+			},	
+			
+			Laps = 3,
+			AIHandicapLevel = 6,
+			AIUpgradeLevel = 5,
+
+			GfxSetPath	= BaseLevelPath.."Forest/",
+			TrackPath	= BaseLevelPath.."Forest/Forest2/",
+			StagePath	= BaseLevelPath.."Forest/Forest2/C/",
+
+			LevelPath = BaseLevelPath.."Forest/Forest2/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[42] = {
+			Name = "PINEWOOD CHALLENGE",
+
+			Winnings = {
+			[1] = 3000,
+			[2] = 1500,
+			[3] = 700,
+			[4] = 350,
+			[5] = 200,
+			[6] = 150,
+			[7] = 100,
+			},	
+			
+			Laps = 4,
+			AIHandicapLevel = 6,
+			AIUpgradeLevel = 6,
+
+			GfxSetPath	= BaseLevelPath.."Forest/",
+			TrackPath	= BaseLevelPath.."Forest/Forest3/",
+			StagePath	= BaseLevelPath.."Forest/Forest3/C/",
+
+			LevelPath = BaseLevelPath.."Forest/Forest3/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[43] = {
+			Name = "BUNKER BIGBANG RUN",
+
+			Winnings = {
+			[1] = 2500,
+			[2] = 1200,
+			[3] = 600,
+			[4] = 300,
+			[5] = 150,
+			[6] = 100,
+			[7] = 50,
+			},	
+			
+			Laps = 4,
+			AIHandicapLevel = 5,
+			AIUpgradeLevel = 5,
+
+			GfxSetPath	= BaseLevelPath.."Pit/",
+			TrackPath	= BaseLevelPath.."Pit/Pit1/",
+			StagePath	= BaseLevelPath.."Pit/Pit1/C/",
+
+			LevelPath = BaseLevelPath.."Pit/Pit1/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[44] = {
+			Name = "BRAD'S SUPER DUSTUP",
+
+			Winnings = {
+			[1] = 1000,
+			[2] = 500,
+			[3] = 300,
+			[4] = 200,
+			[5] = 150,
+			[6] = 100,
+			[7] = 50,
+			},	
+			
+			Laps = 5,
+			AIHandicapLevel = 2,
+			AIUpgradeLevel = 2,
+
+			GfxSetPath	= BaseLevelPath.."Pit/",
+			TrackPath	= BaseLevelPath.."Pit/Pit2/",
+			StagePath	= BaseLevelPath.."Pit/Pit2/C/",
+
+			LevelPath = BaseLevelPath.."Pit/Pit2/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[45] = {
+			Name = "GRAVEL ROCK RUN",
+
+			Winnings = {
+			[1] = 2000,
+			[2] = 1000,
+			[3] = 500,
+			[4] = 250,
+			[5] = 150,
+			[6] = 100,
+			[7] = 50,
+			},	
+			
+			Laps = 5,
+			AIHandicapLevel = 4,
+			AIUpgradeLevel = 4,
+
+			GfxSetPath	= BaseLevelPath.."Pit/",
+			TrackPath	= BaseLevelPath.."Pit/Pit3/",
+			StagePath	= BaseLevelPath.."Pit/Pit3/C/",
+
+			LevelPath = BaseLevelPath.."Pit/Pit3/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[9] = {
+			Name = "BAY CHALLENGE",
+
+			Winnings = {
+			[1] = 4000,
+			[2] = 2000,
+			[3] = 1000,
+			[4] = 500,
+			[5] = 300,
+			[6] = 200,
+			[7] = 100,
+			},	
+			
+			Laps = 3,
+			AIHandicapLevel = 7,
+			AIUpgradeLevel = 6,
+
+			GfxSetPath	= BaseLevelPath.."Racing/",
+			TrackPath	= BaseLevelPath.."Racing/Racing1/",
+			StagePath	= BaseLevelPath.."Racing/Racing1/C/",
+
+			LevelPath = BaseLevelPath.."Racing/Racing1/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[10] = {
+			Name = "FAIRGRASS CHALLENGE",
+
+			Winnings = {
+			[1] = 4000,
+			[2] = 2000,
+			[3] = 1000,
+			[4] = 500,
+			[5] = 300,
+			[6] = 200,
+			[7] = 100,
+			},	
+			
+			Laps = 4,
+			AIHandicapLevel = 5,
+			AIUpgradeLevel = 5,
+
+			GfxSetPath	= BaseLevelPath.."Racing/",
+			TrackPath	= BaseLevelPath.."Racing/Racing2/",
+			StagePath	= BaseLevelPath.."Racing/Racing2/C/",
+
+			LevelPath = BaseLevelPath.."Racing/Racing2/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[15] = {
+			Name = "WHATTAHOO ROADRUN",
+
+			Winnings = {
+			[1] = 2000,
+			[2] = 1000,
+			[3] = 500,
+			[4] = 250,
+			[5] = 150,
+			[6] = 100,
+			[7] = 50,
+			},	
+			
+			Laps = 4,
+			AIHandicapLevel = 5,
+			AIUpgradeLevel = 5,
+
+			GfxSetPath	= BaseLevelPath.."Town/",
+			TrackPath	= BaseLevelPath.."Town/Town2/",
+			StagePath	= BaseLevelPath.."Town/Town2/C/",
+
+			LevelPath = BaseLevelPath.."Town/Town2/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[16] = {
+			Name = "HAYVILLE HAYSTAKKER",
+
+			Winnings = {
+			[1] = 3000,
+			[2] = 1500,
+			[3] = 700,
+			[4] = 400,
+			[5] = 200,
+			[6] = 150,
+			[7] = 100,
+			},	
+			
+			Laps = 3,
+			AIHandicapLevel = 5,
+			AIUpgradeLevel = 2,
+
+			GfxSetPath	= BaseLevelPath.."Town/",
+			TrackPath	= BaseLevelPath.."Town/Town3/",
+			StagePath	= BaseLevelPath.."Town/Town3/C/",
+
+			LevelPath = BaseLevelPath.."Town/Town3/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[17] = {
+			Name = "REDPINE ZERO COURSE",
+
+			Winnings = {
+			[1] = 4000,
+			[2] = 2000,
+			[3] = 1000,
+			[4] = 500,
+			[5] = 300,
+			[6] = 200,
+			[7] = 100,
+			},	
+			
+			Laps = 4,
+			AIHandicapLevel = 6,
+			AIUpgradeLevel = 1,
+
+			GfxSetPath	= BaseLevelPath.."Winter/",
+			TrackPath	= BaseLevelPath.."Winter/Winter1/",
+			StagePath	= BaseLevelPath.."Winter/Winter1/C/",
+
+			LevelPath = BaseLevelPath.."Winter/Winter1/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[18] = {
+			Name = "WHITEFISH ICE RUN",
+
+			Winnings = {
+			[1] = 2500,
+			[2] = 1200,
+			[3] = 600,
+			[4] = 300,
+			[5] = 150,
+			[6] = 100,
+			[7] = 50,
+			},	
+			
+			Laps = 3,
+			AIHandicapLevel = 6,
+			AIUpgradeLevel = 4,
+
+			GfxSetPath	= BaseLevelPath.."Winter/",
+			TrackPath	= BaseLevelPath.."Winter/Winter2/",
+			StagePath	= BaseLevelPath.."Winter/Winter2/C/",
+
+			LevelPath = BaseLevelPath.."Winter/Winter2/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+
+
+	[19] = {
+			Name = "LONGJUMP",
+
+			Score = {
+			[1] = 250,
+			[2] = 200,
+			[3] = 100,
+			},
+
+			Winnings = {
+			[1] = 1000,
+			[2] = 500,
+			[3] = 300,
+			},	
+			
+			Laps = 0,
+
+			StuntMode = 1,
+
+			GfxSetPath	= BaseLevelPath.."Stunt/",
+			TrackPath	= BaseLevelPath.."Stunt/Stunt1/",
+			StagePath	= BaseLevelPath.."Stunt/Stunt1/A/",
+
+			LevelPath = BaseLevelPath.."Stunt/Stunt1/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[20] = {
+			Name = "HIGHJUMP",
+
+			Score = {
+			[1] = 300,
+			[2] = 250,
+			[3] = 100,
+			},
+
+			Winnings = {
+			[1] = 1000,
+			[2] = 500,
+			[3] = 300,
+			},	
+			
+			Laps = 0,
+
+			StuntMode = 1,
+
+			GfxSetPath	= BaseLevelPath.."Stunt/",
+			TrackPath	= BaseLevelPath.."Stunt/Stunt1/",
+			StagePath	= BaseLevelPath.."Stunt/Stunt1/B/",
+
+			LevelPath = BaseLevelPath.."Stunt/Stunt1/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+
+
+	[46] = {
+			Name = "BULLSEYE",
+
+			Score = {
+			[1] = 250,
+			[2] = 200,
+			[3] = 100,
+			},
+
+			Winnings = {
+			[1] = 1500,
+			[2] = 700,
+			[3] = 300,
+			},	
+			
+			Laps = 0,
+
+			StuntMode = 1,
+
+			GfxSetPath	= BaseLevelPath.."Stunt/",
+			TrackPath	= BaseLevelPath.."Stunt/Stunt1/",
+			StagePath	= BaseLevelPath.."Stunt/Stunt1/A/",
+
+			LevelPath = BaseLevelPath.."Stunt/Stunt1/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+	[47] = {
+			Name = "BOWLING",
+
+			Score = {
+			[1] = 25,
+			[2] = 20,
+			[3] = 10,
+			},
+
+			Winnings = {
+			[1] = 1500,
+			[2] = 700,
+			[3] = 300,
+			},	
+			
+			Laps = 0,
+
+			StuntMode = 1,
+
+			GfxSetPath	= BaseLevelPath.."Stunt/",
+			TrackPath	= BaseLevelPath.."Stunt/Stunt1/",
+			StagePath	= BaseLevelPath.."Stunt/Stunt1/B/",
+
+			LevelPath = BaseLevelPath.."Stunt/Stunt1/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+
+
+	[48] = {
+			Name = "DARTS",
+
+			Score = {
+			[1] = 150,
+			[2] = 100,
+			[3] = 50,
+			},
+
+			Winnings = {
+			[1] = 2000,
+			[2] = 1000,
+			[3] = 500,
+			},	
+			
+			Laps = 0,
+
+			StuntMode = 1,
+
+			GfxSetPath	= BaseLevelPath.."Stunt/",
+			TrackPath	= BaseLevelPath.."Stunt/Stunt1/",
+			StagePath	= BaseLevelPath.."Stunt/Stunt1/A/",
+
+			LevelPath = BaseLevelPath.."Stunt/Stunt1/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+
+	[49] = {
+			Name = "CLOWN",
+
+			Winnings = {
+			[1] = 500,
+			[2] = 500,
+			[3] = 500,
+			[4] = 1000,
+			[5] = 3000,
+			[6] = 3000,
+			[7] = 1000,
+			[8] = 1000,
+			[9] = 1000,
+			},	
+			
+			Laps = 0,
+
+			StuntMode = 1,
+
+			GfxSetPath	= BaseLevelPath.."Stunt/",
+			TrackPath	= BaseLevelPath.."Stunt/Stunt1/",
+			StagePath	= BaseLevelPath.."Stunt/Stunt1/B/",
+
+			LevelPath = BaseLevelPath.."Stunt/Stunt1/"   --## this means BaseLevelPath+"Track1/"  eg. "data/Tracks/Track1/",
+	},
+
+}
+
+
+BonusLevels = {
+
+	[1] = Levels[17],
+
+
+	[2] = Levels[18],
+
+	[3] = Levels[19],
+
+	[4] = Levels[20],
+
+	[5] = Levels[21],
+
+	[6] = Levels[22],
+
+}
+
+

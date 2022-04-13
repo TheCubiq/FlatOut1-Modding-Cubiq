@@ -1,0 +1,533 @@
+--///////////////////////////////////////////////////////////////////////////
+--// main.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2003 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// Created on 24.7.2003 12:44:03
+--// 
+--// @Author: Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+dofile("data/language/languages.bed")
+dofile("data/Scripts/State.bed")
+
+
+GAME_ENTERMENU = 1
+GAME_RACE = 2
+GAME_CONTINUE = 3
+
+STUNT_LONGJUMP = 1
+STUNT_NONE = 0
+
+GAME_QUIT = -2
+
+GlobalState=State.new()
+GlobalQueue=Queue.new()
+fsm=FSM()
+
+Menus = Sandbox.GetSandbox("Menu")
+
+--[[--/*
+function GetMenuFromSandbox(menuname)
+--//	local e=Menus:GetEnvironment()
+--//	return e[menuname]
+	return getfenv(0)[menuname]
+
+end
+--]]--*/
+
+menufiles = {
+	"TrackMapping.bed",
+	"MenuTemplate.bed",
+	"TrackSelectionMenu.bed",
+	"TrackLayout.bed",
+	"CarDealer.bed",
+	"UpgradeMenu.bed",
+	"OptionsMenu.bed",
+	"ProfileMenu.bed",
+	"MainMenu.bed",
+	"Garage.bed",
+	"QuickRace.bed",
+	"SingleplayerMenu.bed",
+	"HotseatMenu.bed",
+	"multiplayer.bed",
+	"SplitScreen.bed",
+	"CareerModeMenu.bed",
+	"ResultsMenu.bed",
+	"TimeTrialMenu.bed",
+}
+
+xboxlivemenufiles={
+	"xboxlivemenuLayout.bed",
+	--"auth.bed",
+	"authoneuser.bed",
+	"friends.bed",
+	"friendoptions.bed",
+	"sendvoice.bed",
+	"multiplayer.bed",
+	"systemlink.bed",
+	"xboxlive.bed",
+	"xboxliveoptions.bed",
+	"xboxlivecreategame.bed",
+	"xboxlivelobby.bed",
+	--"invitefriends.bed",
+	"playersmenu.bed",
+	"quickmatch.bed",
+	"Optimatch.bed",
+	"Optimatchresults.bed",
+	"sendfeedback.bed",
+	"statistics.bed",
+	"liveprofile.bed",
+	"gameinfo.bed",
+	"linkcreategame.bed",
+	"linklobby.bed",
+	"linkresults.bed",
+	"crossinvite.bed",
+	"changetrack.bed",
+}
+
+pcmultiplayermenufiles={
+	"lancreategame.bed",
+	"lanresults.bed",
+	"lanlobby.bed",
+	"gameinfo.bed",
+	"changetrack.bed",
+}	
+
+
+function ConvertToWString(phrase)
+	local ret=""
+	for i = 1, string.len(phrase) do
+		if getplatform() == "PS2" then
+			ret=ret..string.sub(phrase,i,i).."\0\0\0"
+		else
+			ret=ret..string.sub(phrase, i, i).."\0"
+		end
+	end 
+	
+	if getplatform() == "PS2" then
+		ret=ret.."\0\0\0\0"
+	else
+		ret=ret.."\0\0"
+	end
+	
+	return ret
+end
+
+--[[--/*
+function WStringConcat(String1, String2)
+	local ret=""
+
+	if type(String1) == "number" then
+		String1=GetPhrase(String1)
+	end
+
+	if type(String2) == "number" then
+		String2=GetPhrase(String2)
+	end
+
+
+	if getplatform() == "PS2" then
+		ret=string.sub(String1, 1, -5)
+	else
+		ret=string.sub(String1, 1, -3)
+	end
+
+	ret=ret..String2
+	return ret
+end
+--]]--*/
+
+
+--//---------------------------script used for gameflow testing
+
+
+function RaceLevel(level)
+	GlobalState.CurrentLevel=level
+	GlobalQueue:Push(wm.QuitMenu,{0})
+	GlobalQueue:Push(GUI.FreeResources,{GUI})
+	GlobalQueue:Push(GameFlow.RaceLevel,{GameFlow, level})
+end
+
+
+function LoadMenuScripts()
+	if GameFlow.ScriptsLoaded() then return end
+
+	dofile("data/Menu/balks.bed")
+	dofile("data/Menu/common.bed")
+	dofile("data/Menu/keyboard.bed")
+	dofile("data/Menu/xboxlive.bed")
+	dofile("data/Menu/tuning_parts.bed")
+	--//dofile("data/Menu/setting_bar.bed")
+	dofile("data/Menu/option_balks.bed")
+    --//dofile("data/menu/extra_balks.bed")
+	--//Menus:DoFile("data/Menu/extra_balks.bed")
+	dofile("data/Menu/track_items.bed")
+	dofile("data/Menu/track_icons.bed")
+	dofile("data/Menu/track_icons_inactive.bed")
+	dofile("data/Menu/tuning_icons.bed")
+	dofile("data/Menu/car_icons.bed")
+	dofile("data/Menu/track_name_icons.bed")
+	dofile("data/Menu/smashysmash.bed")
+	dofile("data/Menu/trophies.bed")
+	dofile("data/Menu/small_trophies.bed")
+	
+	if getplatform() == "PC" then
+        dofile("data/Menu/pc_gui_icons.bed")
+  		dofile("data/Menu/pclan_trackicons.bed")      
+	end
+
+	if getplatform() == "XBOX" then
+	--	dofile("data/Menu/voice_items.bed")
+		dofile("data/Menu/flags.bed")
+		dofile("data/Menu/xboxlive_trackicons.bed")
+	end
+
+	local k,v
+	for k,v in pairs(menufiles) do
+		dofile("data/scripts/"..v)
+	end
+	if getplatform() == "XBOX" then
+		for k,v in pairs(xboxlivemenufiles) do
+			dofile("data/scripts/"..v)
+		end
+	end
+	if getplatform() == "PC" then
+		for k,v in pairs(pcmultiplayermenufiles) do
+			dofile("data/scripts/"..v)
+		end
+	end
+
+	
+	GameFlow.ScriptsLoaded(true)
+	
+end
+
+
+function CheckSignIn()
+	if XBoxLive.Auth.GetNumSignedInUsers() > 0 then
+		if GameFlow.GetGameMode() =="HOST" then
+			FSM_add_function(fsm,EnterMenu,false,{ "menu_xboxlive_lobby"})
+		else
+			FSM_add_function(fsm,EnterMenu,false,{ "menu_xboxlive_quickmatch"})
+		end
+	else
+		FSM_add_delay_state(fsm,1.0)
+		FSM_add_function(fsm,CheckSignIn,false,{})
+	end
+end
+
+function CheckNewMessage()
+	if XBoxLive.Auth.GetNumSignedInUsers()>0 then
+		--KLUDGE should use the correct controller index
+		return XBoxLive.GetMessageManager():HasNewMessage(1)
+	else
+		return false
+	end
+end
+
+function main()
+	
+	LOG("------------------main.bed starting-----------")
+
+	if Network then
+		Network:CreateUpdateThread()
+	end
+
+	GUI:InitMenuLoop()
+
+		Player={ Equipment={} }
+
+	--//MenuCameraSpline = SplineCurve()
+
+	menucamera=nil
+
+	----load menu scripts
+	dofile("data/scripts/internal.bed")
+	dofile("data/tracks/Menu/Menu1/a/data/cardealer_cameras.bed")
+	dofile("data/tracks/menu/menu1/a/data/startpoints.bed")
+
+	LoadMenuScripts()
+ 	GUI:LoadResources()
+
+	local menu_entrypoint=entermenu("menu_profiles")
+	MenuScene:ResetFadeOff()
+	
+--//	if getplatform() ~= "PC" then
+
+--//	if getplatform() == "PS2" then
+--//		menu_entrypoint=entermenu("menu_checkmemorycard")
+--//	else
+		menu_entrypoint=entermenu("menu_startscreen")
+--//	end
+--//	end
+	
+
+	if getplatform() == "XBOX" and CommandLine then
+		if CommandLine["-career"] then
+			
+			if CommandLine["-saveslot"] then
+				Save.RefreshSaves()
+				local slot=CommandLine["-saveslot"]
+				local v=Save.LoadPlayerData(slot)
+				if  v == 0 then
+					GameFlow.SetGameMode("SINGLEPLAYER")
+					PlayerProfile:StartCareer()
+					PlayerProfile:SetAutosaveEnabled(TRUE)
+					PlayerProfile:SetAutosaveSlot(slot)
+				end
+			else
+				GameFlow.SetGameMode("SINGLEPLAYER")
+				GameFlow.SetPlayerCar(CommandLine["-carnr"]-1)
+				PlayerProfile:SetCarType(GameFlow.GetPlayerCar())
+				GameFlow.StartCareer()
+				tuning_setplayerequipment(GameFlow.GetPlayerCar()+1)
+				tuning_loadupgrades()
+				trackselection_check_class_unlock()
+				trackselection_check_track_unlock()
+			end
+		end
+	end
+
+	check_singleplayer_careeritem();
+
+	local joinFriend=false
+	-- Check if we choosed so join a friend or accept a game invite ingame
+	-- in that case enter the main live menu and join from there
+	-- if we are in career mode then enter the results screen, and transfer to the live menu
+	-- after the users has looked at the results
+	if getplatform()=="XBOX" and Friends and Friends.ShouldJoinFriend() then
+		joinFriend=true
+		menu_entrypoint=function()Network:StopXBoxLive()EnterMenu("menu_xboxlive")end
+		AUDIO.PlayTitleMusic()
+		MenuScene:ResetFadeOff()
+	end
+	
+	if GameFlow.GetGameMode() == "SINGLEPLAYER" and not joinFriend then
+		tuning_setplayerequipment(GameFlow.GetPlayerCar()+1)
+		menu_entrypoint=enter_trackselection("menu_quickrace_carselect", race,true) --//entermenu("menu_singleplayer")
+		MenuScene:ResetFadeOff()
+		AUDIO.PlayTitleMusic()
+		if GameFlow.GetSubEventType() == "RACE_TIMETRIAL" then
+			menu_entrypoint=enter_trackselection("menu_timetrial_carselect", race,true)
+			MenuScene:ResetFadeOff()
+		end
+		if GameFlow.GetEventType() == "STUNT" or GameFlow.GetEventType() == "DERBY" then
+			menu_entrypoint=enter_trackselection("menu_quickrace_carselect",race,true)
+			MenuScene:ResetFadeOff()
+		end
+	end
+
+	if GameFlow.GetGameMode() == "SPLITSCREEN"  and not joinFriend then
+		if GameFlow.GetEventType() == "STUNT" then
+			menu_entrypoint=enter_trackselection("menu_multiplayer_hotseat", race,true)
+			--//menu_entrypoint=entermenu("menu_multiplayer_hotseat")
+			AUDIO.PlayTitleMusic()
+		else
+			menu_entrypoint=enter_trackselection("menu_multiplayer_splitscreen", race,true)
+			MenuScene:ResetFadeOff()
+			--//menu_entrypoint=trackselection_setclass(PlayerProfile:GetCurrentClass())
+
+			--//menu_entrypoint=entermenu("menu_multiplayer_splitscreen")
+			AUDIO.PlayTitleMusic()
+		end
+	end
+
+
+	--//we have race results here
+	if PlayerProfile:CareerStarted() then
+		AUDIO.PlayTitleMusic()
+		tuning_setplayerequipment(GameFlow.GetPlayerCar()+1)
+		tuning_loadupgrades()
+--[[--/*
+		GUI:SetRenderScene(TRUE)
+		SetMenuCamera(19)
+		MenuScene:ResetCar(Startpoints[19].Position,Startpoints[19].Orientation)
+		MenuScene:LoadCar(PlayerProfile:GetCarType()+1)
+		MenuScene:SetCarSkin(PlayerProfile:GetCarSkin())
+--]]--*/
+
+
+		if GameFlow.IsCareerMode() then
+			menu_entrypoint=entermenu("menu_careermode_garage")
+			MenuScene:ResetFadeOff()
+
+			if GameFlow.GetEventType() == "STUNT" and PlayerProfile:GetLastRaceFinished() then
+				menu_entrypoint=entermenu("menu_stuntresults")
+				MenuScene:ResetFadeOff()
+			elseif GameFlow.GetEventType() == "DERBY" and PlayerProfile:GetLastRaceFinished() then
+				menu_stuntresults.options.title=DERBY_RESULTS --//ConvertToWString("DERBY RESULTS")
+				menu_entrypoint=entermenu("menu_stuntresults")
+				MenuScene:ResetFadeOff()
+			elseif GameFlow.GetSubEventType() == "RACE_CAREER" then
+				if PlayerProfile:GetLastRaceFinished() then
+					---//check if new class should be opened
+					trackselection_check_track_unlock()
+					trackselection_check_class_unlock()
+					menu_entrypoint=entermenu("menu_raceresults")
+					MenuScene:ResetFadeOff()
+				end
+		    end
+
+		end
+	end
+	
+	if Session and not joinFriend then
+		AUDIO.PlayTitleMusic()
+		if Session:IsLive() then
+			if Session:HostIsConnected() then
+				menu_entrypoint=entermenu("menu_xboxlive_lobby")
+				MenuScene:ResetFadeOff()
+			else
+				menu_entrypoint=function()Network:StopXBoxLive()EnterMenu("menu_xboxlive")end
+			end
+		else
+			if Session:HostIsConnected() then
+				if getplatform()=="XBOX" then
+					menu_entrypoint=entermenu("menu_systemlink_lobby")
+				else
+					menu_entrypoint=entermenu("menu_lan_lobby")
+				end
+				MenuScene:ResetFadeOff()
+			else
+				if getplatform()=="XBOX" then
+					menu_entrypoint=function()Network:StopSystemLink()EnterMenu("menu_systemlink_modeselect")end
+				else
+					menu_entrypoint=function()Network:StopSystemLink()EnterMenu("menu_multiplayer_modeselect")end
+				end				
+				MenuScene:ResetFadeOff()
+			end
+		end
+		if Session:IsHost() then
+			GameFlow.SetGameMode("HOST")
+		else
+			GameFlow.SetGameMode("JOIN")
+		end
+	end
+
+
+	LevelResults=nil
+	GlobalState.CurrentLevel=nil
+
+
+
+
+
+
+	
+	wm.EnterMenu("mainmenu")
+	
+	--//@kludge: load startpoints for menu cars
+	--//dofile("data/Tracks/Menu/Menu1/A/data/startpoints.bed")
+	
+--//	MenuScene:FadeOn()	
+	
+	FSM_init_state(fsm)
+
+
+--//	FSM_add_fadewait(fsm)
+	--//FSM_add_function(fsm,Menu.SetMenu,false,{ Menu,"menu_mainmenu" })
+	--//FSM_add_function(fsm,FSM_init_state,false,{ fsm })
+	
+	if Network then
+		Network:DeleteUpdateThread()
+	end	
+	
+	menu_entrypoint()
+	
+	
+	--//MenuScene:SetCameraPosition(1,5,5)
+	--//MenuScene:SetCameraTarget(0,0,0)
+	--//MenuScene:SetCameraTarget(-17,50,30)
+--[[--/*	
+	local f=function()
+		FSM_add_delay_state(fsm,1.0)
+		FSM_add_function(fsm,EnterMenu,false,{ "menu_quickrace_carselect"})
+		FSM_add_delay_state(fsm,1.0)
+		FSM_add_function(fsm,EnterMenu,false,{ "menu_mainmenu" })
+		FSM_add_delay_state(fsm,1.0)
+		FSM_add_function(fsm,EnterMenu,false,{ "menu_careermode" })
+		FSM_add_delay_state(fsm,1.0)
+		--FSM_add_function(fsm,collectgarbage,false, { 0 })
+		FSM_add_function(fsm,fsm.Reset,false,{ fsm })
+
+	end
+
+	
+	f()
+--]]--*/
+--[[--/*
+	if CommandLine ~=nil then
+		if CommandLine["-host"] ~=nil then
+			GameFlow.SetGameMode("HOST")
+			GameFlow.SetPlayerCar(CommandLine["-carnr"])
+			GameFlow.SetCurrentLevel(CommandLine["-stagenr"])
+			Network:StartXBoxLive()
+			Session:UseOldSessionId(true)
+			FSM_add_delay_state(fsm,1.0)
+			FSM_add_function(fsm,CheckSignIn,false,{})
+		elseif CommandLine["-join"] ~=nil then
+			GameFlow.SetGameMode("JOIN")
+			GameFlow.SetPlayerCar(CommandLine["-carnr"])
+			Network:StartXBoxLive()
+			FSM_add_delay_state(fsm,1.0)
+			FSM_add_function(fsm,CheckSignIn,false,{})
+		end
+	end
+--]]--*/
+	
+	if getplatform() ~= "PS2" then
+		if Network==nil then
+			StartNetwork()
+		end
+	end
+	
+	
+	local running=true
+	local quitgame
+	local result	
+
+	local tm=GUI:GetTime()/1000
+	GUI:ResetMenuTimer()
+	while running do
+			
+			--local t=GUI:GetTime()/1000
+			--local dt=t-tm
+			--tm=t
+			--fsm:Update(dt)
+			
+			
+
+
+			running=GUI:MenuLoop()
+	end
+
+	MenuCameraSpline=nil
+	
+	if getplatform() == "PS2" then
+		FSMRemoveAll()
+	end
+
+	fsm=nil
+	ThinkingWindowFSM=nil
+
+	MainResult = wm.GetMenuResult()
+
+	if Menus:GetEnvironment().SplitScreenPlayers then
+		SplitScreenPlayers=SplitScreenPlayers
+	end
+
+	GUI:FreeResources()
+	GUI:DeinitMenuLoop()
+
+
+	Menus:ClearGlobals()
+	
+	GameFlow.ScriptsLoaded(false)
+
+	collectgarbage()
+
+end
+
+

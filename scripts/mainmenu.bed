@@ -1,0 +1,292 @@
+--///////////////////////////////////////////////////////////////////////////
+--// MainMenu.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2004 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// Created on 2.3.2004 12:22:27
+--// 
+--// @Author Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+
+
+menu_startscreen = {
+
+	options = {
+	
+		title = ConvertToWString(""),
+		background = noimage(), --background("start-screen.tga"),	
+		orientation = MENU_HORIZONTAL,
+		position = POS(260,396),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+
+	},
+
+
+	init_function = function()
+
+		GUI:CheckControllerDisconnect(FALSE)
+
+		windows_reset()
+		StandardUpperBalk()
+		StandardLowerBalk()
+	
+		GUI:LoadBackground()
+
+		startscreen_state={}
+		startscreen_state.time=GUI:GetTime()/1000
+
+		--//MenuScene:SetCameraCoordinateMode(CAMERARELATIVE)
+		SetMenuCamera(20)
+		--//MenuScene:ResetCar(Startpoints[20].Position,Startpoints[20].Orientation)
+
+		MenuScene:StartSmoke(Dummies.title_smoke.Position)
+
+		--//local parent=addparent(InputHandler{})
+		--//parent.onKeyPressed = function(self, character, virtualkey, scancode)
+		menu_startscreen.onKeyPressed = function(virtualkey)
+			if virtualkey == KeyCodes.BUTTON_START or virtualkey == KeyCodes.BUTTON_A and not startscreen_state.pressed then
+				startscreen_state.pressed=true
+				if getplatform()=="XBOX" and not startscreen_state.loading_options then
+					if XBoxLive.Auth.GetNumSignedInUsers()==0 then
+						XBoxLive.Auth.SilentSignIn(GUI:GetLastActiveController())
+					end
+--//				end
+					Menu:DisableButtons()
+					Save.LoadOptions()
+					Save.UpdateSaveFlow()
+					startscreen_state.loading_options=true
+
+				elseif getplatform()~="XBOX" then
+				--//Save.LoadSystemData()
+					EnterMenu("menu_profiles")
+				end
+			end
+		end
+
+
+
+
+		--//THIS PRINTS VERSION INFO ON TITLESCREEN
+		--//REMOVE FROM FINAL BUILD
+		--//addparent(StaticText{Title=ConvertToWString(CompileDate),Position=SPOS(0,0),Size=SIZE(64,16),Font=font10()})
+
+
+
+
+
+
+		--//addparent(StaticText{Title=ConvertToWString("Press START button"),Color=GetPaletteColor(18),Position=SPOS(180,363),Size=SIZE(64,16),Font=font14()})
+
+		activateparents()
+		HideBalkButtons()
+
+		GUI:SetRenderScene(TRUE)
+	end,
+
+	update_function = function()
+
+		if startscreen_state.loading_options then
+			if Save.GetSaveFlowState() == Save.SAVEFLOW_NONE then
+				EnterMenu("menu_profiles")
+			end
+		elseif getplatform() ~= "PC" then  
+			if startscreen_state.playing and not GUI:IsVideoPlaying() then
+				startscreen_state.playing=nil
+				startscreen_state.time=GUI:GetTime()/1000
+			end
+
+			local t=GUI:GetTime()/1000
+
+			local dt=t-startscreen_state.time
+
+			if dt > 60 and not startscreen_state.playing then
+				GUI:PlayVideo("data/video/attract")
+				startscreen_state.playing=true
+			end
+		end
+
+		--//MenuScene:SetCameraPositionOffset(GetCameraSplinePoint())
+	end,
+
+	deinit_function = function()
+		windows_reset()
+
+		GUI:CheckControllerDisconnect(TRUE)
+
+	end,
+
+    
+	items = {
+		{ MAINMENU_TITLESCREEN,noimage(), function() menu_startscreen.onKeyPressed(KeyCodes.BUTTON_START) end },
+	},
+
+}
+
+
+
+menu_mainmenu = {
+
+	options = {
+	
+		title = MAINMENU_TITLE, --GetPhrase(MENU_QUICKRACE_TRACKSELECT_TITLE),
+		background = noimage(), --background("bg-mainmenu.tga"),	
+		orientation = MENU_HORIZONTAL,
+		position = POS(260,396),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+
+		back_action = entermenu("menu_profiles"),
+		
+	},
+	
+	init_function = function()
+		windows_reset()
+		StandardUpperBalk()
+		StandardLowerBalk()
+		activateparents()
+
+		startscreen_state=nil
+		--//GUI:LoadBackground() --"data/menu/bg/game_background.tga")
+
+		GUI:SetRenderScene(TRUE)
+		SetMenuCamera(20)
+		--//MenuScene:ResetCar(Startpoints[20].Position,Startpoints[20].Orientation)
+
+--//		GUI:SetRenderScene(TRUE)
+		if getplatform()=="XBOX" then
+			CheckForGameInvite()
+		end
+	end,
+
+	deinit_function = function()
+		windows_reset()
+	end,
+
+
+	update_function = function()
+		--//MenuScene:SetCameraPositionOffset(GetCameraSplinePoint())
+		if getplatform()=="PC" then
+			CheckMultiplayerCommandLine()
+		end
+	end,
+
+	items = {
+		{ MAINMENU_SINGLE, noimage(),function() check_singleplayer_careeritem(); EnterMenu("menu_singleplayer") end},
+		{ MAINMENU_MULTI, noimage(), entermenu("menu_multiplayer") },
+		{ MAINMENU_OPTIONS, noimage(), enter_optionsmenu("menu_mainmenu") },
+		{ MAINMENU_CREDITS, noimage(), function() GUI:PlayCredits(); EnterMenu("menu_mainmenu") end },
+	},
+
+
+}
+
+
+if getplatform() == "PC" then
+	table.insert(menu_mainmenu.items,{ MAINMENU_QUIT, noimage(),quitgame })
+	menu_startscreen.items={
+		{ INGAME_MENU_TEXT_BUTTON_TO_START_PC,noimage(), function() menu_startscreen.onKeyPressed(KeyCodes.BUTTON_START) end },
+	}
+
+end
+
+
+
+--//set up common data
+function loadsubimages(filename,tbl,imagesize,suffix)
+	local k,v
+
+	local sfx=suffix or ""
+
+	local t={}
+	for k,v in pairs(tbl) do
+		LOG("subimage '%s'",k)
+		t[k]=SubImage(k..sfx,filename,v,imagesize)
+		v=nil
+	end
+
+	return t
+end
+
+function concattable(tbl1,tbl2)
+	if not tbl1 then return tbl2 end
+	
+	local k,v
+	for k,v in pairs(tbl2) do
+		tbl1[k]=v
+	end
+
+	return tbl1
+end
+
+	menucommon=concattable(menucommon,loadsubimages("balks.tga",balks,balks_size))
+	menucommon=concattable(menucommon,loadsubimages("common.tga",common,common_size))
+	menucommon=concattable(menucommon,loadsubimages("keyboard.tga",keyboard,keyboard_size))
+	if getplatform() == "XBOX" then
+		menucommon=concattable(menucommon,loadsubimages("xboxlive.tga",xboxlive,xboxlive_size))
+		menucommon=concattable(menucommon,loadsubimages("xboxlive_trackicons.tga", xboxlive_trackicons, xboxlive_trackicons_size))
+		flagicons=loadsubimages("flags.tga", flags, flags_size)
+	end
+	if getplatform() == "PC" then
+		menucommon=concattable(menucommon,loadsubimages("pc_gui_icons.tga",pc_gui_icons,pc_gui_icons_size))
+		menucommon=concattable(menucommon,loadsubimages("pclan_trackicons.tga", pclan_trackicons, pclan_trackicons_size))
+	end
+
+	menucommon.horsepower_icon=image("horsepower_icon.tga")
+
+	menucommon.controller_box=image("controller_box.tga")
+	--//track_material=loadsubimages("track_material.tga",track_material,track_material_size)
+	tuning_data.images=loadsubimages("tuning_parts.tga",tuning_parts,tuning_parts_size)
+	tuning_data.images.upgradeinfo_box=image("upgradeinfo_box.tga")
+	tuning_data.images.upgradeprice_box=image("upgradeprice_box.tga")
+
+	tuning_parts=nil
+	tuning_parts_size=nil
+	option_balks=loadsubimages("option_balks.tga",option_balks,option_balks_size)
+	--//setting_bar=loadsubimages("setting_bar.tga",setting_bar,setting_bar_size)
+	--//extra_balks=loadsubimages("extra_balks.tga",extra_balks,extra_balks_size)
+	track_items=loadsubimages("track_items.tga",track_items,track_items_size)
+	track_icons=loadsubimages("track_icons.tga",track_icons,track_icons_size)
+	track_icons_inactive=loadsubimages("track_icons_inactive.tga",track_icons_inactive,track_icons_inactive_size,"_inactive")
+	tuning_icons=loadsubimages("tuning_icons.tga",tuning_icons,tuning_icons_size)
+	car_icons=loadsubimages("car_icons.tga",car_icons,car_icons_size)
+	track_name_icons=loadsubimages("track_name_icons.tga",track_name_icons,track_name_icons_size)
+	smashysmash=loadsubimages("smashysmash.tga",smashysmash,smashysmash_size)
+	trophies=loadsubimages("trophies.tga",trophies,trophies_size)
+	small_trophies=loadsubimages("small_trophies.tga",small_trophies,small_trophies_size)
+
+
+	--if getplatform() == "XBOX" then
+	--	voice_items=loadsubimages("voice_items.tga", voice_items, voice_items_size)
+	--end
+
+	if getplatform() == "XBOX" then
+		menucommon.okbutton=menucommon.xbox_a
+		menucommon.backbutton=menucommon.xbox_b
+		menucommon.helpbutton=menucommon.xbox_y
+		wm.SetResourceColor(menucommon.voice_talking, {255, 0, 0, 255})
+		wm.SetResourceColor(menucommon.voice_through_speakers_talking, {255, 0, 0, 255})
+	end
+	
+	if getplatform() == "PS2" then
+		menucommon.okbutton=menucommon.ps2_risti
+		menucommon.backbutton=menucommon.ps2_kolmio
+		menucommon.helpbutton=menucommon.ps2_ympyra
+	else
+		LoadMaps()
+	end
+
+	if getplatform() == "PC" then
+		menucommon.okbutton=menucommon.enter
+		menucommon.backbutton=menucommon.esc
+		menucommon.helpbutton=menucommon.del
+	end
+	
+
+

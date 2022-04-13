@@ -1,0 +1,40 @@
+xboxlive_size = { 256,256 }
+xboxlive = {
+	
+--// XBox Live
+
+--//	checked = {  3, 38, 16, 16 },
+
+	login_empty = { 110, 44, 32, 32 },
+	login_full = { 142, 44, 32, 32 },
+	speaking = {  2, 0, 32, 32 },
+	voice = {  36, 0, 32, 30 },
+	voice_talking = {  36, 0, 32, 30 },
+	voice_through_speakers = { 69, 0, 32, 30 },
+	voice_through_speakers_talking= { 69, 0, 32, 30 },
+	voice_muted = {  102, 0, 32, 30 },
+	invitation_sent = {  135, 0, 32, 30 },
+	invitation_received = {  168, 0, 32, 30 },
+	friend = {  33, 36, 32, 30 },
+	friend_wannabe = { 66, 36, 32, 30 },
+	friend_want = {  201, 0, 32, 30 },
+	xboxlive_mail = {  176, 33, 36, 28 },
+
+--// Voice items
+
+	progress_balk = {  1, 78, 252, 28 },
+	voice_progress_bar = {  1, 107, 237, 16 },
+
+	play_inactive = {  1, 124, 38, 34 },
+	stop_inactive = { 41, 124, 38, 34 },
+	record_inactive = {  81, 124, 38, 34 },
+
+	play_disabled = {  122, 124, 38, 34 },
+	stop_disabled = {  161, 124, 38, 34 },
+	record_disabled = {  201, 124, 38, 34 },
+
+	play_normal =  {  1, 160, 38, 34 },
+	stop_normal =  {  41, 160, 38, 34 },
+	record_normal = {  81, 160, 38, 34 },
+
+}

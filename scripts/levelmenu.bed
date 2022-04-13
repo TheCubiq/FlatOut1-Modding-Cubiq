@@ -1,0 +1,390 @@
+--///////////////////////////////////////////////////////////////////////////
+--// LevelMenu.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2003 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// @date 2.4.2003 11:15:56
+--// 
+--// @Author Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+
+DataPath="data/menu/"
+
+--level info window
+	wmNewFrame(nil,"LevelInfoWindow");
+
+	highScoresTemplate = [[
+		wmNewButton(LevelInfoWindow,"HighScoreName$NUM");
+		wmNewButton(LevelInfoWindow,"HighScoreTime$NUM");
+		wmNewButton(LevelInfoWindow,"HighScoreCar$NUM");
+
+		HighScoreName$NUM.onInit = function()
+				HighScoreName$NUM:SetTitleCentering(TITLE_CENTER_NONE);
+				HighScoreName$NUM:AttachResource(wmGetResource(FontSmall));
+				HighScoreName$NUM:SetPosition($POSITIONX,$POSITIONY);
+				HighScoreName$NUM:SetSize(210,16);
+				HighScoreName$NUM:SetTitle("");
+		end
+
+		HighScoreTime$NUM.onInit = function()
+				HighScoreTime$NUM:SetTitleCentering(TITLE_CENTER_NONE);
+				HighScoreTime$NUM:AttachResource(wmGetResource(FontSmall));
+				HighScoreTime$NUM:SetPosition($POSITIONX,$POSITIONY+16);
+				HighScoreTime$NUM:SetSize(210,16);
+				HighScoreTime$NUM:SetTitle("");
+		end
+		HighScoreCar$NUM.onInit = function()
+				HighScoreCar$NUM:SetTitleCentering(TITLE_CENTER_NONE);
+				HighScoreCar$NUM:AttachResource(wmGetResource(FontSmall));
+				HighScoreCar$NUM:SetPosition($POSITIONX,$POSITIONY+32);
+				HighScoreCar$NUM:SetSize(210,16);
+				HighScoreCar$NUM:SetTitle("");
+		end
+
+	]]
+
+	wmNewButton(LevelInfoWindow,"LevelPrice");
+	wmNewButton(LevelInfoWindow,"LevelWinnings1");
+	wmNewButton(LevelInfoWindow,"LevelWinnings2");
+	wmNewButton(LevelInfoWindow,"LevelWinnings3");
+
+	LevelInfoWindow.onInit = function()
+			LevelInfoWindow:SetTitle("");
+			LevelInfoWindow:SetPosition(400,57);
+			LevelInfoWindow:SetSize(228,342);
+			LevelInfoWindow:AttachResource(wmGetResource(FontSmall));
+			LevelInfoWindow:SetTitleCentering(TITLE_CENTER_NONE);
+			
+			LevelPrice:SetTitle("");
+			LevelPrice:AttachResource(wmGetResource(FontSmall));
+			LevelPrice:SetTitleCentering(TITLE_CENTER_NONE);
+			LevelPrice:SetPosition(8,8+32);
+			LevelPrice:SetSize(228,16);
+			
+
+			LevelWinnings1:AttachResource(wmGetResource(FontSmall));
+			LevelWinnings2:AttachResource(wmGetResource(FontSmall));
+			LevelWinnings3:AttachResource(wmGetResource(FontSmall));
+			LevelWinnings1:SetTitleCentering(TITLE_CENTER_NONE);
+			LevelWinnings2:SetTitleCentering(TITLE_CENTER_NONE);
+			LevelWinnings3:SetTitleCentering(TITLE_CENTER_NONE);
+
+			LevelWinnings1:SetPosition(8,8+32+16);
+			LevelWinnings2:SetPosition(8,8+32+16+16);
+			LevelWinnings3:SetPosition(8,8+32+16+16+16);
+
+			LevelWinnings1:SetSize(228,16);
+			LevelWinnings2:SetSize(228,16);
+			LevelWinnings3:SetSize(228,16);
+
+			LevelWinnings1:SetTitle("");
+			LevelWinnings2:SetTitle("");
+			LevelWinnings3:SetTitle("");
+
+			
+			local x=8;
+			local y=8+32+16+16+16+16+16;
+			local i;
+			for i=1,3 do
+				newButtonFromTemplate(highScoresTemplate,{ NUM=format("%d",i), POSITIONX=x, POSITIONY=y});
+				y=y+32+16+8;
+			end
+			
+	end
+
+
+
+
+
+--level selection buttons
+--	StatusBar = wmNewStatusBar(nil,"statusbar");
+
+	wmNewFrame(nil,"LevelsWindow");
+
+	wmNewButton(LevelsWindow,"LevelButtonsBackground");
+
+
+
+
+	levelButtonTemplate = [[
+			wmNewButton(LevelButtonsBackground, "$NAME");
+
+			$NAME.onInit = function()
+						$NAME:AttachResource(wmGetResource(FontSmall));
+						$NAME:SetToolTip("");
+						----$NAME:SetToolTip(format("failed %d completed %d locked %d",Levels[$LEVEL].Failed,Levels[$LEVEL].Completed,Levels[$LEVEL].Locked));
+						if LevelUnlocked($LEVEL) == TRUE then
+
+							if Levels[$LEVEL].Completed == 1 then
+								$NAME:AttachResource(wmGetResource("level_win"));
+							elseif Levels[$LEVEL].Completed == 2 then
+								$NAME:AttachResource(wmGetResource("level_2nd"));
+							elseif Levels[$LEVEL].Completed == 3 then
+								$NAME:AttachResource(wmGetResource("level_3rd"));
+							elseif Levels[$LEVEL].Failed == YES then
+								$NAME:AttachResource(wmGetResource("level_failed"));
+							else
+								$NAME:AttachResource(wmGetResource("level_inactive"));
+								$NAME:AttachResource(wmGetResource("level_active"));
+								------------------$NAME:SetToolTip(format("Enter race %d",$LEVEL));
+							end
+						else
+							$NAME:AttachResource(wmGetResource("level_locked"));
+							$NAME:AttachResource(wmGetResource("level_lockedSelected"));
+
+						----------------------	$NAME:SetToolTip(format("Race %d locked",$LEVEL));
+						end
+
+						if $LEVEL > 16 then
+							if LevelUnlocked($LEVEL) == TRUE then
+								if Levels[$LEVEL].Completed > 0 and Levels[$LEVEL].Completed < 4 then
+									$NAME:AttachResource(wmGetResource("level_win"));
+								elseif Levels[$LEVEL].Failed == YES then
+									$NAME:AttachResource(wmGetResource("level_failed"));
+								else
+									$NAME:AttachResource(wmGetResource("level_inactive"));
+									$NAME:AttachResource(wmGetResource("level_active"));
+								end
+							else
+								$NAME:AttachResource(wmGetResource("level_locked"));
+								$NAME:AttachResource(wmGetResource("level_lockedSelected"));
+							end
+						end
+
+
+						$NAME:SetTitle(""); --------format("%d",$LEVEL));						
+						$NAME:SetSize(32,32);
+						$NAME:SetPosition($POSITIONX,$POSITIONY);
+			end
+
+			$NAME.onAction = function()
+						SetLevelInfo($LEVEL);
+						$NAME:SetSelected();
+						if LevelUnlocked($LEVEL) == TRUE and Levels[$LEVEL].Failed == NO then
+								SelectedLevel=$LEVEL;
+								ConfirmWindow.EnableButtons(SelectLevel,ExitLevelSelection);
+
+								if $LEVEL > 16 and Levels[$LEVEL].Completed > 0  then
+									ConfirmWindow.EnableButtons(nil,ExitLevelSelection);
+								end
+						else
+							ConfirmWindow.EnableButtons(nil,ExitLevelSelection);
+						end
+			end
+	]]
+
+
+
+	levelButtonTemplateData = {
+				[1] =  { POSITIONX=160, POSITIONY=336 },
+				[2] =  { POSITIONX=112, POSITIONY=288 },
+				[3] =  { POSITIONX=208, POSITIONY=288 },
+				[4] =  { POSITIONX=64,  POSITIONY=240 },
+				[5] =  { POSITIONX=160, POSITIONY=240 },
+				[6] =  { POSITIONX=256, POSITIONY=240 },
+				[7] =  { POSITIONX=16,  POSITIONY=192 },
+				[8] =  { POSITIONX=112, POSITIONY=192 },
+				[9] =  { POSITIONX=208, POSITIONY=192 },
+				[10] = { POSITIONX=304, POSITIONY=192 },
+				[11] = { POSITIONX=64,  POSITIONY=144 },
+				[12] = { POSITIONX=160, POSITIONY=144 },
+				[13] = { POSITIONX=256, POSITIONY=144 },
+				[14] = { POSITIONX=112, POSITIONY=96 },
+				[15] = { POSITIONX=208, POSITIONY=96 },
+				[16] = { POSITIONX=160, POSITIONY=48 },
+				[17] = { POSITIONX=160, POSITIONY=288 },
+				[18] = { POSITIONX=64,  POSITIONY=192 },
+				[19] = { POSITIONX=160, POSITIONY=192 },
+				[20] = { POSITIONX=256, POSITIONY=192 },
+				[21] = { POSITIONX=112, POSITIONY=144 },
+				[22] = { POSITIONX=208, POSITIONY=144 },
+	}
+						
+
+
+
+--level button bitmaps
+	wmNewResource(BITMAP_INACTIVE,"level_locked",DataPath.."Button_LevelClosed.tga");
+	wmNewResource(BITMAP_ACTIVE,"level_lockedSelected",DataPath.."Button_LevelClosedSelected.tga");
+	wmNewResource(BITMAP_INACTIVE,"level_inactive",DataPath.."Button_LevelOpen.tga");
+	wmNewResource(BITMAP_ACTIVE,"level_active",DataPath.."Button_LevelSelected.tga");
+	wmNewResource(BITMAP,"level_win",DataPath.."Button_LevelWin.tga");
+	wmNewResource(BITMAP,"level_2nd",DataPath.."Button_LevelSilver.tga");
+	wmNewResource(BITMAP,"level_3rd",DataPath.."Button_LevelBronze.tga");
+	wmNewResource(BITMAP,"level_failed",DataPath.."Button_LevelFailed.tga");
+	wmNewResource(BITMAP,"window_background",DataPath.."Levelguide.tga");
+
+	LevelsWindow.onInit = function()
+						LevelsWindow:SetPosition(16,16);
+						LevelsWindow:SetSize(358,400);
+						LevelsWindow:SetToolTip("Choose race");
+						LevelButtonsBackground:AttachResource(wmGetResource("window_background"));
+						LevelButtonsBackground:SetPosition(2,2);
+						LevelButtonsBackground:SetSize(352,400);
+
+						local i
+						for i=1,getn(levelButtonTemplateData) do
+							levelButtonTemplateData[i].NAME=format("Level%d",i);
+							levelButtonTemplateData[i].LEVEL=i;
+
+							newButtonFromTemplate(levelButtonTemplate,levelButtonTemplateData[i]);
+						end
+	end
+
+
+function SetLevelInfo(level)
+
+	LevelInfoWindow:SetTitle(Levels[level].Name);
+
+	--if bonuslevel
+	if level > 16 then 
+			LevelPrice:SetTitle(format("Timelimit: %d:%d",floor(Levels[level].Timelimit/(1000*60)),mod(Levels[level].Timelimit/1000,60)));
+			LevelWinnings1:SetTitle("Your final racetime must be");
+			LevelWinnings2:SetTitle(format("less than %d:%d.",floor(Levels[level].Timelimit/(1000*60)),mod(Levels[level].Timelimit/1000,60)));
+			LevelWinnings3:SetTitle("");
+			HighScoreName1:SetTitle("");
+			HighScoreTime1:SetTitle("");
+			HighScoreCar1:SetTitle("");
+			HighScoreName2:SetTitle("");
+			HighScoreTime2:SetTitle("");
+			HighScoreCar2:SetTitle("");
+			HighScoreName3:SetTitle("");
+			HighScoreTime3:SetTitle("");
+			HighScoreCar3:SetTitle("");
+	else
+				local winnings = Levels[level].Winnings;
+				------------LevelPrice:SetTitle(format("Entry fee: $%d",Levels[level].Price));
+				LevelPrice:SetTitle("");
+				
+				if winnings[1] == 0 then
+					LevelWinnings1:SetTitle(format("Prize 1: Free repair"));
+				else
+					LevelWinnings1:SetTitle(format("Prize 1: $%d",winnings[1]));
+				end
+
+				LevelWinnings2:SetTitle(format("Prize 2: $%d",winnings[2]));
+				LevelWinnings3:SetTitle(format("Prize 3: $%d",winnings[3]));
+
+
+			if HighScores[level][1].Time ~= 0 then
+				HighScoreName1:SetTitle("Driver: "..HighScores[level][1].Name);
+				HighScoreTime1:SetTitle("Time: "..TimeToString(HighScores[level][1].Time));
+				if HighScores[level][1].Car > 0 then
+						HighScoreCar1:SetTitle("Truck: "..Car.Body[Players[HighScores[level][1].Car].Body].Name);
+				else
+						HighScoreCar1:SetTitle("Truck: None");
+				end
+			else
+				HighScoreName1:SetTitle("Driver: None");
+				HighScoreTime1:SetTitle("Time: "..TimeToString(0));
+				HighScoreCar1:SetTitle("Truck: None");
+			end
+
+			if HighScores[level][2].Time ~= 0 then
+				HighScoreName2:SetTitle("Driver: "..HighScores[level][2].Name);
+				HighScoreTime2:SetTitle("Time: "..TimeToString(HighScores[level][2].Time));
+				if HighScores[level][2].Car > 0 then
+						HighScoreCar2:SetTitle("Truck: "..Car.Body[Players[HighScores[level][2].Car].Body].Name);
+				else
+						HighScoreCar2:SetTitle("Truck: None");
+				end
+			else
+				HighScoreName2:SetTitle("Driver: None");
+				HighScoreTime2:SetTitle("Time: "..TimeToString(0));
+				HighScoreCar2:SetTitle("Truck: None");
+			end
+
+			if HighScores[level][3].Time ~= 0 then
+				HighScoreName3:SetTitle("Driver: "..HighScores[level][3].Name);
+				HighScoreTime3:SetTitle("Time: "..TimeToString(HighScores[level][3].Time));
+				if HighScores[level][3].Car > 0 then
+						HighScoreCar3:SetTitle("Truck: "..Car.Body[Players[HighScores[level][3].Car].Body].Name);
+				else
+						HighScoreCar3:SetTitle("Truck: None");
+				end
+			else
+				HighScoreName3:SetTitle("Driver: None");
+				HighScoreTime3:SetTitle("Time: "..TimeToString(0));
+				HighScoreCar3:SetTitle("Truck: None");
+------				HighScoreCar3:SetTitle("Truck: None");
+			end
+	end
+
+end
+
+
+
+function SelectLevel()
+		
+-------		local text=format("Entry fee for the race is $ %d",Levels[SelectedLevel].Price);
+		local leveltext="";
+		if SelectedLevel < 17 then
+			leveltext=format("Enter race %d ?",SelectedLevel);
+		else
+			leveltext=format("Enter bonus race %d ?",SelectedLevel-16);
+		end
+		if ConfirmDialog(leveltext,"") == TRUE then
+			RaceLevel(SelectedLevel);
+			Garage_door:SetToolTip("Enter selected race");
+			ExitLevelSelection();
+		end
+end
+
+
+function EnterLevelSelection()
+
+		if SelectedLevel ~= nil and SelectedLevel > 0 then
+			local str=format("Level%d:SetSelected(); Level%d.onAction()",SelectedLevel,SelectedLevel);
+			dostring(str);
+		else
+			Level1:SetSelected();
+			Level1.onAction();
+		end
+
+-----		SelectedLevel=0;
+		Race_calendar:HideWindow();
+		Garage_door:HideWindow();
+		Spray_can:HideWindow();
+		Toolbox:HideWindow();
+		Office_door:HideWindow();
+
+		LevelsWindow:ShowWindow();
+		LevelInfoWindow:ShowWindow();
+
+----		if LevelSelected() == TRUE then
+-----			ConfirmWindow.EnableButtons(nil,ExitLevelSelection);
+-----		else
+-----			ConfirmWindow.EnableButtons(SelectLevel,ExitLevelSelection);
+----		end
+end
+
+function ExitLevelSelection()
+
+		Race_calendar:ShowWindow();
+		Garage_door:ShowWindow();
+		Spray_can:ShowWindow();
+		Toolbox:ShowWindow();
+		Office_door:ShowWindow();
+
+		LevelsWindow:HideWindow();
+		LevelInfoWindow:HideWindow();
+		ConfirmWindow.DisableButtons();
+
+end
+
+
+
+
+
+
+wmActivateWindow(LevelsWindow);
+wmActivateWindow(LevelInfoWindow);
+
+LevelsWindow:HideWindow();
+LevelInfoWindow:HideWindow();
+--wmActivateWindow(StatusBar);
+
+
+

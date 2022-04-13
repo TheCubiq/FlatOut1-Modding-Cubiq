@@ -1,0 +1,251 @@
+--///////////////////////////////////////////////////////////////////////////
+--// HotseatMenu.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2004 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// Created on 30.6.2004 12:54:02
+--// 
+--// @Author Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+
+menustate_hotseat={}
+
+function hotseat_selectcar()
+	
+	SplitScreenPlayers[menustate_hotseat.currentplayer]={ Car=cardealer_state.car-1,Skin=cardealer_state.skin,Controller=GUI:GetLastActiveController() }
+	GameFlow.SetSplitScreenPlayerCar(menustate_hotseat.currentplayer-1,cardealer_state.car-1)
+	GameFlow.SetSplitScreenPlayerSkin(menustate_hotseat.currentplayer-1,cardealer_state.skin)
+	GameFlow.SetSplitScreenPlayerAutoTransmission(menustate_hotseat.currentplayer-1,GameFlow.GetAutoTransmission())
+
+	GameFlow.SetCarController(menustate_hotseat.currentplayer,GUI:GetLastActiveController())
+--//	GUI:SetControllerAllowed(GUI:GetLastActiveController(),FALSE)
+	menustate_hotseat.currentplayer = menustate_hotseat.currentplayer + 1
+
+	if menustate_hotseat.currentplayer == GameFlow.GetNumSplitScreenPlayers()+1 then
+		menustate_hotseat.initialized=nil
+		GUI:ResetAllowedControllers()
+		GameFlow.SetGameMode("SPLITSCREEN")
+		GameFlow.SetEventType("STUNT")
+		local f=enter_trackselection("menu_multiplayer_hotseat", race)
+		f()
+	else
+		EnterMenu("menu_multiplayer_hotseat_name")
+	end
+end
+
+function hotseat_backaction()
+	
+	menustate_hotseat.currentplayer = menustate_hotseat.currentplayer - 1
+
+	if cardealer_state then
+		cardealer_state.forward=nil
+	end
+
+	if menustate_hotseat.currentplayer == 0 then
+		menustate_hotseat.initialized=nil
+		GUI:ResetAllowedControllers()
+		EnterMenu("menu_multiplayer_hotseat")
+	else
+--//		GUI:SetControllerAllowed(SplitScreenPlayers[menustate_hotseat.currentplayer].Controller,TRUE)
+		EnterMenu("menu_multiplayer_hotseat_name")
+	end
+
+end
+
+
+
+
+menu_multiplayer_hotseat_carselect = {
+
+	options = {
+		title = HOTSEAT_P1,
+		background = noimage(),
+		orientation = MENU_HORIZONTAL,
+		position = DEFAULTBUTTONPOS(),
+		padding = { 6,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+
+	},
+
+	init_function = function()
+		if not menustate_hotseat.initialized then
+				
+			SplitScreenPlayers = {}
+			menustate_hotseat.currentplayer=1
+			menustate_hotseat.initialized=true
+		else
+			if not cardealer_state then cardealer_state={} end
+			cardealer_state.car=0
+			--//GUI:SetControllerAllowed(GUI:GetLastActiveController(),FALSE)
+		end
+
+		GameFlow.SetPlayerCar(0)
+		--//GUI:SetMenuController(menustate_splitscreen.currentplayer)
+
+		menu_cardealer.options.title=WStringConcat(CAREERMODE_PLAYER,ConvertToWString(string.format(" %d",menustate_hotseat.currentplayer)))
+		Menu:SetMenuTitle(menu_multiplayer_hotseat.options.title)
+		cardealer_init(hotseat_backaction,cardealer_transmissionselect(hotseat_selectcar))
+	end,
+
+
+	deinit_function = function()
+--//		GUI:SetMenuController(0)
+		cardealer_deinit()
+	end,
+
+	update_function = function()
+		cardealer_update()
+	end,
+
+	items = {
+
+	},
+
+}
+
+
+
+menu_multiplayer_hotseat_name = {
+
+	options = {
+		title = HOTSEAT_P1,
+		background = noimage(),
+		orientation = MENU_HORIZONTAL,
+		position = DEFAULTBUTTONPOS(),
+		padding = { 6,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+
+	},
+
+	init_function = function()
+		windows_reset()
+
+		StandardUpperBalk()
+		StandardLowerBalk()
+
+		if not menustate_hotseat then
+			menustate_hotseat = {}
+		end
+
+		if not menustate_hotseat.initialized then
+				
+			SplitScreenPlayers = {}
+			menustate_hotseat.currentplayer=1
+			menustate_hotseat.initialized=true
+		end
+
+		GUI:LoadBackground("data/menu/bg/game_background.tga")
+
+
+		GameFlow.SetStuntModePlayerNameToKeyboard(menustate_hotseat.currentplayer)
+
+		local kb=addparent(VirtualKeyboard{ Name="virtualkeyboard",Position=POS(80,170),Size=SIZE(32,32) })
+		kb:AttachResource(font12())
+
+		kb:SetFocus()
+
+		kb.onEscape = function(self)
+			hotseat_backaction()
+		end
+
+		kb.onAction = function(self)
+			GameFlow.SetStuntModePlayerNameFromKeyboard(menustate_hotseat.currentplayer)
+			EnterMenu("menu_multiplayer_hotseat_carselect")
+		end
+
+
+
+		--//GUI:SetMenuController(menustate_splitscreen.currentplayer)
+
+		menu_multiplayer_hotseat_name.options.title=WStringConcat(CAREERMODE_PLAYER,ConvertToWString(string.format(" %d",menustate_hotseat.currentplayer)))
+--//		menu_multiplayer_hotseat_name.options.title=ConvertToWString(string.format("Player %d",menustate_hotseat.currentplayer))
+		Menu:SetMenuTitle(menu_multiplayer_hotseat_name.options.title)
+
+		activateparents()
+
+	end,
+
+
+	deinit_function = function()
+--//		GUI:SetMenuController(0)
+		windows_reset()
+	end,
+
+	update_function = function()
+		cardealer_update()
+	end,
+
+	items = {
+
+	},
+
+}
+
+
+
+
+
+
+menu_multiplayer_hotseat = {
+
+	options = {
+		title = HOTSEAT_TITLE,
+		background = noimage(),
+		orientation = MENU_HORIZONTAL,
+		position = DEFAULTBUTTONPOS(),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		back_action = entermenu("menu_mainmenu"),
+	},
+
+	init_function = function()
+		windows_reset()
+
+		menustate_hotseat=nil
+
+		StandardUpperBalk()
+		StandardLowerBalk()
+
+		activateparents()
+
+		GUI:LoadBackground()
+		SetMenuCamera(20)
+		GUI:SetRenderScene(TRUE)
+		MenuScene:StartFadeOn()
+
+		if cardealer_state then
+			cardealer_state.forward=nil
+		end
+		--//GUI:LoadBackground("data/menu/bg/class_select_background.tga")
+--//		GUI:LoadBackground("data/menu/bg/multiplayer_background.tga")
+	end,
+
+	deinit_function = function()
+		windows_reset()
+
+	end,
+
+
+	items = {
+		{ HOTSEAT_P2, noimage(), function() GameFlow.SetGameMode("SPLITSCREEN"); GameFlow.SetNumSplitScreenPlayers(2) EnterMenu("menu_multiplayer_hotseat_name") end },
+		{ HOTSEAT_P3, noimage(), function() GameFlow.SetGameMode("SPLITSCREEN"); GameFlow.SetNumSplitScreenPlayers(3) EnterMenu("menu_multiplayer_hotseat_name") end },
+		{ HOTSEAT_P4, noimage(), function() GameFlow.SetGameMode("SPLITSCREEN"); GameFlow.SetNumSplitScreenPlayers(4) EnterMenu("menu_multiplayer_hotseat_name") end },
+		
+	},
+
+
+
+
+
+}

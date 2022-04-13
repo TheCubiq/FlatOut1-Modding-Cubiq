@@ -1,0 +1,56 @@
+tuning_icons_size = { 512,512 }
+tuning_icons = {
+
+--// 1 is used, 2 is regular, 3 is racing
+
+	flywheel_1 = {  0, 0, 79, 68 },
+	flywheel_2 = {  79, 0, 79, 68 },
+	flywheel_3 = {  158, 0, 79, 68 },
+	shocks_1 = {  237, 0, 79, 68 },
+	shocks_2 = {  316, 0, 79, 68 },
+	shocks_3 = {  395, 0, 79, 68 },
+
+	filterkit = {  0, 68, 79, 68 },
+	carburator_intakemanifold_1 = {  79, 68, 79, 68 },
+	carburator_intakemanifold_2 = {  158, 68, 79, 68 },
+	carburator_intakemanifold_3 = {  237, 68, 79, 68 },
+	turbo = {  316, 68, 79, 68 },
+	supercharger = {  395, 68, 79, 68 },
+
+	bodyupgrade_1 = {  0, 136, 79, 68 },
+	bodyupgrade_2 = {79, 136, 79, 68 },
+	bodyupgrade_3 = {158, 136, 79, 68 },
+	tires_1 = { 237, 136, 79, 68 },
+	tires_2 = {316, 136, 79, 68 },
+	tires_3 = {395, 136, 79, 68 },
+
+	clutch_1 = {0, 204, 79, 68 },
+	clutch_2 = {79, 204, 79, 68 },
+	clutch_3 = {158, 204, 79, 68 },
+--//	circle = {237, 204, 79, 68 },
+--//	brakes_2 = {316, 204,  79, 68 },
+--//	brakes_3 = {395, 204, 79, 68 },
+
+	tuningkit_1 = { 0, 272, 79, 68 },
+	tuningkit_2 = { 79, 272, 79, 68 },
+	tuningkit_3 = { 158, 272, 79, 68 },
+	portpolish = { 237, 272, 79, 68 },
+	enginebalancing = { 316, 272, 79, 68 },
+--//	blank = { 395, 272, 79, 68 },
+
+	transmission_1 = { 0, 340, 79, 68 },
+	transmission_2 = { 79, 340, 79, 68 },
+	transmission_3 = { 158, 340, 79, 68 },
+	exhaust_1 = { 237, 340, 79, 68 },
+	exhaust_2 = { 316, 340, 79, 68 },
+	exhaust_3 = { 395, 340, 79, 68 },
+
+	exhaustmanifold_1 = { 0, 408, 79, 68 },
+	exhaustmanifold_2 = {79, 408, 79, 68 },
+	exhaustmanifold_3 = { 158, 408, 79, 68 },
+--//	blank = { 237, 408, 79, 68 },
+--//	blank = { 316, 408, 79, 68 },
+
+
+
+}

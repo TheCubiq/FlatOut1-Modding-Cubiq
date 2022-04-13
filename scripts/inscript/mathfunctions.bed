@@ -1,0 +1,21 @@
+function floor(n)
+    return math.floor(n)
+end
+
+function getn(t)
+    return table.getn(t)
+end
+
+function mod(n)
+    return math.mod(n)
+end
+
+function abs(n)
+    return math.abs(n)
+end
+
+function table.foreach(t,func)
+    for i,v in pairs(t) do
+        func(i,v)
+    end
+end

@@ -1,0 +1,17 @@
+
+smashysmash_size = { 256,256 }
+smashysmash = {
+	
+	balk = {  114, 0, 112, 42 },
+
+	bonus_accessory = {  0, 0, 56, 55 },
+	bonus_fence = {  57, 0, 56, 55 },
+	bonus_machinery = {  0, 57, 56, 55 },
+	bonus_nature = {  57, 57, 57, 55 },
+	bonus_roadblock = {  114, 57, 56, 55 },
+	bonus_signs = {  171, 57, 56, 55 },
+	bonus_structure = {  0, 113, 56, 55 },
+	bonus_tire = {  57, 113, 56, 55 },
+
+
+}

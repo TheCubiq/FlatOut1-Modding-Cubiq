@@ -1,0 +1,443 @@
+--///////////////////////////////////////////////////////////////////////////
+--// GameFlow.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2003 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// @date 7.2.2003 11:00:53
+--// 
+--// @Author Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+YES = 1
+NO = 0
+
+function LOG(...)
+	local s=string.format(unpack(arg))
+	host.LOG(s)
+end
+
+function MakeTime(min,sec)
+	return min*1000*60 + sec*1000;
+end
+
+dofile("data/scripts/Levels.bed");
+dofile("data/scripts/main.bed");
+
+
+---winnings for race completion per position
+
+
+---Winnings = {
+---	[1] = 3000
+---	[2] = 2000
+---	[3] = 1000
+---	[4] = 0
+---}
+
+function LevelCompleted(currentLevel,position)
+
+
+	local level=Levels[currentLevel];
+	local unlocked=0;
+	local bonuslevels=0;
+
+	LOG(format("GameFlow::LevelCompleted(%d,%d)",currentLevel,position));
+
+	local racetime = FinalRaceTime or -1;
+
+	CompletedLevel = {}
+
+	--adjust position if bonuslevel and did not finish in time
+	if currentLevel > 16 then
+		if racetime > 0 and racetime < level.Timelimit then
+			position=1;
+		else
+			position=4;
+			level.Failed = YES;
+		end
+	end
+
+	if position < 4 and position > 0 then
+--------------		if level ~= nil then
+
+			if level.Completed == NO or level.Completed > position then
+				CompletedLevel.PreviousPosition = level.Completed;
+				level.Completed = position;
+			end
+			----level.Failed = NO;
+
+	--unlock levels
+			local unlocks=level.UnlockLevels;
+
+			if unlocks ~= nil then
+				local i;
+				for i=1,getn(unlocks) do
+
+					LOG(format("GameFlow::Unlocking level %d",unlocks[i]));
+										
+					local l=Levels[unlocks[i]];
+					if l.Locked == YES then
+						l.Locked=NO;
+						l.Completed=NO;
+						l.Failed=NO;
+						unlocked = unlocked + 1;
+					end
+				end
+			end
+			bonuslevels=CheckBonusLevels(currentLevel);
+	--check for bonus levels
+-------------------		end
+	end
+	
+	if position > 3 then
+			---level.Failed = YES;
+			if level.Completed == 0 or level.Completed > position then
+				level.Completed = position;
+			end
+	end
+
+	local winnings=level.Winnings or Winnings;
+----	if position ~= nil then
+----		if position > 0 then
+----			local money=GetPlayerMoney()-level.Price;
+----			SetPlayerMoney(money+winnings[position]);
+----		end
+----	end
+
+
+	CompletedLevel.Level = currentLevel;
+	CompletedLevel.Position = position;
+	CompletedLevel.Winnings = winnings[position] or 0;
+	CompletedLevel.Price = level.Price;
+	CompletedLevel.UnlockedLevels=unlocked;
+	CompletedLevel.BonusLevels=bonuslevels;
+	CompletedLevel.Racetime=racetime;
+
+	FinalRaceTime=nil;
+
+------	tabledump(HighScores);
+
+	return unlocked,bonuslevels;
+end
+
+
+function CheckBonusLevels(currentLevel)
+
+	local level=Levels[currentLevel];
+	local retvalue=0;
+
+	local bonuslevel; ---=level.BonusLevel+16;
+	LOG(format("checking bonuslevels, current level %d",currentLevel));
+
+-----	if level.BonusLevel ~= nil then
+		for bonuslevel=17,22 do
+
+			if Levels[bonuslevel].Locked ~= NO then 
+				local levelsRequired=Levels[bonuslevel].RequiresLevels;
+				local i;
+				local isOk=1;
+				for i=1,getn(levelsRequired) do
+					if Levels[levelsRequired[i]].Completed == NO or Levels[levelsRequired[i]].Failed == YES then
+						isOk=0;
+						LOG(format("bonuslevel %d not ok",bonuslevel));
+					end
+				end
+			
+				if isOk == 1 then
+					LOG("GameFlow::Bonuslevel \""..Levels[bonuslevel].Name.."\" unlocked!");
+					Levels[bonuslevel].Locked=NO;
+					Levels[bonuslevel].Completed = NO;
+					Levels[bonuslevel].Failed = NO;
+					retvalue=retvalue + 1;
+				end
+			end
+
+		end
+
+	
+	return retvalue;
+end
+
+
+function GetLevelSettings(levelNum)
+
+	local level=Levels[levelNum];
+
+	local players=4;
+	local laps=3;
+
+	if levelNum > 16 then
+		players=1;
+		laps=1;
+	end
+
+	
+	local tracknum=levelNum;
+
+	local name=level.Name;
+
+	return players,laps,tracknum,name;
+end
+
+
+
+
+--stores level completion info to highscoretable
+function SavePlayerData()
+	local i;
+
+	SaveData.PlayerName=GetPlayerName();
+	SaveData.CarId=GetPlayerCar();
+	SaveData.Money=GetPlayerMoney();
+	SaveData.Equipment=GetPlayerInventory(PLAYERID)
+	
+	SaveData.SelectedLevel=SelectedLevel or 0;
+
+	for i=1,getn(Levels) do
+		SaveData.Levels[i]={}
+		SaveData.Levels[i].Completed = Levels[i].Completed;
+		SaveData.Levels[i].Failed = Levels[i].Failed
+		SaveData.Levels[i].Locked = Levels[i].Locked;
+		SaveData.Levels[i].Winnings = Levels[i].Winnings;
+	end
+
+
+end
+
+--retrieves level completion info from highscoretable
+function LoadPlayerData()
+	local i;
+
+	SetPlayerName(SaveData.PlayerName);
+	SetPlayerCar(SaveData.CarId);
+	SetPlayerMoney(SaveData.Money);
+
+	LOG("Load savegame player: "..SaveData.PlayerName.." CarId: "..tostring(SaveData.CarId));
+
+	dofile("data/Scripts/Levels.bed");
+
+	for i=1,getn(SaveData.Levels) do
+
+		
+------		if SaveData.Levels[i].Completed ~= NO then
+------			LevelCompleted(i,SaveData.Levels[i].Completed);
+------		end
+		Levels[i].Locked=SaveData.Levels[i].Locked;
+		Levels[i].Completed=SaveData.Levels[i].Completed;
+		Levels[i].Failed=SaveData.Levels[i].Failed;
+		if SaveData.Levels[i].Winnings ~= nil then
+			Levels[i].Winnings=SaveData.Levels[i].Winnings;
+		end
+	end
+
+------	if SaveData.BonusLevels ~= nil then
+------		for i=1,getn(SaveData.BonusLevels) do
+------			BonusLevels[SaveData.BonusLevels[i]].Completed = YES;
+------		end
+------	end
+
+--------------------------------	Levels[17].Locked=NO;
+
+	CompletedLevel = nil;
+	GameRunning=TRUE;
+end
+
+function FinishLoad()
+	if SaveData.SelectedLevel ~= nil and SaveData.SelectedLevel > 0 then
+		SelectedLevel=SaveData.SelectedLevel;
+
+----		if Levels[SelectedLevel].Completed == 0 then
+----			RaceLevel(SelectedLevel);
+----		end
+	end
+end
+
+function LoadEquipment()
+--	tabledump(SaveData.Equipment);
+	SetPlayerInventory(PLAYERID,SaveData.Equipment);
+	SetVisiblePart(SaveData.Equipment["ENGINE"].Name);
+	SetVisiblePart(SaveData.Equipment["SUSPENSION"].Name);
+	SetVisiblePart(SaveData.Equipment["GEARBOX"].Name);
+	SetVisiblePart(SaveData.Equipment["TIRES"].Name);
+end
+
+function UpdateHighscores(name,car,time)
+	
+	local level=GameFlow.GetCurrentLevel();
+	FinalRaceTime=time;
+
+	if level > 0 and level < getn(HighScores) then
+			local i;
+			for i=1,getn(HighScores[level]) do
+				if time < HighScores[level][i].Time or HighScores[level][i].Time == 0 then
+					HighScores[level][i].Name=name;
+					HighScores[level][i].Car=car;
+					HighScores[level][i].Time=time;
+
+					return		
+				end
+			end
+	end
+--	tabledump(HighScores);
+end
+
+
+-------------------------------------------------------------------------
+-- savedata template 
+-------------------------------------------------------------------------
+SaveData = {
+	PlayerName = "",
+	CarId = 0,
+	Money = 0,
+	SelectedLevel = 0,
+	Equipment = {},
+	Trophys = {},
+	Levels = {
+		{ Completed = NO, Failed = NO },
+		{ Completed = NO, Failed = NO },
+		{ Completed = NO, Failed = NO },
+		{ Completed = NO, Failed = NO },
+		{ Completed = NO, Failed = NO },
+		{ Completed = NO, Failed = NO },
+		{ Completed = NO, Failed = NO },
+		{ Completed = NO, Failed = NO },
+		{ Completed = NO, Failed = NO },
+		{ Completed = NO, Failed = NO },
+		{ Completed = NO, Failed = NO },
+		{ Completed = NO, Failed = NO },
+		{ Completed = NO, Failed = NO },
+		{ Completed = NO, Failed = NO },
+		{ Completed = NO, Failed = NO },
+		{ Completed = NO, Failed = NO },
+		{ Completed = NO, Failed = NO },
+		{ Completed = NO, Failed = NO },
+		{ Completed = NO, Failed = NO },
+		{ Completed = NO, Failed = NO },
+		{ Completed = NO, Failed = NO },
+		{ Completed = NO, Failed = NO },
+	},
+	BonusLevels = {},
+}
+
+-------------------------------------------------------------------------
+--highscoredata template
+-------------------------------------------------------------------------
+HighScores = {
+	[1] = { 	
+			[1] = { Name="", Car=0, Time=0	},
+			[2] = { Name="", Car=0, Time=0	},
+			[3] = { Name="", Car=0, Time=0	},
+	},
+	[2] = { 	
+			[1] = { Name="", Car=0, Time=0	},
+			[2] = { Name="", Car=0, Time=0	},
+			[3] = { Name="", Car=0, Time=0	},
+	},
+	[3] = { 	
+			[1] = { Name="", Car=0, Time=0	},
+			[2] = { Name="", Car=0, Time=0	},
+			[3] = { Name="", Car=0, Time=0	},
+	},
+	[4] = { 	
+			[1] = { Name="", Car=0, Time=0	},
+			[2] = { Name="", Car=0, Time=0	},
+			[3] = { Name="", Car=0, Time=0	},
+	},
+	[5] = { 	
+			[1] = { Name="", Car=0, Time=0	},
+			[2] = { Name="", Car=0, Time=0	},
+			[3] = { Name="", Car=0, Time=0	},
+	},
+	[6] = { 	
+			[1] = { Name="", Car=0, Time=0	},
+			[2] = { Name="", Car=0, Time=0	},
+			[3] = { Name="", Car=0, Time=0	},
+	},
+	[7] = { 	
+			[1] = { Name="", Car=0, Time=0	},
+			[2] = { Name="", Car=0, Time=0	},
+			[3] = { Name="", Car=0, Time=0	},
+	},
+	[8] = { 	
+			[1] = { Name="", Car=0, Time=0	},
+			[2] = { Name="", Car=0, Time=0	},
+			[3] = { Name="", Car=0, Time=0	},
+	},
+	[9] = { 	
+			[1] = { Name="", Car=0, Time=0	},
+			[2] = { Name="", Car=0, Time=0	},
+			[3] = { Name="", Car=0, Time=0	},
+	},
+	[10] = { 	
+			[1] = { Name="", Car=0, Time=0	},
+			[2] = { Name="", Car=0, Time=0	},
+			[3] = { Name="", Car=0, Time=0	},
+	},
+	[11] = { 	
+			[1] = { Name="", Car=0, Time=0	},
+			[2] = { Name="", Car=0, Time=0	},
+			[3] = { Name="", Car=0, Time=0	},
+	},
+	[12] = { 	
+			[1] = { Name="", Car=0, Time=0	},
+			[2] = { Name="", Car=0, Time=0	},
+			[3] = { Name="", Car=0, Time=0	},
+	},
+	[13] = { 	
+			[1] = { Name="", Car=0, Time=0	},
+			[2] = { Name="", Car=0, Time=0	},
+			[3] = { Name="", Car=0, Time=0	},
+	},
+	[14] = { 	
+			[1] = { Name="", Car=0, Time=0	},
+			[2] = { Name="", Car=0, Time=0	},
+			[3] = { Name="", Car=0, Time=0	},
+	},
+	[15] = { 	
+			[1] = { Name="", Car=0, Time=0	},
+			[2] = { Name="", Car=0, Time=0	},
+			[3] = { Name="", Car=0, Time=0	},
+	},
+	[16] = { 	
+			[1] = { Name="", Car=0, Time=0	},
+			[2] = { Name="", Car=0, Time=0	},
+			[3] = { Name="", Car=0, Time=0	},
+	},
+	[17] = { 	
+			[1] = { Name="", Car=0, Time=0	},
+			[2] = { Name="", Car=0, Time=0	},
+			[3] = { Name="", Car=0, Time=0	},
+	},
+	[18] = { 	
+			[1] = { Name="", Car=0, Time=0	},
+			[2] = { Name="", Car=0, Time=0	},
+			[3] = { Name="", Car=0, Time=0	},
+	},
+	[19] = { 	
+			[1] = { Name="", Car=0, Time=0	},
+			[2] = { Name="", Car=0, Time=0	},
+			[3] = { Name="", Car=0, Time=0	},
+	},
+	[20] = { 	
+			[1] = { Name="", Car=0, Time=0	},
+			[2] = { Name="", Car=0, Time=0	},
+			[3] = { Name="", Car=0, Time=0	},
+	},
+	[21] = { 	
+			[1] = { Name="", Car=0, Time=0	},
+			[2] = { Name="", Car=0, Time=0	},
+			[3] = { Name="", Car=0, Time=0	},
+	},
+	[22] = { 	
+			[1] = { Name="", Car=0, Time=0	},
+			[2] = { Name="", Car=0, Time=0	},
+			[3] = { Name="", Car=0, Time=0	},
+	},
+
+}
+	
+
+
+
+

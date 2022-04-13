@@ -1,0 +1,8 @@
+-- texturemap
+MapTexture		= "data/tracks/town/textures/map_town3C.tga"
+-- mapped world area
+WorldTopLeft	= { -486.2,506.6}
+WorldBottomRight	= { 526.8,-506.0 }
+-- screen position & size ( in 640x480 )
+ScreenPos		= { 32.0, 336.0 }
+ScreenSize		= {128.0, 128.0 }

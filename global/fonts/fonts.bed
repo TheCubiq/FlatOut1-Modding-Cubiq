@@ -1,0 +1,60 @@
+--///////////////////////////////////////////////////////////////////////////
+--// Fonts.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2003 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// @date 2.5.2003 12:34:16
+--// 
+--// @Author Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+--datapath for fonts
+Fonts = {
+	DataPath = "data/global/Fonts/",
+}
+
+
+
+Fonts.Ingame10 = {
+	Texture = Fonts.DataPath.."regular_10.tga",
+	Data = Fonts.DataPath.."regular_10.abc",
+}
+
+Fonts.Ingame12 = {
+	Texture = Fonts.DataPath.."condensed_12.tga",
+	Data = Fonts.DataPath.."condensed_12.abc",
+}
+
+Fonts.Ingame14 = {
+	Texture = Fonts.DataPath.."italic_14.tga",
+	Data = Fonts.DataPath.."italic_14.abc",
+}
+
+Fonts.Ingame18 = {
+	Texture = Fonts.DataPath.."regular_18.tga",
+	Data = Fonts.DataPath.."regular_18.abc",
+}
+
+Fonts.Ingame20 = {
+	Texture = Fonts.DataPath.."regular_20.tga",
+	Data = Fonts.DataPath.."regular_20.abc",
+}
+
+
+Fonts.Ingame24 = {
+	Texture = Fonts.DataPath.."italic_24.tga",
+	Data = Fonts.DataPath.."italic_24.abc",
+}
+
+Fonts.Ingame36 = {
+	Texture = Fonts.DataPath.."italic_36.tga",
+	Data = Fonts.DataPath.."italic_36.abc",
+}
+
+Fonts.Title14 = {
+	Texture = Fonts.DataPath.."navigation.tga",
+	Data = Fonts.DataPath.."navigation.abc",
+}
+
+

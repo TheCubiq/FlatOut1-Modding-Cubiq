@@ -1,0 +1,32 @@
+--defaults.bed
+
+BODY = {"Car","Body","DefaultBody"}
+ENGINE1 = {"Car","Engine","DefaultEngine1"}
+ENGINE2 = {"Car","Engine","DefaultEngine2"}
+ENGINE3 = {"Car","Engine","DefaultEngine3"}
+ENGINE4 = {"Car","Engine","DefaultEngine4"}
+GEARBOX1 = {"Car","Gearbox","DefaultGearbox1"}
+GEARBOX2 = {"Car","Gearbox","DefaultGearbox2"}
+GEARBOX3 = {"Car","Gearbox","DefaultGearbox3"}
+GEARBOX4 = {"Car","Gearbox","DefaultGearbox4"}
+SUSPENSION1 = {"Car","Suspension","DefaultSuspension1"}
+SUSPENSION2 = {"Car","Suspension","DefaultSuspension2"}
+SUSPENSION3 = {"Car","Suspension","DefaultSuspension3"}
+SUSPENSION4 = {"Car","Suspension","DefaultSuspension4"}
+TIRE1 = {"Car","Tires","DefaultTire1"}
+TIRE2 = {"Car","Tires","DefaultTire2"}
+TIRE3 = {"Car","Tires","DefaultTire3"}
+TIRE4 = {"Car","Tires","DefaultTire4"}
+
+
+function GetDefaults(setting)
+
+	local global=_G or globals();
+	
+		
+	if global[setting[1]][setting[2]][setting[3]] == nil then
+		LOG("EquipmentManager::GetDefaults cannot find part \""..tostring(setting[1]).."."..tostring(setting[2]).."."..tostring(setting[3]).."\"");
+		return nil;
+	end
+	return global[setting[1]][setting[2]][setting[3]].Settings;
+end

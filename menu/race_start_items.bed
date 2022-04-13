@@ -1,0 +1,13 @@
+
+race_start_items_size = { 256,256 }
+race_start_items = {
+	
+	start_one = {  0, 0, 29, 50 },
+	start_two = {  30, 0, 56, 50 },
+	start_three = {  86, 0, 57, 50 },
+	go = {  143, 0, 114, 50 },
+
+	finish = {  0, 62, 256, 93 },
+	finish_blur = {  0, 157, 256, 93 },
+
+}

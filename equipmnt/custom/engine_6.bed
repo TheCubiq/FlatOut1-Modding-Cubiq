@@ -1,0 +1,83 @@
+
+----#  Engine settings for car6 (Fasthammer) 
+Car.Engine.Car6_1 = {
+
+	--# --------------------------------------------------------------------
+	----#  Default Engine Settings
+	--# --------------------------------------------------------------------
+	
+	Name 			= 	"Fasthammer",
+	Price  			= 	10,
+	
+	Mesh			=	1,
+	
+	Settings = {
+	
+		----#  Car mass = body mass + engine mass
+		Mass			=	200,
+		-- turbo acceleration in G's
+		TurboAcceleration		=	0.20, 	
+		-- nitro acceleration in G's
+		NitroAcceleration		=	1.20,
+		-- storage for nitro in seconds
+		NitroStorage		=	5.00,
+		
+		----#  --- Differential ---
+		----#  Locking system: 0 = spool differential, 1 = open differential
+		DifferentialLock		=	0.15,	
+		DifferentialBias		=	1.0,
+	
+		InertiaEngine		=	0.12,	
+		InertiaDriveShaft		=	0.06,	
+		EngineFriction		=	0.055,	
+
+		----#  Engine
+		IdleRpm			=	950.0,	
+	
+		TorqueMax              		=      	206.0,	 
+		TorqueCurveParams		=	17,
+
+		-- peak at 2400	
+		Torque00		=	{500,	0.246},
+		Torque01		=	{1000,	0.523},
+		Torque02		=	{1500,	0.793},
+		Torque03		=	{2000,	0.933},
+		Torque04		=	{2500,	1.000},
+		Torque05		=	{3000,	0.986},
+		Torque06		=	{3500,	0.933},
+		Torque07		=	{4000,	0.860},
+		Torque08		=	{4500,	0.777},
+		Torque09		=	{5000,	0.690},
+		Torque10		=	{5500,	0.604},
+		Torque11		=	{6000,	0.523},
+		Torque12		=	{6500,	0.451},
+		Torque13		=	{7000,	0.378},
+		Torque14		=	{7500,	0.200},
+		Torque15		=	{8000,	0.000},
+		Torque16		=	{8500,	0.000},
+		Torque17		=	{9000,	0.000},
+		Torque18		=	{9500,	0.000},
+		Torque19		=	{10000,	0.000},
+	
+		----#  ---- EXHAUST VISUALS ----
+		ExhaustPeakRpm		=	3000,
+
+		----#  --- HORSEPOWER VISUAL ---
+		Horsepower		= 	208.0,	--# 149.0 	
+
+	},
+
+
+	MaxSettings = {
+
+		TurboAcceleration		=	0.50,	 			 
+		InertiaEngine		=	0.10,	
+		InertiaDriveShaft		=	0.048,	
+		EngineFriction		=	0.039,	
+		TorqueMax             		=     	296.0,
+		Horsepower		= 	290.0,
+
+	},
+	
+}   ----# --# ----#  ENGINE1 END
+

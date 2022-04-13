@@ -1,0 +1,42 @@
+
+Car.Gearbox.Car12_1 = {
+	Settings = {
+			
+		ClutchReleaseTime	=	0.10,	
+		GearShiftTime	=	0.08,	
+		ClutchEngageTime	=	0.15,		
+		ClutchTorque	= 	224.0,	--# 2 * engine torque
+
+		NumGears		=	4,
+		GearRRatio	=	{1.05, -6.0, 0.95},
+		GearRInertia	=	0.1,		
+		Gear1Ratio	=	{1.10, 4.0, 0.90},
+		Gear1Inertia	=	0.08,		
+		Gear2Ratio	=	{1.15, 2.0, 0.85},
+		Gear2Inertia	=	0.07,		
+		Gear3Ratio	=	{1.15, 1.4, 0.85},
+		Gear3Inertia	=	0.06,		
+		Gear4Ratio	=	{1.15, 1.0, 0.85},
+		Gear4Inertia	=	0.05,
+		Gear5Ratio	=	{1.0, 1.0, 1.0},
+		Gear5Inertia	=	0.04,
+		Gear6Ratio	=	{1.0, 1.0, 1.0},
+		Gear6Inertia	=	1.0,
+	
+		----#  (multiplier for short ratio, gear ratio (default), multiplier for long ratio )
+		EndRatio		=	4.1,
+	
+	},
+
+	MaxSettings = {
+			
+		ClutchReleaseTime	=	0.08,	
+		GearShiftTime	=	0.06,	
+		ClutchEngageTime	=	0.12,		
+		ClutchTorque	= 	224.0,	--# 2 * engine torque
+
+		EndRatio		=	4.92,
+	
+	},
+	
+}  ----# --# ----#  GEARBOX1 END

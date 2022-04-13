@@ -1,0 +1,12 @@
+
+track_material_size = { 512,512 }
+
+track_material = {
+	
+	rata_1 = {  0, 0, 143, 115 },
+	rata_2 = {  144, 0, 143, 115 },
+	rata_3 = {  290, 0, 143, 115 },
+
+	info_ikkuna = {  0, 122, 256, 264 },
+
+}

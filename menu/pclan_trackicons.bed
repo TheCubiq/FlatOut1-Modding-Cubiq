@@ -1,0 +1,13 @@
+
+pclan_trackicons_size = { 128,64 }
+pclan_trackicons = {
+
+	tracktype_arena = {  0, 0, 24, 24 },
+	tracktype_winter = {  24, 0, 24, 24 },
+	tracktype_town = { 48, 0, 24, 24 },
+	tracktype_derby = { 72, 0, 24, 24 },
+	tracktype_forest =  { 0, 24, 24, 24 },
+	tracktype_pit = { 24, 24, 24, 24 },
+	tracktype_racing = {  48, 24, 24, 24 },
+
+}

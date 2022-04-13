@@ -1,0 +1,36 @@
+--///////////////////////////////////////////////////////////////////////////
+--// Purchase.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2003 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// @date 22.5.2003 10:48:59
+--// 
+--// @Author Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+
+currentCurrencySign = "$"
+
+
+function Purchase(value,action,itemname)
+	local selection=nil;
+
+	if GetPlayerMoney() < value then
+		if ConfirmDialog("You don't have enough money to",strlower(action).." "..itemname) ~= nil then
+			return FALSE;
+		end
+	else
+		selection=ConfirmDialog(format("%s costs %s%d",action,currentCurrencySign,value),"Do you want to "..strlower(action).." "..itemname.."?");
+		if selection == TRUE then
+			SetPlayerMoney(GetPlayerMoney()-value);
+			if Money ~= nil then
+				Money:SetMoney(GetPlayerMoney());
+			end
+			return TRUE;
+		end
+	end
+	return selection;
+
+end
+

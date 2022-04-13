@@ -1,0 +1,14 @@
+
+Car.Engine.Car2Engine1 = {
+
+	Name 			= 	"7.2l V8",
+	Price  			= 	1000,
+	RepairPrice		=       	500,    --repair price if 100% damage
+	UpgradeLevel		= 	1,
+	Mesh			=	2,
+	Sound			=	"engine_2_0.bed",
+	Settings			=	Car.Engine.Car2_1.Settings,
+	MaxSettings		=	Car.Engine.Car2_1.MaxSettings,
+
+}   ----# --# ----#  ENGINE1 END
+

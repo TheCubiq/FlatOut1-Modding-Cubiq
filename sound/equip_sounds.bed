@@ -1,0 +1,12 @@
+
+-- Nitro sounds
+Nitro = {
+	ShotSample 		= "gearshift/nitro_on.wav",
+	LoopSample		= "gearshift/nitro_loop.wav",
+	ShotMinDistance	= 25.0,	--# 5.0
+	LoopMinDistance	= 25.0,	--# 5.0
+	ShotGain		= 1.0,			--# 0.5
+	LoopGain		= 1.0,
+	Delay				= 2500,			--# 800
+}
+

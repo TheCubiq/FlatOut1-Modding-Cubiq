@@ -1,0 +1,14 @@
+keyboard_size = { 512,128 }
+keyboard = {
+	
+	nappi_HL = {  2, 1, 30, 30 },
+	nappi = {  2, 32, 30, 30 },
+	isonappi_HL = {  37, 1, 126, 30 },
+	isonappi = {  37, 32, 126, 30 },
+	spacebar_HL = {  1, 63, 319, 30 },
+	spacebar = {  1, 94, 319, 30 },
+	nuolinappi_HL = {  168, 1, 63, 30 },
+	nuolinappi = {  168, 32, 63, 30 },
+	nimi = {  234, 2, 153 , 30 },
+
+}

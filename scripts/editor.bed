@@ -1,0 +1,90 @@
+--///////////////////////////////////////////////////////////////////////////
+--// Editor.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2003 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// Created on 27.8.2003 15:59:04
+--// 
+--// @Author: Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+
+-- MODULE STRUCTURE
+--module = {
+--	Name = "Module",   --name of the module. for example, "Statistics"
+--	
+--	main = function(init) end, -- module main function (init is true when called first time, else nil)	
+--	
+--}
+
+
+
+
+
+Editor.Modules={}
+Editor.Threads={}
+
+
+function Editor.Init()
+	host.CreateThread("Editor",Editor.Execute)
+end
+
+function Editor.Deinit()
+	host.DestroyThread("Editor")
+	Editor.Threads=nil
+	collectgarbage()
+end
+
+function Editor.AddModule(module)   --module table
+	if Editor.Modules[module.Name] then LOG("module %s already added",module.Name) return end
+	
+	LOG("Editor::Adding module %s",module.Name)
+	
+	if not module.main then LOG("module %s has no main function",module.Name) return end
+		
+	Editor.Modules[module.Name]=module	
+	
+	local thread=coroutine.create(module.main)
+
+	coroutine.resume(thread,true)
+	
+	Editor.Threads[module.Name]=thread
+
+end
+
+function Editor.RemoveModule(modulename) --module name
+	
+	if Editor.Modules[modulename] then
+		Editor.Modules[modulename]=nil
+	end
+	if Editor.Threads[modulename] then
+		Editor.Threads[modulename]=nil
+	end
+	collectgarbage()
+end
+
+function Editor.Execute(init)
+	local k,v
+	
+	if init then 
+		LOG("Editor::Thread created.")	
+		coroutine.yield() 
+	end
+	
+	while true do
+		for k,v in pairs(Editor.Threads) do
+			coroutine.resume(v)
+			
+			if coroutine.status(v) == "dead" then
+				LOG("Editor thread %s is dead. removing",k)
+				Editor.Threads[k]=nil
+			end
+		end
+		
+		coroutine.yield()
+	end
+end
+
+
+

@@ -1,0 +1,369 @@
+--SURFACESOUND_MUD			= 1
+--SURFACESOUND_WETMUD			= 2
+--SURFACESOUND_SAND			= 3
+--SURFACESOUND_GRAVEL			= 4
+--SURFACESOUND_TARMAC			= 5
+--SURFACESOUND_TARMAC_WET		= 6
+--SURFACESOUND_GRASS			= 7
+--SURFACESOUND_SNOW			= 8
+--SURFACESOUND_SNOW_DEEP		= 9
+--SURFACESOUND_ROCK			= 10
+--SURFACESOUND_WATER_LOW		= 11
+--SURFACESOUND_WATER_HIGH		= 12
+--SURFACESOUND_ICE			= 13
+
+MinDistance = 4.0
+
+-- Pitching
+-- Nominal pitch [m/s] ie. sample recorded at this speed
+NominalPitch	= 20.00
+-- Scale: ie. how fast pitch is scaled (compared to real live) < 1 = slower, > 1 faster
+PitchScale	= 0.25
+-- Pitching limits 0.5 = half pitch etc.
+MinPitch	= 0.50
+MaxPitch	= 2.00			
+
+
+Samples = {
+	-- Dry Mud
+	[1] = {
+		-- Rolling sound
+		Roll = "Surface/tyres_mud_roll.wav",
+		-- Skidding sound
+		Slide = "Surface/tyres_mud_skid.wav",
+		-- smoothing
+		Smooth = 0.20,
+		VolumeFader = {
+		
+			FadeStart	= 3.00,
+			FadeEnd		= 20.00	
+		},
+	
+		-- Crossfade between samples (units in [m/s])
+		SlideXFader = {
+			-- fade start [m/s] for sliding
+			FadeStart	= 5.00,	
+			-- fade end [m/s] for sliding (after that it's 100% slide sound)
+			FadeEnd		= 10.00,
+			-- Volume for rolling
+			GainRoll	= 0.40,
+			-- Volume for sliding
+			GainSlide	= 1.00,
+		}		
+	},
+	-- Wet Mud
+	[2] = {
+		-- Rolling sound
+		Roll = "Surface/tyres_mud_roll.wav",
+		-- Skidding sound
+		Slide = "Surface/tyres_mud_skid.wav",
+		-- smoothing
+		Smooth = 0.20,
+		VolumeFader = {
+		
+			FadeStart	= 3.00,
+			FadeEnd		= 20.00	
+		},
+	
+		-- Crossfade between samples (units in [m/s])
+		SlideXFader = {
+			-- fade start [m/s] for sliding
+			FadeStart	= 5.00,	
+			-- fade end [m/s] for sliding (after that it's 100% slide sound)
+			FadeEnd		= 10.00,
+			-- Volume for rolling
+			GainRoll	= 0.75,
+			-- Volume for sliding
+			GainSlide	= 1.00,
+		}		
+	},
+	-- Sand
+	[3] = {
+		-- Rolling sound
+		Roll = "Surface/tyres_sand_roll.wav",
+		-- Skidding sound
+		Slide = "Surface/tyres_sand_skid.wav",
+		-- smoothing
+		Smooth = 0.20,
+		VolumeFader = {
+		
+			FadeStart	= 3.00,
+			FadeEnd		= 20.00	
+		},
+	
+		-- Crossfade between samples (units in [m/s])
+		SlideXFader = {
+			-- fade start [m/s] for sliding
+			FadeStart	= 5.00,	
+			-- fade end [m/s] for sliding (after that it's 100% slide sound)
+			FadeEnd		= 10.00,
+			-- Volume for rolling
+			GainRoll	= 0.75,
+			-- Volume for sliding
+			GainSlide	= 1.00,
+		}		
+	},
+	-- Gravel
+	[4] = {
+		-- Rolling sound
+		Roll = "Surface/tyres_gravel_roll_2.wav",
+		-- Skidding sound
+		Slide = "Surface/tyres_gravel_skid_2.wav",
+		-- smoothing
+		Smooth = 0.20,
+		VolumeFader = {
+		
+			FadeStart	= 3.00,
+			FadeEnd		= 20.00	
+		},
+	
+		-- Crossfade between samples (units in [m/s])
+		SlideXFader = {
+			-- fade start [m/s] for sliding
+			FadeStart	= 5.00,	
+			-- fade end [m/s] for sliding (after that it's 100% slide sound)
+			FadeEnd		= 10.00,
+			-- Volume for rolling
+			GainRoll	= 0.75,
+			-- Volume for sliding
+			GainSlide	= 1.00,
+		}		
+	},
+	-- Tarmac
+	[5] = {
+		-- Rolling sound
+		Roll = "Surface/tyres_tarmac_roll.wav",
+		-- Skidding sound
+		Slide = "Surface/tyres_tarmac_skid.wav",
+		-- smoothing
+		Smooth = 0.20,
+		VolumeFader = {
+		
+			FadeStart	= 3.00,
+			FadeEnd		= 20.00	
+		},
+	
+		-- Crossfade between samples (units in [m/s])
+		SlideXFader = {
+			-- fade start [m/s] for sliding
+			FadeStart	= 5.00,	
+			-- fade end [m/s] for sliding (after that it's 100% slide sound)
+			FadeEnd		= 10.00,
+			-- Volume for rolling
+			GainRoll	= 0.75,
+			-- Volume for sliding
+			GainSlide	= 0.9,
+		}		
+	},
+	-- Tarmac Wet
+	[6] = {
+		-- Rolling sound
+		Roll = "Surface/tyres_tarmac_roll.wav",
+		-- Skidding sound
+		Slide = "Surface/tyres_tarmac_skid.wav",
+		-- smoothing
+		Smooth = 0.20,
+		VolumeFader = {
+		
+			FadeStart	= 3.00,
+			FadeEnd		= 20.00	
+		},
+	
+		-- Crossfade between samples (units in [m/s])
+		SlideXFader = {
+			-- fade start [m/s] for sliding
+			FadeStart	= 5.00,	
+			-- fade end [m/s] for sliding (after that it's 100% slide sound)
+			FadeEnd		= 10.00,
+			-- Volume for rolling
+			GainRoll	= 0.75,
+			-- Volume for sliding
+			GainSlide	= 1.00,
+		}		
+	},
+	-- Grass
+	[7] = {
+		-- Rolling sound
+		Roll = "Surface/tyres_grass_roll.wav",
+		-- Skidding sound
+		Slide = "Surface/tyres_grass_skid.wav",
+		-- smoothing
+		Smooth = 0.20,
+		VolumeFader = {
+		
+			FadeStart	= 3.00,
+			FadeEnd		= 20.00	
+		},
+	
+		-- Crossfade between samples (units in [m/s])
+		SlideXFader = {
+			-- fade start [m/s] for sliding
+			FadeStart	= 5.00,	
+			-- fade end [m/s] for sliding (after that it's 100% slide sound)
+			FadeEnd		= 10.00,
+			-- Volume for rolling
+			GainRoll	= 0.75,
+			-- Volume for sliding
+			GainSlide	= 1.00,
+		}		
+	},
+	-- Snow
+	[8] = {
+		-- Rolling sound
+		Roll = "Surface/tyres_snow_roll_1.wav",
+		-- Skidding sound
+		Slide = "Surface/tyres_snow_skid_1.wav",
+		-- smoothing
+		Smooth = 0.20,
+		VolumeFader = {
+		
+			FadeStart	= 3.00,
+			FadeEnd		= 20.00	
+		},
+	
+		-- Crossfade between samples (units in [m/s])
+		SlideXFader = {
+			-- fade start [m/s] for sliding
+			FadeStart	= 5.00,	
+			-- fade end [m/s] for sliding (after that it's 100% slide sound)
+			FadeEnd		= 10.00,
+			-- Volume for rolling
+			GainRoll	= 0.75,
+			-- Volume for sliding
+			GainSlide	= 1.00,
+		}		
+	},	
+	-- Snow Deep
+	[9] = {
+		-- Rolling sound
+		Roll = "Surface/tyres_snowdeep_roll_2.wav",
+		-- Skidding sound
+		Slide = "Surface/tyres_snowdeep_skid_2.wav",
+		-- smoothing
+		Smooth = 0.20,
+		VolumeFader = {
+		
+			FadeStart	= 3.00,
+			FadeEnd		= 20.00	
+		},
+	
+		-- Crossfade between samples (units in [m/s])
+		SlideXFader = {
+			-- fade start [m/s] for sliding
+			FadeStart	= 5.00,	
+			-- fade end [m/s] for sliding (after that it's 100% slide sound)
+			FadeEnd		= 10.00,
+			-- Volume for rolling
+			GainRoll	= 0.75,
+			-- Volume for sliding
+			GainSlide	= 1.00,
+		}		
+	},	
+	-- Rock
+	[10] = {
+		-- Rolling sound
+		Roll = "Surface/tyres_rock_roll.wav",
+		-- Skidding sound
+		Slide = "Surface/tyres_rock_skid.wav",
+		-- smoothing
+		Smooth = 0.20,
+		VolumeFader = {
+		
+			FadeStart	= 3.00,
+			FadeEnd		= 20.00	
+		},
+	
+		-- Crossfade between samples (units in [m/s])
+		SlideXFader = {
+			-- fade start [m/s] for sliding
+			FadeStart	= 5.00,	
+			-- fade end [m/s] for sliding (after that it's 100% slide sound)
+			FadeEnd		= 10.00,
+			-- Volume for rolling
+			GainRoll	= 0.75,
+			-- Volume for sliding
+			GainSlide	= 1.00,
+		}		
+	},	
+	-- Water Low
+	[11] = {
+		-- Rolling sound
+		Roll = "Surface/tyres_waterlow_roll.wav",
+		-- Skidding sound
+		Slide = "Surface/tyres_waterlow_skid.wav",
+		-- smoothing
+		Smooth = 0.20,
+		VolumeFader = {
+		
+			FadeStart	= 3.00,
+			FadeEnd		= 20.00	
+		},
+	
+		-- Crossfade between samples (units in [m/s])
+		SlideXFader = {
+			-- fade start [m/s] for sliding
+			FadeStart	= 5.00,	
+			-- fade end [m/s] for sliding (after that it's 100% slide sound)
+			FadeEnd		= 10.00,
+			-- Volume for rolling
+			GainRoll	= 0.75,
+			-- Volume for sliding
+			GainSlide	= 1.00,
+		}		
+	},	
+	-- Water High
+	[12] = {
+		-- Rolling sound
+		Roll = "Surface/tyres_waterhigh_roll.wav",
+		-- Skidding sound
+		Slide = "Surface/tyres_waterhigh_skid.wav",
+		-- smoothing
+		Smooth = 0.20,
+		VolumeFader = {
+		
+			FadeStart	= 3.00,
+			FadeEnd		= 20.00	
+		},
+	
+		-- Crossfade between samples (units in [m/s])
+		SlideXFader = {
+			-- fade start [m/s] for sliding
+			FadeStart	= 5.00,	
+			-- fade end [m/s] for sliding (after that it's 100% slide sound)
+			FadeEnd		= 10.00,
+			-- Volume for rolling
+			GainRoll	= 0.75,
+			-- Volume for sliding
+			GainSlide	= 1.00,
+		}		
+	},	
+	-- Ice
+	[13] = {
+		-- Rolling sound
+		Roll = "Surface/tyres_snow_roll_1.wav",
+		-- Skidding sound
+		Slide = "Surface/tyres_snow_skid_1.wav",
+		-- smoothing
+		Smooth = 0.20,
+		VolumeFader = {
+		
+			FadeStart	= 3.00,
+			FadeEnd		= 20.00	
+		},
+	
+		-- Crossfade between samples (units in [m/s])
+		SlideXFader = {
+			-- fade start [m/s] for sliding
+			FadeStart	= 5.00,	
+			-- fade end [m/s] for sliding (after that it's 100% slide sound)
+			FadeEnd		= 10.00,
+			-- Volume for rolling
+			GainRoll	= 0.40,
+			-- Volume for sliding
+			GainSlide	= 1.00,
+		}		
+	},
+	
+
+}
+	

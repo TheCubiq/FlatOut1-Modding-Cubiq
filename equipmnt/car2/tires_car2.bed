@@ -1,0 +1,45 @@
+
+Car.Tires.Car2Tire1 = {
+	Name = "Car2Tire1",
+	Price = 1000,
+	RepairPrice		=       500,    --repair price if 100% damage
+	UpgradeLevel		= 	1,
+	Mesh			=	1,	
+	Settings = GetDefaults(TIRE1),
+}
+	
+Car.Tires.Car2Tire2 = {
+	Name = "Car2Tire2",
+	Price = 2000,
+	RepairPrice		=       1000,    --repair price if 100% damage
+	UpgradeLevel		= 	2,
+	Mesh			=	2,
+	Settings = GetDefaults(TIRE1),
+}
+	
+Car.Tires.Car2Tire3 = {
+	Name = "Car2Tire3",
+	Price = 5000,
+	RepairPrice		=       2500,    --repair price if 100% damage
+	UpgradeLevel		= 	3,
+	Mesh			=	3,
+	Settings = GetDefaults(TIRE1),
+}
+	
+Car.Tires.Car2Tire4 = {
+	Name = "Car2Tire4",
+	Price = 10000,
+	RepairPrice		=       5000,    --repair price if 100% damage
+	UpgradeLevel		= 	4,
+	Mesh			=	4,		
+	Settings = GetDefaults(TIRE1),
+}
+
+
+
+	
+
+		
+
+
+

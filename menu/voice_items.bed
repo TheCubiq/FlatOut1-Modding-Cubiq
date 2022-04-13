@@ -1,0 +1,20 @@
+
+voice_items_size = { 256,128 }
+voice_items = {
+
+	progress_balk = {  0, 0, 252, 29 },
+	voice_progress_bar = {  0, 30, 237, 16 },
+
+	play_inactive = {  0, 47, 38, 34 },
+	stop_inactive = { 40, 47, 38, 34 },
+	record_inactive = {  80, 47, 38, 34 },
+
+	play_disabled = {  120, 47, 38, 34 },
+	stop_disabled = {  160, 47, 38, 34 },
+	record_disabled = {  200, 47, 38, 34 },
+
+	play_normal =  {  0, 83, 38, 34 },
+	stop_normal =  {  40, 83, 38, 34 },
+	record_normal = {  80, 83, 38, 34 },
+
+}

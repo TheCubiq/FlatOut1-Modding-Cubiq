@@ -1,0 +1,768 @@
+--///////////////////////////////////////////////////////////////////////////
+--// LANLobby.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2004 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// Created on 1.10.2004 19:03:28
+--// 
+--// Authors: Fred Sundvik (fred.sundvik@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+local LobbyImages={
+	BigBox=image("big_box.tga"),
+}
+
+local Layout={
+	--BigBoxPos=POS(18,92),
+	LabelTop=63,
+	LabelHeight=16,
+	LabelWidth=10,
+
+	LabelFont=font10(),
+	LabelColor={255, 200, 0, 255},
+	
+	LineColor={255, 200, 0, 255},
+	LineThickness=2,
+	Line1Top=80,
+	Line2Top=339,
+
+	VoiceLeft=39,
+	NameLeft=65,
+	CarLeft=243,
+	SkillLeft=388,
+	ReadyTextLeft=5,
+	ReadyLeft=11,
+	ReadyTop=8,
+	
+	ListLeft=0,
+	ListTop=85,
+	RowHeight=30,
+	
+	ListFont=font10(),
+	ListFontColor={255, 255, 255, 255},
+	
+	GameSettingsFont=font10(),
+	GameSettingsLabelColor={255, 200, 0, 255},
+	GameSettingsTextColor={255, 255, 255, 255},
+	
+	--TrackLabelPos=POS(241, 335),
+	--TrackIconPos=POS(480, 323),
+	
+	InfoMessageFont=font10(),
+	InfoMessageFontColor={255, 255, 255, 255},
+	InfoMessagePos=POS(5, 345),
+	
+	InfoBoxPos=POS(355, 80),
+	InfoBoxSize=SIZE(274, 263),
+}
+
+local LineColor=wm.NewResource(COLOR, "LobbyLineColor", "",  Layout.LineColor)
+local ReadyIn=0
+local CurrentTime=nil
+local CarSelected=false
+local ShouldSelectCar=false
+local ShowInfoBox=false
+local NameCarTime=0
+
+local Error=false
+local GameTypeWin=nil
+local TrackWin=nil
+local LapsWin=nil
+
+local ShouldEnterLobbyMenu=false
+local EnterLobbyMenuFunction=nil
+
+function ShowLanLobby()
+	CarSelected=false
+	ShouldSelectCar=true
+	ShowInfoBox=true
+	EnterMenu("menu_lan_lobby")
+end
+
+local function ToggleInfoBox(Show)
+	ShowInfoBox=Show
+	if Show then
+		ShowGameInfoBox()
+		local labelPos=SAFEPOS(Layout.NameLeft, Layout.LabelTop)
+		wm.GetWindow("carlabel"):SetPosition(labelPos[1], labelPos[2])
+		local carPos=POS(Layout.NameLeft, 0)
+		for i=1, 8 do
+			wm.GetWindow(string.format("car_row%i", i)):SetPosition(carPos[1], carPos[2])
+		end
+
+		--wm.GetWindow("skilllabel"):HideWindow()
+		wm.GetWindow("gameinfotracklabel"):HideWindow()
+		TrackWin:HideWindow()
+		wm.GetWindow("trackicon2"):HideWindow()
+		--XBLiveLowerBalkSetButton("wht",LINKLOBBY_SETTINGS_HIDE, true)
+		--wm.GetWindow("lowerbalk_wht"):SetTitle(LINKLOBBY_SETTINGS_HIDE)
+		--CarShowing=false
+		NameCarTime=0
+	else
+		HideGameInfoBox()
+		local labelPos=SAFEPOS(Layout.CarLeft, Layout.LabelTop)
+		wm.GetWindow("carlabel"):SetPosition(labelPos[1], labelPos[2])
+		local carPos=POS(Layout.CarLeft, 0)
+		for i=1, 8 do
+			wm.GetWindow(string.format("car_row%i", i)):SetPosition(carPos[1], carPos[2])
+		end
+		--wm.GetWindow("skilllabel"):ShowWindow()
+		wm.GetWindow("gameinfotracklabel"):ShowWindow()
+		TrackWin:ShowWindow()
+		wm.GetWindow("trackicon2"):ShowWindow()
+		--wm.GetWindow("lowerbalk_wht"):SetTitle(LINKLOBBY_SETTINGS_SHOW)
+		--XBLiveLowerBalkSetButton("wht", LINKLOBBY_SETTINGS_SHOW, true)
+	end
+	wm.GetWindow("list"):Refresh()
+end
+
+
+local function SetNumRows(NumRows)
+	wm.GetWindow("list"):SetNumRows(NumRows)
+end
+
+local function GetCarName(CarNum)
+	if CarNum==256 then
+		return LINKLOBBY_NOCAR
+	else
+		local table=cardealer_data.car_data
+		for i,j in pairs(table) do
+			if j.car==CarNum then
+				return ConvertToWString(j.name)
+			end
+		end
+		return ConvertToWString("")
+	end
+end
+
+local function GetGameType()
+	local sessionInfo=Session:GetSessionInfo()
+	if sessionInfo.EventType==EventType.RACE and sessionInfo.SubEventType==SubEventType.RACE_NORMAL then
+		return LINKLOBBY_QUICK
+	elseif sessionInfo.EventType==EventType.RACE and sessionInfo.SubEventType==SubEventType.RACE_DOUBLESMASH then
+		return LINKLOBBY_DOUBLE
+	elseif sessionInfo.EventType==EventType.DERBY and sessionInfo.SubEventType==SubEventType.DERBY_LASTMANSTANDING then
+		return LINKLOBBY_DERBY
+	elseif sessionInfo.EventType==EventType.RACE and sessionInfo.SubEventType==SubEventType.RACE_TAG then	
+		return LINKLOBBY_TAG
+	end
+end
+
+local function GetTrackName()
+	local info=Session:GetSessionInfo()
+	return ConvertToWString(Levels[info.StageNr].Name)
+end
+
+local function GetNumLapsText()
+	local sessionInfo=Session:GetSessionInfo()
+	local numLaps=string.format("%i", sessionInfo.Laps)
+	return ConvertToWString(numLaps)
+end
+
+
+local function StartRace()
+	local i=1
+	local numPlayers=Session:GetNumPlayers()
+	 while i<=numPlayers do
+		local player=Session:GetPlayer(i)
+		if player:GetReady()==false then
+			Session:DeletePlayer(player)
+			i=1
+			numPlayers=Session:GetNumPlayers()
+		else
+			i=i+1
+		end
+	end
+
+	local isReady=function()
+		local prog=Session:GetProgress()
+		return prog~="STARTING"
+	end
+	local emptyFunc=function()end
+	
+	Session:StartRace()
+	MultiplayerWaitState=FSM()
+	ShowThinkingWindow()
+	FSM_init_state(MultiplayerWaitState)
+	FSM_add_wait_for_event(MultiplayerWaitState, 0.1, emptyFunc, isReady)
+	FSM_add_function(MultiplayerWaitState, HideThinkingWindow, false, {})
+	FSM_add_function(MultiplayerWaitState, function()wm.QuitMenu(GAME_RACE)end, false, {})
+end
+
+
+local function StartGameWithoutReadyPlayers()
+	StartRace()	
+end
+
+local function GetTrackIcon()
+	local info=Session:GetSessionInfo()
+	if info then
+		local level=info.StageNr
+		local class
+		local course
+		local track
+		for class=1, 4 do
+			local numCourses=table.getn(Classes[class].Courses)
+			for course=1, numCourses do
+				local numTracks=table.getn(Classes[class].Courses[course])
+				for track=1, numTracks do
+					if Classes[class].Courses[course][track].Level==level then				
+						for i,j in pairs(trackselection_layout[class][track]) do
+							if j[3][1]==course then
+								return track_icons[j[2]]
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+	return noimage()
+end
+
+local function AfterCarSelect()
+	--KLUDGE: only one player
+	local playerNum=1
+	local player=Session:GetLocalPlayer(playerNum)
+	player:SetCarNum(GameFlow.GetPlayerCar())
+	player:SetCarSkin(GameFlow.GetPlayerCarSkin())
+	player:SetAutoTransmission(GameFlow.GetAutoTransmission())
+	ShowInfoBox=false
+	EnterMenu("menu_lan_lobby")
+end
+
+local function NoCarSelected()
+	if CarSelected==false then
+		ShouldSelectCar=true
+	end
+	EnterMenu("menu_lan_lobby")
+end
+
+local function LanSelectCar(BackAction, ForwardAction)
+	local info=Session:GetSessionInfo()
+	local num=info.CarClass
+	local restrict_class=nil
+	local restrict_cars=nil
+	if num==SessionInfo.CarClass.Any then
+		restrict_class=nil
+		restict_cars=nil
+	elseif num==SessionInfo.CarClass.ClassA then
+		restrict_class=3
+		restrict_cars=nil
+	elseif num==SessionInfo.CarClass.ClassB then
+		restrict_class=2
+		restrict_cars=nil
+	elseif num==SessionInfo.CarClass.ClassC then
+		restrict_class=1
+		restrict_cars=nil
+	else
+		restrict_class=nil
+		restrict_cars=num
+	end																																													   
+	cardealer_init(BackAction, cardealer_transmissionselect(ForwardAction), false, false, restrict_cars, restrict_class, CheckSystemLinkErrors)
+end
+
+local function EnterLobbyMenu(Func)
+	ShouldEnterLobbyMenu=true
+	LobbyMenuFunction=Func
+	for i=1, Session:GetNumLocalPlayers() do
+		Session:GetLocalPlayer(i):SetReady(false)
+	end	
+end
+
+menu_lan_lobby = {
+	preinit_function = function()
+		local changeCar=function()
+			ShowInfoBox=false
+			EnterLobbyMenu(function()LanSelectCar(entermenu("menu_lan_lobby"),AfterCarSelect)end)
+		end
+		
+		local selectCar=function()
+			EnterLobbyMenu(function()LanSelectCar(NoCarSelected,AfterCarSelect)end)
+		end
+		
+		local changeTrack=function()
+			ShowChangeTrack()
+		end
+	
+		local startGame=function()
+			local numPlayers=Session:GetNumPlayers()
+			if GameFlow.GetGameMode()=="HOST" then
+				local ready=true
+				for i=1, Session:GetNumPlayers() do
+					if Session:GetPlayer(i):GetReady()==false then
+						numPlayers=numPlayers-1
+						ready=false
+					end
+				end
+				if numPlayers<2 then
+					ShowMessageBox(SAFEPOS(154, 70), 
+						LINKLOBBY_MOREPLAYERS, 
+						LINKLOBBY_OK, 
+						function()Menu:EnableButtons()end
+					)
+				elseif ready==false then
+					ShowMessageBox(SAFEPOS(154, 70), 
+						LINKLOBBY_NOTREADY, 
+						LINKLOBBY_YES, 
+						function()StartGameWithoutReadyPlayers()end,
+						LINKLOBBY_NO, 
+						function()Menu:EnableButtons()end
+					)
+				else
+					StartRace()
+				end
+			end
+		end
+	
+		if CarSelected or not ShouldSelectCar then
+			if GameFlow.GetGameMode()=="HOST" then
+				menu_lan_lobby.items=
+				{
+					{LINKLOBBY_START, noimage(), startGame},
+					{LINKLOBBY_CHANGE_CAR, noimage(), changeCar},
+					{LINKLOBBY_CHANGE_TRACK, noimage(), changeTrack},
+				}
+			else
+				menu_lan_lobby.items=
+				{
+					{LINKLOBBY_CHANGE_CAR, noimage(), changeCar}
+				}
+			end
+		else
+				menu_lan_lobby.items=
+				{
+					{LINKLOBBY_SELECT, noimage(), selectCar}
+				}
+		end		
+	end,
+
+	init_function = function()
+		if ShouldSelectCar then
+			CarSelected=false
+			ShouldSelectCar=false
+		else
+			CarSelected=true
+		end
+
+		windows_reset()
+
+
+		StandardUpperBalk()
+		StandardLowerBalk()
+		
+--		if CarSelected then
+--			if GameFlow.GetGameMode()=="HOST" then
+--				XBoxLiveLowerBalk(
+--					LINKLOBBY_START,
+--					LINKLOBBY_LEAVE,
+--					LINKLOBBY_CHANGE_CAR,
+--					LINKLOBBY_CHANGE_TRACK,
+--					nil,
+--					LINKLOBBY_HIDE
+--				)
+---			else
+--				XBoxLiveLowerBalk(
+--					nil,
+--					LINKLOBBY_LEAVE,
+--					LINKLOBBY_CHANGE_CAR,
+--					nil,
+--					nil,
+--					LINKLOBBY_HIDE
+--				)
+--			end		
+--		else
+--			XBoxLiveLowerBalk(
+--				LINKLOBBY_SELECT,
+--				LINKLOBBY_LEAVE,
+--				nil,
+--				nil,
+--				nil,
+--				LINKLOBBY_HIDE
+--			)
+--		end	
+		GUI:LoadBackground("data/menu/bg/game_background.tga")	
+		local labelTemplate={
+			Font=Layout.LabelFont,
+			Position=POS(0, Layout.LabelTop), 
+			Size=SIZE(Layout.LabelWidth, Layout.LabelHeight),
+			ShowBorders=FALSE,
+			TitleCentering=TITLE_CENTER_Y,
+		}
+			
+		labelTemplate.Title=LINKLOBBY_NAME
+		labelTemplate.Name="namelabel"
+		labelTemplate.Position=SAFEPOS(Layout.NameLeft, Layout.LabelTop)
+		addparent(StaticText(labelTemplate)):SetColor(Layout.LabelColor)
+
+		labelTemplate.Title=LINKLOBBY_CAR
+		labelTemplate.Name="carlabel"
+		labelTemplate.Position=SAFEPOS(Layout.CarLeft, Layout.LabelTop)
+		addparent(StaticText(labelTemplate)):SetColor(Layout.LabelColor)
+
+		labelTemplate.Title=LINKLOBBY_READY
+		labelTemplate.Position=SAFEPOS(Layout.ReadyTextLeft, Layout.LabelTop)
+		addparent(StaticText(labelTemplate)):SetColor(Layout.LabelColor)
+
+		local t_y = TITLESAFE_Y or 0
+		local line=addparent(Frame{Position=POS(-100, t_y+Layout.Line1Top), Size=SIZE(800, Layout.LineThickness), ShowBorders=FALSE})
+		line:AttachResource(LineColor)
+		line=addparent(Frame{Position=POS(-100, t_y+Layout.Line2Top), Size=SIZE(800, Layout.LineThickness), ShowBorders=FALSE})
+		line:AttachResource(LineColor)
+
+		local listboxParams={
+		ListBoxTemplate={Name="list", ShowBorders=FALSE},
+		Left=Layout.ListLeft,
+		Top=Layout.ListTop,
+		LeftPadding=0,
+		RightPadding=0,
+		TopPadding=0,
+		BottomPadding=0,
+		RowWidth=GetResourceSize(LobbyImages.BigBox)[1],
+		RowHeight=Layout.RowHeight,
+		RowPadding=0,
+		RowTemplate={Font=Layout.ListFont, DrawBackgroundColor=TRUE, TitleCentering=TITLE_CENTER_NONE},
+		RowTemplateType="Button",
+		RowTemplateCust=function(Row, RowNr)
+			Row:SetColor(Layout.ListFontColor)
+			Row:SetActiveColor({0, 0, 0, 0})
+			Row:SetInactiveColor({0, 0, 0, 0})
+		end,
+		NumRows=8,
+		Coloumns={
+				[1]={
+				Name="gamertag", -- _row# is added
+				ColoumnTemplate={Position=POS(Layout.NameLeft, 0), Size=SIZE(Layout.LabelWidth, Layout.RowHeight), Font=Layout.ListFont, DrawBackgroundColor=FALSE, TitleCentering=TITLE_CENTER_Y},
+				ColoumnTemplateType="StaticText",
+				ColoumnTemplateCust=function(Coloumn, RowNr, ColoumnNr)
+					Coloumn:SetColor(Layout.ListFontColor)
+				end
+				},		
+
+				[2]={
+				Name="car", -- _row# is added
+				ColoumnTemplate={Position=POS(Layout.CarLeft, 0), Size=SIZE(Layout.LabelWidth, Layout.RowHeight), Font=Layout.ListFont, DrawBackgroundColor=FALSE, TitleCentering=TITLE_CENTER_Y},
+				ColoumnTemplateType="StaticText",
+				ColoumnTemplateCust=function(Coloumn, RowNr, ColoumnNr)
+					Coloumn:SetColor(Layout.ListFontColor)
+				end
+				},
+				[3]={
+				Name="readyicon", -- _row# is added
+				ColoumnTemplate={Position=POS(Layout.ReadyLeft, Layout.ReadyTop), Size=SIZE(20, 20), ShowBorders=FALSE},
+				ColoumnTemplateType="Frame",
+				ColoumnTemplateCust=function(Coloumn, RowNr, ColoumnNr)
+					Coloumn:AttachResource(menucommon.checked)
+				end
+				},
+					
+			}
+		}
+
+		local list=addparent(CreateMultiColoumnListBox(listboxParams))
+		list.onNeedData=function(Self, RowObject, RowNr, ControlRowNr)
+			local player=Session:GetPlayer(RowNr)
+			local userId=player:GetUserId()
+
+			local isReady=player:GetReady()
+			local name=wm.GetWindow(string.format("gamertag_row%i", RowNr))
+			local car=wm.GetWindow(string.format("car_row%i", RowNr))
+			local ready=wm.GetWindow(string.format("readyicon_row%i", RowNr))
+		
+			name:SetTitle(player:GetName())
+			car:SetTitle(GetCarName(player:GetCarNum()+1))
+			if isReady then
+				ready:ShowWindow()
+			else
+				ready:HideWindow()
+			end
+		end
+		
+		list:SetNumRows(0)
+		
+		local infoMes=addparent(StaticText{Name="infomessage", Position=MakeSafePos(Layout.InfoMessagePos), Size=SIZE(100, 16), Font=Layout.InfoMessageFont, ShowBorders=FALSE, TitleCentering=TITLE_CENTER_NONE})
+		infoMes:SetColor(Layout.InfoMessageFontColor)
+		
+		--labelTemplate.Title=LINKLOBBY_TRACK
+		--labelTemplate.Position=MakeSafePos(Layout.TrackLabelPos)
+		--labelTemplate.Name="gameinfotracklabel"
+		--addparent(StaticText(labelTemplate)):SetColor(Layout.GameSettingsLabelColor)
+		
+		--labelTemplate.Name="track"
+		--textWidth=wm.GetTextWidth(LINKLOBBY_TRACK, Layout.GameSettingsFont)
+		--labelTemplate.Position=MakeSafePos(AddPos(Layout.TrackLabelPos, POS(textWidth+5, 0)))
+		--TrackWin=addparent(StaticText(labelTemplate))
+		--TrackWin:SetColor(Layout.GameSettingsTextColor)
+		
+		--local trackIcon=addparent(Frame{Name="trackicon2", Position=MakeSafePos(Layout.TrackIconPos), Size=SIZE(57,38), DrawBackground=FALSE, ShowBorders=FALSE})
+		--trackIcon:AttachResource(track_icons.forestI_A)
+		
+		
+		local player=Session:GetLocalPlayer(1)
+		player:SetName(PlayerProfile:GetName())
+		if CarSelected then
+			player:SetReady(true)
+		else
+			player:SetReady(false)
+		end	
+	
+		CurrentTime=nil
+		
+		CreateGameInfoBox(Layout.InfoBoxPos, Layout.InfoBoxSize, false, false, true)
+		
+		--local handler=addparent(InputHandler{Name="inputhandler"})
+		--handler.onKeyPressed=function(Self, Character, VirtualKey, ScanCode)
+		--	if VirtualKey==KeyCodes["BUTTON_START"] then
+		--		if CarSelected then
+		--			local numPlayers=Session:GetNumPlayers()
+		--			if GameFlow.GetGameMode()=="HOST" then
+		--				local ready=true
+		--				for i=1, Session:GetNumPlayers() do
+		--					if Session:GetPlayer(i):GetReady()==false then
+		--						numPlayers=numPlayers-1
+		--						ready=false
+		--					end
+		--				end
+		--				if numPlayers<2 then
+		--					ShowMessageBox(SAFEPOS(154, 70), 
+		--						LINKLOBBY_MOREPLAYERS, 
+		--						LINKLOBBY_OK, 
+		--						function()wm.GetWindow("inputhandler"):SetFocus()end
+		--					)
+		--				elseif ready==false then
+		--					ShowMessageBox(SAFEPOS(154, 70), 
+		--						LINKLOBBY_NOTREADY, 
+		--						LINKLOBBY_YES, 
+		--						function()StartGameWithoutReadyPlayers()end,
+		--						LINKLOBBY_NO, 
+		--						function()wm.GetWindow("inputhandler"):SetFocus()end
+		--					)
+		--				else
+		--					StartRace()
+		--				end
+		--			end
+		--		else
+		--			EnterLobbyMenu(function()LanSelectCar(NoCarSelected,AfterCarSelect)end)
+		--		end
+		--	elseif VirtualKey==KeyCodes["BUTTON_SELECT"] then
+		--		if GameFlow.GetGameMode()=="HOST" then
+		--			ShowMessageBox(SAFEPOS(154, 70), 
+		--					LINKLOBBY_LEAVING, 
+		--					LINKLOBBY_YES, 
+		--					menu_lan_lobby.options.back_action,
+		--					LINKLOBBY_NO, 
+		--					function()wm.GetWindow("inputhandler"):SetFocus()end
+		--				)
+		--		else
+		--			menu_lan_lobby.options.back_action()
+		--		end
+		--	elseif VirtualKey==KeyCodes["BUTTON_X"] then
+		--		if CarSelected then
+		--			for i=1, Session:GetNumLocalPlayers() do
+		--				Session:GetLocalPlayer(i):SetReady(false)
+		--			end
+		--			ShowInfoBox=false
+		--			EnterLobbyMenu(function()LanSelectCar(entermenu("menu_lan_lobby"),AfterCarSelect)end)
+		--		end
+		--	elseif VirtualKey==KeyCodes["BUTTON_Y"] then
+		--		if CarSelected and GameFlow.GetGameMode() =="HOST" then
+		--			ShowChangeTrack()
+		--		end				
+		--	elseif VirtualKey==KeyCodes["BUTTON_EXTRA2"] then
+		--		if ShowInfoBox then
+		--			ToggleInfoBox(false)
+		--		else
+		--			ToggleInfoBox(true)
+		--		end
+		--	elseif VirtualKey==KeyCodes["BUTTON_LEFT"] then
+		--		PrevInfoPage()
+		--	elseif VirtualKey==KeyCodes["BUTTON_RIGHT"] then
+		--		NextInfoPage()
+		--	end	
+		--end
+		
+		CreateChangeTrackWindow()
+		activateparents()
+		--handler:SetFocus()
+		Error=false
+		--ToggleInfoBox(ShowInfoBox)
+		HideChangeTrack()
+		ShouldEnterLobbyMenu=false
+		LobbyMenuFunction=nil	
+	end,
+	
+	deinit_function = function()
+		windows_reset()
+		if Session then
+			for i=1, Session:GetNumLocalPlayers() do
+				local player=Session:GetLocalPlayer(i)
+				player:SetReady(false)
+				player:SetController(GUI:GetLastActiveController())
+				Session:GetLocalPlayer(i):SetReady(false)
+			end
+		end
+		HideThinkingWindow()
+	end,
+	
+	update_function = function(time)
+		if CheckLanErrors() then
+			return
+		end
+
+		if ShouldEnterLobbyMenu then
+			ShowThinkingWindow()
+			ShouldEnterLobbyMenu=false
+		end
+		
+		if LobbyMenuFunction~=nil then
+			local allUnReady=true
+			for i=1, Session:GetNumLocalPlayers() do
+				if Session:GetLocalPlayer(i):GetReady()==true then
+					allUnReady=false
+				end
+			end
+			if allUnReady then
+				HideThinkingWindow()
+				LobbyMenuFunction()
+				LobbyMenuFunction=nil
+				return
+			end
+		end
+		
+		
+		local dt=0
+		if CurrentTime==nil then
+			CurrentTime=time
+		else
+			dt=time-CurrentTime
+			CurrentTime=time
+		end
+		
+		--Slow down time when entering the lobby
+		if NameCarTime < 1 then
+			NameCarTime=NameCarTime+0.5*dt
+		else
+			NameCarTime=NameCarTime+dt
+		end		
+		
+		if Session:HostIsConnected() then
+			SetNumRows(Session:GetNumPlayers())
+			
+			local raceStart=Session:GetRaceStarted()
+			if raceStart==true and GameFlow.GetGameMode()~="HOST" then 
+				wm.QuitMenu(GAME_RACE)
+			end
+			
+			--GameTypeWin:SetTitle(GetGameType())
+			--TrackWin:SetTitle(GetTrackName())
+			--local trackIconWin=wm.GetWindow("trackicon2")
+			--local trackIcon=GetTrackIcon()
+			--if trackIcon and ShowInfoBox==false then
+			--	trackIconWin:AttachResource(trackIcon)
+			--	trackIconWin:ShowWindow()
+			--else
+			--	trackIconWin:HideWindow()
+			--end			
+			
+			RefreshGameInfoBox()
+		elseif Error==false then
+			local f=function()
+				Network:StopSystemLink()
+				EnterMenu("menu_multiplayer_modeselect")
+			end
+			ShowMessageBox(SAFEPOS(154, 70), LINKLOBBY_LOST, LINKLOBBY_OK, f)
+			Error=true
+		end
+		
+		local infoMes=wm.GetWindow("infomessage")
+		if CarSelected then
+			infoMes:SetTitle(ConvertToWString(""))
+		else
+			infoMes:SetTitle(LINKLOBBY_CARSELECT)
+		end
+		
+		--local stateTime=1000
+		--local fadeTime=NameCarTime*1000
+		--local PI=3.14
+		--fadeTime=stateTime*4-math.mod(fadeTime, stateTime*4 )
+		--local alpha1
+		--local alpah2
+		--if ShowInfoBox then
+		--	if fadeTime<stateTime then
+		--		alpha1 = 1
+		--		alpha2 = 0
+		--	elseif fadeTime>=stateTime and fadeTime<stateTime*2 then
+		--		alpha1 = 0.5 + 0.5*math.cos( (fadeTime-stateTime) * (PI/stateTime) )
+		--		alpha2 = 0.5 + 0.5*math.cos( PI + (fadeTime-stateTime) * PI/stateTime )
+		--	elseif fadeTime>=stateTime*2 and fadeTime<stateTime*3 then
+		--		alpha1 = 0
+		--		alpha2 = 1
+		--	else
+		--		alpha1 = 0.5 + 0.5*math.cos( PI + (fadeTime-3*stateTime) * PI/stateTime )
+		--		alpha2 = 0.5 + 0.5*math.cos( (fadeTime-3*stateTime) * (PI/stateTime) )
+		--	end
+		--else
+		--	alpha1=1
+		--	alpha2=1
+		--end
+		--alpha1=alpha1*255
+		--alpha2=alpha2*255
+		
+		--NOTE the color table has to be copied becasuse of some strange script bug
+		--local color={Layout.LabelColor[1], Layout.LabelColor[2], Layout.LabelColor[3], alpha1} 
+		--wm.GetWindow("namelabel"):SetColor(color)
+		--color[4]=alpha2
+		--wm.GetWindow("carlabel"):SetColor(color)
+		
+		--NOTE the color table has to be copied becasuse of some strange script bug
+		--color={Layout.ListFontColor[1], Layout.ListFontColor[2], Layout.ListFontColor[3], alpha1}
+		--for i=1, 8 do
+		--	color[4]=alpha1
+		--	wm.GetWindow(string.format("gamertag_row%i", i)):SetColor(color)
+		--	color[4]=alpha2
+		--	wm.GetWindow(string.format("car_row%i", i)):SetColor(color)
+		--end	
+		
+		UpdateChangeTrack()
+	end,
+
+	options = {
+	
+		title = LINKLOBBY_TITLE, --GetPhrase(MENU_lan_lobby_TITLE),
+		background = noimage(),
+		orientation = MENU_HORIZONTAL,
+		position = { 260,396 },
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		back_action=function()
+			local f=function()
+				Network:StopSystemLink()
+				EnterMenu("menu_multiplayer_modeselect")
+			end
+			if GameFlow.GetGameMode()=="HOST" then
+				ShowMessageBox(SAFEPOS(154, 70), 
+						LINKLOBBY_LEAVING, 
+						LINKLOBBY_YES, 
+						f,
+						LINKLOBBY_NO, 
+						function()end
+					)
+			else
+				ShowMessageBox(SAFEPOS(154, 70), 
+						LINKLOBBY_CLIENT_LEAVE, 
+						LINKLOBBY_YES, 
+						f,
+						LINKLOBBY_NO, 
+						function()end
+					)
+			end		
+		end,
+	},
+	
+	items = { },
+}
+

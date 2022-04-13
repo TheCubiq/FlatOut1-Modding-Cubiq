@@ -1,0 +1,82 @@
+
+----#  Engine settings for car10 (Road King) 
+Car.Engine.Car10_1 = {
+
+	--# --------------------------------------------------------------------
+	----#  Default Engine Settings
+	--# --------------------------------------------------------------------
+	
+	Name 			= 	"Road King",
+	Price  			= 	10,
+	
+	Mesh			=	1,
+	
+	Settings = {
+	
+		----#  Car mass = body mass + engine mass
+		Mass			=	200,
+		-- turbo acceleration in G's
+		TurboAcceleration		=	0.20, 	
+		-- nitro acceleration in G's
+		NitroAcceleration		=	1.20,
+		-- storage for nitro in seconds
+		NitroStorage		=	5.00,
+		
+		----#  --- Differential ---
+		----#  Locking system: 0 = spool differential, 1 = open differential
+		DifferentialLock		=	0.15,		
+		DifferentialBias		=	1.0,
+	
+		InertiaEngine		=	0.12,		
+		InertiaDriveShaft		=	0.06,		
+		EngineFriction		=	0.055,		
+	
+		----#  Engine
+		IdleRpm			=	950.0,		
+	
+		TorqueMax               		=       	205.0,		--# 190.0  
+		TorqueCurveParams		=	16,	
+
+		-- torque peak at 4300, power 5500
+		Torque00		=	{500,	0.200},
+		Torque01		=	{1000,	0.453},
+		Torque02		=	{1500,	0.691},
+		Torque03		=	{2000,	0.808},
+		Torque04		=	{2500,	0.879},
+		Torque05		=	{3000,	0.928},
+		Torque06		=	{3500,	0.964},
+		Torque07		=	{4000,	0.996},
+		Torque08		=	{4500,	1.000},
+		Torque09		=	{5000,	0.989},
+		Torque10		=	{5500,	0.928},
+		Torque11		=	{6000,	0.829},
+		Torque12		=	{6500,	0.712},
+		Torque13		=	{7000,	0.560},
+		Torque14		=	{7500,	0.300},
+		Torque15		=	{8000,	0.000},
+		Torque16		=	{8500,	0.000},
+		Torque17		=	{9000,	0.000},
+		Torque18		=	{9500,	0.000},
+		Torque19		=	{10000,	0.000},
+	
+		----#  ---- EXHAUST VISUALS ----
+		ExhaustPeakRpm		=	4300,
+
+		----#  --- HORSEPOWER VISUAL ---
+		Horsepower		= 	196.0,		--# 161.0	
+
+	},
+
+	MaxSettings = {
+
+		TurboAcceleration		=	0.50,	 			 
+		InertiaEngine		=	0.10,	--# 0.12	
+		InertiaDriveShaft		=	0.048,	--# 0.06	
+		EngineFriction		=	0.039,	--# 0.055	
+		TorqueMax             		=     	286.0,	--# 250.0
+		Horsepower		= 	277.0, 	
+
+	},
+
+	
+}   ----# --# ----#  ENGINE10 END

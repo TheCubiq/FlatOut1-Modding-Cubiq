@@ -1,0 +1,9 @@
+
+pc_gui_icons_size = { 128, 32 }
+pc_gui_icons = {
+	
+	esc = {  0, 0, 28, 28 },
+	enter = {  29, 0, 28, 28 },
+	del = {  58, 0, 28, 28 },
+
+}

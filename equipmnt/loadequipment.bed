@@ -1,0 +1,54 @@
+
+function _getglobal(name)
+	return _G[name]
+end
+
+if not getglobal then getglobal=_getglobal end
+
+
+
+function LoadEq(eqtype)
+	local pi,i;
+
+
+	local parttype;
+	local eq=getglobal(eqtype);
+	
+	for parttype,pi in eq do
+		--LOG("subclass "..parttype);
+		local partname;
+		for partname,i in pi do
+			--LOG("adding equipment "..eqtype..":"..tostring(parttype)..":"..tostring(partname));
+			AddEquipment(eqtype,tostring(parttype),partname);
+		end		
+	end
+end
+
+recursion=0
+
+function tabledump(table)
+	local k,v
+	
+	recursion = recursion + 1
+	
+	for k,v in table do
+		--LOG(string.format("%s%s = %s",string.rep("\t",recursion),k,type(v)))
+	
+		if type(v) == "table" then
+			tabledump(v)
+		end
+	end
+
+	recursion = recursion - 1
+
+
+end
+
+--tabledump(Car)
+
+
+LoadEq("Car")
+--LOG("EquipmentManager::Adding equipment...");
+
+
+

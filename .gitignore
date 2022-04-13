@@ -1,0 +1,6 @@
+#ignore all kind of files
+*.*
+#except php files
+!*.bed
+!.vscode
+!.gitignore

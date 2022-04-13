@@ -1,0 +1,8 @@
+-- texturemap
+MapTexture		= "data/tracks/winter/textures/map_winter1C.tga"
+-- mapped world area
+WorldTopLeft	= { -481.4,480.6 }
+WorldBottomRight	= { 479.8,-480.5 }
+-- screen position & size ( in 640x480 )
+ScreenPos		= { 32.0, 336.0 }
+ScreenSize		= {128.0, 128.0 }

@@ -1,0 +1,619 @@
+--///////////////////////////////////////////////////////////////////////////
+--// TrackMapping.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2004 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// Created on 11.3.2004 11:45:37
+--// 
+--// @Author Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+
+
+
+--//this maps levels from Levels.bed to classes, courses and stages
+
+
+Classes = {
+
+
+	[1] = {
+			Name = "Class C",  --//TRANSLATOR_ID
+			Description = "novice class",  --//TRANSLATOR_ID
+
+			Courses = {
+					
+					[1] = {       --//course C1
+
+
+						[1] = {   --//stage C1.1 RACING 1A
+								Level = 7,   --//levels.bed id
+								NameIcon = "racing1",
+								Filename = "racing1_1.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+						[2] = {   --//stage C1.2 FOREST 2A
+								Level = 2,   --//levels.bed id
+								NameIcon = "forest2",
+								Filename = "forest2_1.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},			
+						[3] = {   --//stage C1.3 PIT 1B
+								Level = 31,   --//levels.bed id
+								NameIcon = "pit1",
+								Filename = "PIT1_2.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+
+					},
+
+					[2] = { --//C2
+
+
+						[1] = {   --//stage C2.1 FOREST 1A
+								Level = 1,   --//levels.bed id
+								NameIcon = "forest1",
+								Filename = "forest1_1.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+						[2] = {   --//stage C2.2 PIT 2C
+								Level = 44,   --//levels.bed id
+								NameIcon = "pit2",
+								Filename = "pit2_3.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},			
+						[3] = {   --//stage C2.3 RACING 2B
+								Level = 35,   --//levels.bed id
+								NameIcon = "racing2",
+								Filename = "racing2_2.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+
+
+
+					},
+
+					[3] = { --//C3
+
+
+						[1] = {   --//stage C3.1 PIT 2A
+								Level = 5,   --//levels.bed id
+								NameIcon = "pit2",
+								Filename = "pit2_1.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+						[2] = {   --//stage C3.2 FOREST 1B
+								Level = 28,   --//levels.bed id
+								NameIcon = "forest1",
+								Filename = "forest1_2.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},			
+						[3] = {   --//stage C3.3 PIT 1A
+								Level = 4,   --//levels.bed id
+								NameIcon = "pit1",
+								Filename = "pit1_1.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+
+
+					},
+
+
+			},
+
+	},
+
+	[2] = {
+			Name = "Class B",  --//TRANSLATOR_ID
+			Description = "medium class",  --//TRANSLATOR_ID
+
+			Courses = {
+					
+					[1] = {       --//course B1
+						
+
+						[1] = {   --//stage B1.1 WINTER 2B
+								Level = 39,   --//levels.bed id
+								NameIcon = "winter2",
+								Filename = "winter2_2.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+						[2] = {   --//stage B1.2 PIT 1C
+								Level = 43,   --//levels.bed id
+								NameIcon = "pit1",
+								Filename = "pit1_3.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},			
+						[3] = {   --//stage B1.3 FOREST 3C
+								Level = 42,   --//levels.bed id
+								NameIcon = "forest3",
+								Filename = "forest3_3.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+
+					},
+
+					[2] = { --//B2
+
+
+						[1] = {   --//stage B2.1 FOREST 3A
+								Level = 3,   --//levels.bed id
+								NameIcon = "forest1",
+								Filename = "forest3_1.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+						[2] = {   --//stage B2.2 TOWN 2C
+								Level = 15,   --//levels.bed id
+								NameIcon = "town2",
+								Filename = "town2_3.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},			
+						[3] = {   --//stage B2.3 WINTER 2C
+								Level = 18,   --//levels.bed id
+								NameIcon = "winter2",
+								Filename = "winter2_3.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+
+
+					},
+
+					[3] = { --//B3
+
+
+						[1] = {   --//stage B3.1 PIT 3C
+								Level = 45,   --//levels.bed id
+								NameIcon = "pit3",
+								Filename = "pit3_3.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+						[2] = {   --//stage B3.2 WINTER 2A
+								Level = 14,   --//levels.bed id
+								NameIcon = "winter2",
+								Filename = "winter2_1.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},			
+						[3] = {   --//stage B3.3 RACING 2A
+								Level = 8,   --//levels.bed id
+								NameIcon = "racing2",
+								Filename = "racing2_1.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+
+
+					},
+
+					[4] = { --//B4
+
+
+						[1] = {   --//stage B4.1 RACING 1B
+								Level = 34,   --//levels.bed id
+								NameIcon = "racing1",
+								Filename = "racing1_2.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+						[2] = {   --//stage B4.2 FOREST 3B
+								Level = 30,   --//levels.bed id
+								NameIcon = "forest3",
+								Filename = "FOREST3_2.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},			
+						[3] = {   --//stage B4.3 TOWN 2B
+								Level = 36,   --//levels.bed id
+								NameIcon = "town2",
+								Filename = "town2_2.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+
+
+					},
+
+			},
+
+	},
+
+	[3] = {
+			Name = "Class A",  --//TRANSLATOR_ID
+			Description = "super class",  --//TRANSLATOR_ID
+
+			Courses = {
+
+					[1] = { --//A1
+
+
+
+						[1] = {   --//stage A1.1 FOREST 1C
+								Level = 40,   --//levels.bed id
+								NameIcon = "forest1",
+								Filename = "forest1_3.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+						[2] = {   --//stage A1.2 WINTER 1C
+								Level = 17,   --//levels.bed id
+								NameIcon = "winter1",
+								Filename = "winter1_3.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},			
+						[3] = {   --//stage A1.3 RACING 1C
+								Level = 9,   --//levels.bed id
+								NameIcon = "racing1",
+								Filename = "racing1_3.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+
+
+					},
+			
+					[2] = { --//A2
+
+
+
+						[1] = {   --//stage A2.1 TOWN 2A
+								Level = 11,   --//levels.bed id
+								NameIcon = "town2",
+								Filename = "TOWN2_1.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+						[2] = {   --//stage A2.2 RACING 2C
+								Level = 10,   --//levels.bed id
+								NameIcon = "racing2",
+								Filename = "racing2_3.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},			
+						[3] = {   --//stage A2.3 WINTER1B
+								Level = 38,   --//levels.bed id
+								NameIcon = "winter1",
+								Filename = "winter1_2.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+
+
+					},
+
+					[3] = { --//A3
+
+
+						[1] = {   --//stage A3.1 WINTER 1A
+								Level = 13,   --//levels.bed id
+								NameIcon = "winter1",
+								Filename = "winter1_1.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+						[2] = {   --//stage A3.2 TOWN 3A
+								Level = 12,   --//levels.bed id
+								NameIcon = "town3",
+								Filename = "town3_1.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},			
+						[3] = {   --//stage A3.3 FOREST 2B
+								Level = 29,   --//levels.bed id
+								NameIcon = "forest2",
+								Filename = "forest2_2.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+
+
+					},
+
+					[4] = { --//A4
+
+
+						[1] = {   --//stage A4.1 PIT 2B
+								Level = 32,   --//levels.bed id
+								NameIcon = "pit2",
+								Filename = "pit2_2.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+						[2] = {   --//stage A4.2 FOREST 2C
+								Level = 41,   --//levels.bed id
+								NameIcon = "forest2",
+								Filename = "forest2_3.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},			
+						[3] = {   --//stage A4.3 TOWN 3B
+								Level = 37,   --//levels.bed id
+								NameIcon = "town3",
+								Filename = "town3_2.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+
+
+					},
+
+
+					[5] = { --//A5
+
+
+						[1] = {   --//stage A5.1 TOWN 3C
+								Level = 16,   --//levels.bed id
+								NameIcon = "town3",
+								Filename = "town3_3.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+						[2] = {   --//stage A5.2 PIT 3A
+								Level = 6,   --//levels.bed id
+								NameIcon = "pit3",
+								Filename = "pit3_1.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},			
+						[3] = {   --//stage A5.3 PIT 3B
+								Level = 33,   --//levels.bed id
+								NameIcon = "pit3",
+								Filename = "pit3_2.tga",
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+
+
+					},
+
+			},
+	},
+
+	[4] = {
+			Name = "Bonus",  --//TRANSLATOR_ID
+			Description = "super class",  --//TRANSLATOR_ID
+
+			Courses = {
+
+					[1] = { --//A1
+
+						[1] = {   --//stage A1.1
+								Name = "LONGJUMP",
+								NameIcon = "stunt",
+								Filename = "longjump.tga",
+
+								EventType = "STUNT",
+								SubEventType = "STUNT_LONGJUMP",
+
+								Level = 19,   --//levels.bed id
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+						[2] = {   --//stage A1.2
+								Name = "HIGHJUMP",
+								NameIcon = "stunt",
+								Filename = "highjump.tga",
+
+								EventType = "STUNT",
+								SubEventType = "STUNT_HIGHJUMP",
+
+								Level = 20,   --//levels.bed id
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},			
+						[3] = {   --//stage A1.3
+								Name = "DARTS",
+								NameIcon = "stunt",
+								Filename = "darts.tga",
+
+								EventType = "STUNT",
+								SubEventType = "STUNT_DARTS",
+
+								Level = 48,   --//levels.bed id
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+					},
+					[2] = {
+						[1] = {   --//stage A1.3
+								Name = "BOWLING",
+								NameIcon = "stunt",
+								Filename = "bowling.tga",
+
+								EventType = "STUNT",
+								SubEventType = "STUNT_BOWLING",
+
+								Level = 47,   --//levels.bed id
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+						[2] = {   --//stage A1.3
+								Name = "CLOWN",
+								NameIcon = "stunt",
+								Filename = "clown.tga",
+
+								EventType = "STUNT",
+								SubEventType = "STUNT_CLOWN",
+
+								Level = 49,   --//levels.bed id
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+						[3] = {   --//stage A1.3
+								Name = "BULLSEYE",
+								NameIcon = "stunt",
+								Filename = "bullseye.tga",
+
+								EventType = "STUNT",
+								SubEventType = "STUNT_CURLING",
+
+								Level = 46,   --//levels.bed id
+								Description = "",  --//TRANSLATOR_ID
+						},
+
+					},
+			
+					[3] = { --//A2
+
+						[1] = {   --//stage A2.1
+								Filename = "arena1.tga",
+								NameIcon = "arena",
+								Level = 25,   --//levels.bed id
+								Name = "CIRCLE OF EIGHT",
+
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+						[2] = {   --//stage A2.2
+								Filename = "arena2.tga",
+								NameIcon = "arena",
+								Level = 26,   --//levels.bed id
+								Name = "SUPER ROUNDABOUT",
+
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},			
+						[3] = {   --//stage A2.3
+								Filename = "arena3.tga",
+								NameIcon = "arena",
+								Level = 27,   --//levels.bed id
+								Name = "CRASHALLEY RUN",
+
+								Description = "",  --//TRANSLATOR_ID
+									
+
+						},
+					},
+
+					[4] = { --//A3
+						
+						[1] = {   --//stage A3.1
+								Filename = "derby1.tga",
+								NameIcon = "derby",
+								Level = 22,   --//levels.bed id
+								Name = "DEMOLITION DASH",
+
+								Description = "",  --//TRANSLATOR_ID
+									
+								EventType = "DERBY",
+								SubEventType = "DERBY_LASTMANSTANDING",
+						},
+						[2] = {   --//stage A3.2
+								Filename = "derby2.tga",
+								NameIcon = "derby",
+								Level = 23,   --//levels.bed id
+								Description = "",  --//TRANSLATOR_ID
+								Name = "SUPER MUD MAYHEM",
+
+								EventType = "DERBY",
+								SubEventType = "DERBY_LASTMANSTANDING",									
+
+						},			
+						[3] = {   --//stage A3.3
+								Filename = "derby3.tga",
+								NameIcon = "derby",
+								Level = 24,   --//levels.bed id
+								Description = "",  --//TRANSLATOR_ID
+								Name = "DEMOLITION SANDPIT",
+									
+								EventType = "DERBY",
+								SubEventType = "DERBY_LASTMANSTANDING",
+						},
+					},
+			},
+	},
+
+}
+
+TrackTypes=
+{
+	[1]={
+		TrackIcon="tracktype_forest",
+		Tracks={1, 28, 40, 2, 29, 41, 3, 30, 42},
+	},
+	[2]={
+		TrackIcon="tracktype_pit",
+		Tracks={4, 31, 43, 5, 32, 44, 6, 33, 45},
+	},
+	[3]={
+		TrackIcon="tracktype_town",
+		Tracks={11, 36, 15, 12, 37, 16},
+	},
+	[4]={
+		TrackIcon="tracktype_winter",
+		Tracks={13,38, 17, 14, 39, 18},
+	},
+	[5]={
+		TrackIcon="tracktype_racing",
+		Tracks={7, 34, 9, 8, 35, 10},
+	},
+	[6]={
+		TrackIcon="tracktype_arena",
+		Tracks={25, 26, 27},
+	},
+	[7]={
+		TrackIcon="tracktype_derby",
+		Tracks={22, 23, 24},
+	},
+}
+

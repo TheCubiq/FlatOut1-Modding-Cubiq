@@ -1,0 +1,584 @@
+--///////////////////////////////////////////////////////////////////////////
+--// Garage.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2003 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// @date 6.3.2003 12:20:16
+--// 
+--// @Author Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+
+menu_careermode_cartrading = {
+
+	options = {
+	
+		title = GARAGE_TRADING,
+		background = noimage(),
+		orientation = MENU_HORIZONTAL,
+		position = POS(260,396),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+	}, 
+
+	
+	init_function = function() 
+		cardealer_init(entermenu("menu_careermode_garage"),cardealer_transmissionselect(entermenu("menu_careermode_garage")),true,true) 
+	end,
+
+	deinit_function = function()
+
+		cardealer_deinit()
+	end,
+
+}
+
+
+
+menu_careermode_garage = {
+
+	options = {
+	
+		title = GARAGE_TITLE,
+		background = noimage(),
+		orientation = MENU_HORIZONTAL,
+		position = POS(260,396),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		back_action = function() GameFlow.SetCareerMode(nil); EnterMenu("menu_singleplayer") end,
+	},
+
+
+
+
+	init_function = function()
+		windows_reset()
+
+		StandardUpperBalk(true)
+		StandardLowerBalk()
+
+		AUDIO.PlayTitleMusic()
+
+		if cardealer_state and cardealer_state.forward then
+			PlayerProfile:CareerModeCarSelected(TRUE)
+			PlayerProfile:SetAutoTransmission(GameFlow.GetAutoTransmission())
+			PlayerProfile:SetCarType(cardealer_state.car-1)
+			PlayerProfile:SetCarClass(cardealer_state.carclass)
+			PlayerProfile:SetCarSkin(cardealer_state.skin or 1)
+			cardealer_state.forward=nil
+
+--//			if PlayerProfile:GetAutosaveEnabled() then
+			profile_entersave(entermenu("menu_careermode_garage"),entermenu("menu_careermode_garage"))
+--//				Save.SavePlayerData(PlayerProfile:GetAutosaveSlot())
+--//			end
+			return
+		end
+
+		tuning_state=nil
+
+		activateparents()
+		GameFlow.SetPlayerCar(PlayerProfile:GetCarType())
+		--//GameFlow.SetPlayerCarSkin(PlayerProfile.GetCarSkin())
+
+		if getplatform() ~= "PS2" then
+			tuning_setplayerequipment(PlayerProfile:GetCarType()+1)
+			tuning_loadupgrades()
+		end
+
+
+		GUI:LoadBackground()
+--//		GUI:SetRenderScene(TRUE)
+		SetMenuCamera(19)
+		MenuScene:ResetCar(Startpoints[19].Position,Startpoints[19].Orientation)
+		MenuScene:LoadCar(PlayerProfile:GetCarType()+1,PlayerProfile:GetCarSkin())
+		--//MenuScene:SetCarSkin(PlayerProfile:GetCarSkin())
+
+	end,
+
+
+	deinit_function = function()
+
+		check_singleplayer_careeritem()
+		
+		windows_reset()
+
+	end,
+
+	update_function = function()
+		--If we enter this after an accepted game invite or join friend, then we should enter the main live
+		--menu to continue the session joining
+		if getplatform()=="XBOX" and Friends and Friends.ShouldJoinFriend() then
+			GameFlow.SetCareerMode(nil)
+			EnterMenu("menu_xboxlive")
+		end
+		--MenuScene:SetCameraPositionOffset(GetCameraSplinePoint())
+	end,
+
+	items= {
+
+		{ GARAGE_RACE,noimage(), function() GameFlow.SetGameMode("SINGLEPLAYER"); GameFlow.SetCareerMode(TRUE); GameFlow.SetEventType("RACE"); GameFlow.SetSubEventType("RACE_CAREER"); local f=enter_trackselection("menu_careermode_garage", race); f(); end },
+		{ GARAGE_TUNING, noimage(), enter_tuning() },
+		{ GARAGE_CARDEALER, noimage(), entermenu("menu_careermode_cartrading")},
+--//		{ GARAGE_OPTIONS, noimage(), enter_optionsmenu("menu_careermode_garage")},
+		{ GARAGE_STATISTICS, noimage(), entermenu("menu_careermode_statistics")},
+	},
+
+}
+
+
+function value(title,value,pos,valuepos,parent)
+
+
+	local frame=addchild(Frame{Position=pos,Size=SIZE(320,32),Parent=parent,ShowBorders=FALSE})
+
+	--//title
+	local win=addchild(StaticText{Position=POS(0,0),Color=GetPaletteColor(18),Size=SIZE(320,32),Parent=frame,Font=font10()})
+
+	win.title=title
+	win:SetTitle(win.title)
+
+	win=addchild(StaticText{Position=RELATIVEPOS(valuepos,pos),Size=SIZE(32,32),Parent=frame,Font=font12()})
+
+	win.title=value
+	win:SetTitle(win.title)
+
+
+	return frame
+end
+
+
+function equipment(t,v)
+
+	table.insert(menustate_careerstats.upgradelist,{title=t,value=v})
+end
+
+function equipment_empty()
+	table.insert(menustate_careerstats.upgradelist,{title=ConvertToWString(""),value=ConvertToWString(""),color=GetPaletteColor(18),Font=font10()})
+end
+
+function equipment_title(t)
+	table.insert(menustate_careerstats.upgradelist,{title=t,value=GARAGE_LEVEL,color=GetPaletteColor(18),Font=font10()})
+end
+
+
+
+
+
+function find_from_templist(partid)
+	local k,v
+
+	for k,v in ipairs(equipment_templist) do
+		if v.Upgrade == partid then
+			return k
+		end
+	end
+end
+
+
+function check_templist(part)
+
+	local upgradelevels = {
+		GARAGE_USED,
+		GARAGE_REGULAR,
+		GARAGE_RACING,
+	}
+
+	local index
+
+	local upg={title=part[1], Upgrade=part.Upgrade,level=1}
+
+	if part.RequiredUpgrade then
+		local old=find_from_templist(part.RequiredUpgrade)
+
+		if old then
+			upg.level = equipment_templist[old].level + 1
+				table.remove(equipment_templist,old)
+			index=old
+		end
+	end
+	upg.value=part.UpgradeLevel or upgradelevels[upg.level]
+
+	if not index then
+		table.insert(equipment_templist,upg)
+	else
+		table.insert(equipment_templist,index,upg)
+	end
+
+end
+
+function insert_from_templist(tbl)
+	local k,v
+
+	for k,v in ipairs(equipment_templist) do
+		equipment(v.title,v.value)
+	end
+end
+
+function templist_empty()
+	if table.getn(equipment_templist) > 0 then
+		return false
+	end
+	return true
+end
+
+function equipment_buildlist(parent)
+
+
+	local i
+	for i=1,13 do
+		
+		local parentpos=POS(0,16*(i-1))
+		local frame=addchild(Frame{Name=string.format("car_upgrade%d",i),Position=parentpos,Size=SIZE(320,32),Parent=parent,ShowBorders=FALSE})
+
+		--//title
+		local win=addchild(StaticText{Position=POS(0,0),Size=SIZE(320,32),Parent=frame,Font=font10()})
+		frame.title=win
+		win:SetTitle(ConvertToWString(""))
+
+		win=addchild(StaticText{Position=POS(252,0),Size=SIZE(32,32),Parent=frame,Font=font10()})
+		frame.value=win
+		win:SetTitle(ConvertToWString(""))
+	end
+
+	menustate_careerstats.upgradelist={}
+
+	local k,v
+
+	equipment_templist={}
+--//engine
+
+	for k,v in ipairs(tuning_data.submenus.engine.items) do
+		if PlayerProfile:FindUpgrade(v.Upgrade) ~= -1 then
+			check_templist(v)
+		end
+	end
+
+	
+	if not templist_empty() then
+			equipment_title(GARAGE_ENGINE)	
+			insert_from_templist(menustate_careerstats.upgradelist)
+	end
+	equipment_templist={}
+
+
+--//drivetrain
+
+	for k,v in ipairs(tuning_data.submenus.drivetrain.items) do
+		if PlayerProfile:FindUpgrade(v.Upgrade) ~= -1 then
+			check_templist(v) --//equipment(v[1],ConvertToWString("level"))
+		end
+	end
+
+	if not templist_empty() then
+		equipment_empty()
+		equipment_title(TUNING_DRIVETRAIN)	
+		insert_from_templist(menustate_careerstats.upgradelist)
+	end
+
+	equipment_templist={}
+
+
+
+--//exhaust
+	for k,v in ipairs(tuning_data.submenus.exhaust.items) do
+		if PlayerProfile:FindUpgrade(v.Upgrade) ~= -1 then
+			check_templist(v) --//equipment(v[1],ConvertToWString("level"))
+		end
+	end
+
+	if not templist_empty() then
+		equipment_empty()
+		equipment_title(TUNING_EXHAUST)	
+		insert_from_templist(menustate_careerstats.upgradelist)
+	end
+	equipment_templist={}
+	
+
+
+--//body
+
+	for k,v in ipairs(tuning_data.submenus.body.items) do
+		if PlayerProfile:FindUpgrade(v.Upgrade) ~= -1 then
+			check_templist(v) --//equipment(v[1],ConvertToWString("level"))
+		end
+	end
+
+	if not templist_empty() then
+		equipment_empty()
+		equipment_title(TUNING_BODY)	
+		insert_from_templist(menustate_careerstats.upgradelist)
+	end
+
+	equipment_templist={}
+	
+
+
+--//suspension
+
+	for k,v in ipairs(tuning_data.submenus.suspension.items) do
+		if PlayerProfile:FindUpgrade(v.Upgrade) ~= -1 then
+			check_templist(v) --//equipment(v[1],ConvertToWString("level"))
+		end
+	end
+
+	if not templist_empty() then
+		equipment_empty()
+		equipment_title(TUNING_SUSPENSION)	
+		insert_from_templist(menustate_careerstats.upgradelist)
+	end
+	equipment_templist={}
+
+
+
+--//tires
+
+	for k,v in ipairs(tuning_data.submenus.tires.items) do
+		if PlayerProfile:FindUpgrade(v.Upgrade) ~= -1 then
+			check_templist(v) --//equipment(v[1],ConvertToWString("level"))
+		end
+	end
+
+	if not templist_empty() then
+		equipment_empty()
+		equipment_title(TUNING_TIRES)	
+		insert_from_templist(menustate_careerstats.upgradelist)
+	end
+
+	equipment_templist=nil
+end
+
+
+menu_careermode_statistics = {
+
+	options = {
+	
+		title = GARAGE_TITLE,
+		background = noimage(),
+		orientation = MENU_HORIZONTAL,
+		position = POS(260,396),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		back_action = entermenu("menu_careermode_garage")
+	},
+
+
+
+
+	init_function = function()
+		windows_reset()
+
+		StandardUpperBalk(true)
+		StandardLowerBalk()
+
+		menustate_careerstats = {}
+		menustate_careerstats.submenus={}
+
+		local ppos=POS(0,36+59)
+		local win
+		if getplatform() == "PC" then
+			win=addparent(Frame{Name="careerstats_car",Position=POS(0,59),Size=SIZE(640,298+37),ShowBorders=FALSE})
+		else
+			win=addparent(Frame{Name="careerstats_car",Position=POS(0,36+59),Size=SIZE(640,298),ShowBorders=FALSE})
+		end
+		win:AttachResource(menucommon.black_transparent)
+
+--//		local win=addparent(Frame{Name="careerstats_car",Position=ppos,Size=SIZE(640,298),ShowBorders=FALSE})
+--//		win:AttachResource(menucommon.black_transparent)
+
+		local playercar
+
+		local k,v,i
+		i=1
+		for k,v in ipairs(cardealer_data.car_data) do
+			if v.car == GameFlow:GetPlayerCar()+1 then
+				playercar=i
+			end
+			i = i+1
+		end
+
+		local tbl=Players[cardealer_data.car_data[playercar].car]
+		local eq=Car.Body[tbl.Body]
+
+		--//value(title,value,pos,valuepos,parent)
+		value(GARAGE_CARMODEL,ConvertToWString(cardealer_data.car_data[playercar].name),POS(18+48,81-59),POS(18+48,99-59),win)
+		value(GARAGE_WEIGHT,ConvertToWString(string.format("%dkg",eq.Settings.Mass)),POS(18+48,203-59),POS(18+48,221-59),win)
+		value(GARAGE_VALUE,ConvertToWString(string.format("$%d",eq.Price)),POS(18+48,244-59),POS(18+48,261-59),win)
+
+		eq=Car.Engine[tbl.Engine]
+		value(GARAGE_ENGINE,ConvertToWString(eq.Name),POS(18+48,122-59),POS(18+48,139-59),win)
+		value(GARAGE_POWER,ConvertToWString(string.format("%dhp",Player.Equipment.Engine.Settings.Horsepower)),POS(18+48,163-59),POS(18+48,179-59),win)
+		--//value(GARAGE_TORQUE,ConvertToWString(string.format("%dNm",eq.Settings.TorqueMax)),POS(18+48,203-59),POS(18+48,221-59),win)
+
+
+		value(GARAGE_UPGRADES,ConvertToWString(""),POS(170+48,81-59),POS(465+48,113-59),win)
+
+
+		addchild(Button{Name="upgrades_uparrow",Position=POS(339+48,64-59),Size=GetResourceSize(menucommon.nuoliylos),Parent=win}):AttachResource(menucommon.nuoliylos)
+		addchild(Button{Name="upgrades_downarrow",Position=POS(339+48,332-59),Size=GetResourceSize(menucommon.nuolialas),Parent=win}):AttachResource(menucommon.nuolialas)
+
+		local listbox=addchild(ListBox{Name="car_upgrades",Position=POS(170+48,113-59),Size=SIZE(332+48,208),Parent=win,ShowBorders=FALSE})
+
+		equipment_buildlist(listbox)
+
+		listbox:SetNumRows(table.getn(menustate_careerstats.upgradelist))
+
+
+		listbox.onNeedData = function(self,child,row,controlrow,rowstring)
+			local r=menustate_careerstats.upgradelist[row]
+			if r then
+				child.title:SetTitle(r.title)
+				child.value:SetTitle(r.value)
+
+				if r.color then
+					child.title:SetColor(r.color)
+					child.value:SetColor(r.color)
+				else
+					child.title:SetColor(GetPaletteColor(17))
+					child.value:SetColor(GetPaletteColor(17))
+				end
+			end
+		end
+
+		listbox.onShow = function(self)
+			self:SetSelectedRow(1)
+		end
+
+		listbox.onShowScrollUpArrow = function(self)
+			GetWindow("upgrades_uparrow"):ShowWindow()
+		end
+
+		listbox.onHideScrollUpArrow = function(self)
+			GetWindow("upgrades_uparrow"):HideWindow()
+		end
+
+		listbox.onShowScrollDownArrow = function(self)
+			GetWindow("upgrades_downarrow"):ShowWindow()
+		end
+
+		listbox.onHideScrollDownArrow = function(self)
+			GetWindow("upgrades_downarrow"):HideWindow()
+		end
+
+
+
+		--//player
+		local ppos=POS(0,36+59)
+
+		if getplatform() == "PC" then
+			win=addparent(Frame{Name="careerstats_player",Position=POS(0,59),Size=SIZE(640,298+37),ShowBorders=FALSE})
+		else
+			win=addparent(Frame{Name="careerstats_player",Position=POS(0,36+59),Size=SIZE(640,298),ShowBorders=FALSE})
+		end
+--//		win=addparent(Frame{Name="careerstats_player",Position=ppos,Size=SIZE(640,298),ShowBorders=FALSE})
+		win:AttachResource(menucommon.black_transparent)
+
+		local kclasses={ TRACK_AMATEUR,TRACK_INTERMEDIATE,TRACK_PRO,}
+
+		local total_races=9+12+15
+		local num_races=0
+
+		local i
+		for i=1,50 do
+			if PlayerProfile:GetLevelCompleted(i) then
+				num_races = num_races +1
+			end
+		end
+
+		local cl
+		local c1,c2,c3,c4=PlayerProfile:GetEnabledClasses()
+		if c1 then
+			cl=1
+		end
+		if c2 then
+			cl=2
+		end
+		if c3 then
+			cl=3
+		end
+
+		local km=PlayerProfile:GetTotalKilometers()
+
+		local unit="km"
+
+		--//if Settings.Game.ImperialUnits == true then
+		--//	km = km/1.609344
+		--//	unit="mi"
+		--//end
+
+		value(GARAGE_PROFILE,PlayerProfile:GetName(),POS(18+48,81-59),POS(18+48,99-59),win)
+		value(GARAGE_CLASS,kclasses[cl] or ConvertToWString(""),POS(18+48,123-59),POS(18+48,139-59),win)
+		value(GARAGE_KM,ConvertToWString(string.format("%d %s",km,unit)),POS(18+48,163-59),POS(18+48,179-59),win)
+		value(GARAGE_GAME,ConvertToWString(string.format("%d %%",(num_races/total_races)*100)),POS(18+48,203-59),POS(18+48,220-59),win)
+		value(GARAGE_MONEY,ConvertToWString(string.format("$ %d",PlayerProfile:GetTotalMoneyCollected())),POS(18+48,243-59),POS(18+48,261-59),win)
+
+
+		menustate_careerstats.submenus[1]="careerstats_car" --//GetWindow("careerstats_car")
+		menustate_careerstats.submenus[2]="careerstats_player"
+
+
+		activateparents()
+
+		HideForwardButton()
+
+		GetWindow("careerstats_player"):HideWindow()
+
+	end,
+
+	up_function = function()
+		local curr=menustate_careerstats.current_submenu or ""
+
+		if curr == "careerstats_car" then
+			GetWindow("car_upgrades"):ScrollPrev()
+		end
+	end,
+
+	down_function = function()
+		local curr=menustate_careerstats.current_submenu or ""
+
+		if curr == "careerstats_car" then
+			GetWindow("car_upgrades"):ScrollNext()
+		end
+	end,
+
+
+	deinit_function = function()
+		windows_reset()
+
+	end,
+
+	update_function = function()
+		--//MenuScene:SetCameraPositionOffset(GetCameraSplinePoint())
+	end,
+
+	buttonchange_function = function(oldbutton,newbutton)
+		
+		if menustate_careerstats.current_submenu then
+			GetWindow(menustate_careerstats.current_submenu):HideWindow()
+		end
+
+		GetWindow(menustate_careerstats.submenus[newbutton]):ShowWindow()
+		menustate_careerstats.current_submenu=menustate_careerstats.submenus[newbutton]
+		GetWindow(menustate_careerstats.current_submenu):ShowWindow()
+
+		if menustate_careerstats.current_submenu == "careerstats_car" then
+			GetWindow("car_upgrades"):onShow()
+		end
+	end,
+
+
+	items = {
+		{ GARAGE_SPECS, noimage(), function() end },
+		{ GARAGE_CAREERSTATS, noimage(), function() end },
+
+	},
+}

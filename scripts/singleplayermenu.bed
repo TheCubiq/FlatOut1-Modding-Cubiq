@@ -1,0 +1,95 @@
+--///////////////////////////////////////////////////////////////////////////
+--// SingleplayerMenu.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2004 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// Created on 2.3.2004 13:13:07
+--// 
+--// @Author Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+
+function check_singleplayer_careeritem()
+	if PlayerProfile:CareerModeCarSelected() then 
+		menu_singleplayer.items[1][1]=SINGLE_CONTINUE
+	else
+		menu_singleplayer.items[1][1]=SINGLE_START
+	end
+end
+
+
+menu_singleplayer = {
+
+	options = {
+	
+		title = SINGLE_TITLE, --GetPhrase(MENU_QUICKRACE_TRACKSELECT_TITLE),
+		--subtitle = SINGLE_GAMEMODE,
+		
+		background = noimage(), --background("bg-mainmenu.tga"),	
+		orientation = MENU_HORIZONTAL,
+		position = POS(260,396),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		back_action=entermenu("menu_mainmenu"),
+	},
+	
+
+	init_function = function()
+	
+		windows_reset()
+
+		if cardealer_state then
+			cardealer_state=nil
+		end
+
+		AUDIO.PlayTitleMusic()
+
+		StandardUpperBalk()
+		StandardLowerBalk()
+
+		activateparents()
+		GameFlow.SetGameMode("SINGLEPLAYER")
+
+		--//MenuScene:ResetCar(Startpoints[19].Position,Startpoints[19].Orientation)
+		GUI:LoadBackground()
+		SetMenuCamera(20)
+		GUI:SetRenderScene(TRUE)
+		MenuScene:StartFadeOn()
+
+		--//MenuScene:ResetCar(Startpoints[20].Position,Startpoints[20].Orientation)
+
+		--//GUI:LoadBackground("data/menu/bg/game_select_background.tga")
+		
+--//		SetMenuCamera(19)
+
+	end,
+
+	deinit_function = function()
+		windows_reset()
+
+
+		check_singleplayer_careeritem()
+	end,
+
+	items = {
+		{ SINGLE_START, noimage(), function() 
+			if PlayerProfile:CareerModeCarSelected() then 
+				GameFlow.SetGameMode("SINGLEPLAYER")
+				EnterMenu("menu_careermode_garage") 
+			else 
+				GameFlow.SetGameMode("SINGLEPLAYER")
+				EnterMenu("menu_careermode_carselect") 
+			end 
+		end
+		},
+		{ SINGLE_QUICK, noimage(),function() GameFlow.SetEventType("RACE") EnterMenu("menu_quickrace_carselect") end},
+		{ SINGLE_TIME, noimage(),function() GameFlow.SetEventType("RACE") GameFlow.SetSubEventType("RACE_TIMETRIAL"); EnterMenu("menu_timetrial_carselect") end},
+--//		{ SINGLE_PROFILE, noimage(), entermenu("menu_profiles") },
+	},
+
+
+}

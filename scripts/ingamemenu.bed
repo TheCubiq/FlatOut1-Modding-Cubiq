@@ -1,0 +1,334 @@
+---@diagnostic disable: duplicate-set-field
+--///////////////////////////////////////////////////////////////////////////
+--// IngameMenu.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2004 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// Created on 8.3.2004 16:35:54
+--// 
+--// @Author Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+
+INGAMEMENU_NONE					=0
+INGAMEMENU_ENTERMENU			=1
+INGAMEMENU_STARTLEVEL			=2
+INGAMEMENU_STARTLEVELREPLAY     =3
+INGAMEMENU_QUITLEVEL			=4
+INGAMEMENU_RESTARTLEVEL			=5
+INGAMEMENU_COUNTDOWN			=6
+INGAMEMENU_LEVELFINISHED        =7
+INGAMEMENU_QUITFINISHED         =8
+INGAMEMENU_OPTIONSMENU			=9
+INGAMEMENU_QUITMENU             =10
+INGAMEMENU_LEVELRESULTS         =11
+
+
+
+ingamemenu_state = {}
+
+
+
+
+
+--// ---------------------------------------------------------------------------------------------------------------------------------
+--//  ingame main
+--// ---------------------------------------------------------------------------------------------------------------------------------
+menu_ingame_mainmenu = {
+
+	options = {
+		title = ConvertToWString("ingame menu"),
+
+		orientation = MENU_HORIZONTAL,
+		position = DEFAULTBUTTONPOS(),
+		padding = { 6,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		back_action=quitmenu(INGAMEMENU_NONE),
+	},
+
+
+	items = {
+		{ ConvertToWString("Continue game"), noimage(), quitmenu(INGAMEMENU_NONE) },
+		{ ConvertToWString("Restart race"), noimage(), quitmenu(INGAMEMENU_RESTARTLEVEL) },
+		{ ConvertToWString("Retire"), noimage(), quitmenu(INGAMEMENU_QUITLEVEL) },
+		{ ConvertToWString("Settings"),noimage(), entermenu("menu_ingame_settings") },
+		{ ConvertToWString("Replay (pc only)"), noimage(), quitmenu(INGAMEMENU_STARTLEVELREPLAY) },
+
+	},
+
+
+}
+
+--// ---------------------------------------------------------------------------------------------------------------------------------
+--//  audiosettings
+--// ---------------------------------------------------------------------------------------------------------------------------------
+
+menu_ingame_settings =
+{
+	
+	options = {
+		title = ConvertToWString("settings"),
+
+		orientation = MENU_HORIZONTAL,
+		position = DEFAULTBUTTONPOS(),
+		padding = { 6,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+
+
+		back_action = entermenu("menu_ingame_mainmenu"),
+
+
+	},
+
+
+
+
+	init_function = function()
+		ingamemenu_state.buttons={}
+		local parent=ButtonGroup{ Position = POS(160,112), Size=SIZE(320,256), ShowBorders=FALSE }
+
+		ingamemenu_state.optionswin=parent
+
+			parent.onEscape = function(self)
+				EnterMenu("menu_ingame_mainmenu")
+			end
+
+			parent.onShow = function(self)
+				self:SetFocus()
+				self:SetSelectedChild(ingamemenu_state.buttons[1])
+			end
+
+			parent.onAction = function(self)
+				local child=self:GetSelected()
+				if child.onAction then
+					child:onAction()
+				end
+			end
+
+			parent.onMoveLeft = function(self)
+				local child=self:GetSelected()
+				if child.onMoveLeft then
+					child:onMoveLeft()
+				end
+			end
+
+			parent.onMoveRight = function(self)
+				local child=self:GetSelected()
+				if child.onMoveRight then
+					child:onMoveRight()
+				end
+			end
+
+
+
+
+		--//music volume
+		local button = {
+			Title=ConvertToWString("music volume"), 
+			Font=wm.GetResource("FontIngame14"), 
+			Position=POS(16,16), 
+			Size=SIZE(32,32), 
+			Parent=parent, 
+			TitleCentering=0
+		}
+
+
+		local win=Button(button)
+
+			win.changeTitle = function(self)
+				self:SetTitle(ConvertToWString(string.format("music volume %d",Settings.Audio.IngameMusicVolume or 0)))
+			end
+
+			win.onInit = function(self)
+				self:changeTitle()
+			end
+
+			win.onMoveLeft = function(self)
+				Settings.Audio.IngameMusicVolume = Settings.Audio.IngameMusicVolume - 10
+				self:changeTitle()
+			end
+
+			win.onMoveRight = function(self)
+				Settings.Audio.IngameMusicVolume = Settings.Audio.IngameMusicVolume + 10
+				self:changeTitle()
+			end
+
+		table.insert(ingamemenu_state.buttons,win)
+
+
+		--//sfx volume
+		button.Title=ConvertToWString("sfx volume")
+		button.Position[2] = button.Position[2]+32
+
+		win=Button(button)
+
+			win.changeTitle = function(self)
+				self:SetTitle(ConvertToWString(string.format("sfx volume %d",Settings.Audio.IngameSfxVolume)))
+			end
+
+			win.onInit = function(self)
+				self:changeTitle()
+			end
+
+			win.onMoveLeft = function(self)
+				Settings.Audio.IngameSfxVolume = Settings.Audio.IngameSfxVolume - 10
+				self:changeTitle()
+			end
+
+			win.onMoveRight = function(self)
+				Settings.Audio.IngameSfxVolume = Settings.Audio.IngameSfxVolume + 10
+				self:changeTitle()
+			end
+
+
+		table.insert(ingamemenu_state.buttons,win)
+
+
+
+
+
+		--//gauges
+		button.Position[2] = button.Position[2]+64
+		local win=Button(button)
+
+			win.changeTitle = function(self)
+				local str=""
+				if Settings.Game.OverlayGauges == true then
+					str="on"
+				else
+					str="off"
+				end
+
+				self:SetTitle(ConvertToWString(string.format("Gauges %s",str)))
+			end
+
+			win.onInit = function(self)
+				self:changeTitle()
+			end
+
+			win.onAction = function(self)
+				if Settings.Game.OverlayGauges == true then
+					Settings.Game.OverlayGauges=false
+				else
+					Settings.Game.OverlayGauges=true
+				end
+				self:changeTitle()
+			end
+
+		table.insert(ingamemenu_state.buttons,win)
+
+
+		--//racemap
+		button.Position[2] = button.Position[2]+32
+
+		local win=Button(button)
+
+			win.changeTitle = function(self)
+				local str=""
+				if Settings.Game.IngameMap == true then
+					str="on"
+				else
+					str="off"
+				end
+
+				self:SetTitle(ConvertToWString(string.format("Racemap %s",str)))
+			end
+
+			win.onInit = function(self)
+				self:changeTitle()
+			end
+
+			win.onAction = function(self)
+				if Settings.Game.IngameMap == true then
+					Settings.Game.IngameMap = false
+				else
+					Settings.Game.IngameMap = true
+				end
+				self:changeTitle()
+			end
+
+		table.insert(ingamemenu_state.buttons,win)
+
+
+		wm.ActivateWindow(parent)
+
+	end,
+
+
+	deinit_function = function()
+		--Settings.SaveSettings()
+
+		wm.DeactivateWindow(ingamemenu_state.optionswin)
+
+		ingamemenu_state.optionswin=nil
+		ingamemenu_state.buttons=nil
+	end,
+
+
+}
+
+
+
+
+
+--//---------------------------------------------------------------------------------------------------------------------------------
+--// ingame results 
+--//-------------------------------------------------------------------------------------------------------------------------------
+menu_ingame_levelresults = {
+
+	options = {
+		title = ConvertToWString("Results"),
+
+		orientation = MENU_HORIZONTAL,
+		position = DEFAULTBUTTONPOS(),
+		padding = { 6,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		--//back_action=quitmenu(INGAMEMENU_NONE),
+	},
+
+	init_function = function()
+		ingamemenu_state.buttons={}
+
+		local parent=Frame{ Position = POS(160,112), Size=SIZE(320,256), ShowBorders=FALSE }
+		local win=StaticText{ Position = POS(0,0), Size=SIZE(320,256), TitleCentering=0, Parent=parent }
+
+		ingamemenu_state.win=parent
+
+		win:SetTitle(ConvertToWString("results"))
+		table.insert(ingamemenu_state.buttons,win)
+
+		wm.ActivateWindow(parent)
+
+	end,
+
+	deinit_function = function()
+
+		wm.DeactivateWindow(ingamemenu_state.win)
+		ingamemenu_state.win=nil
+		ingamemenu_state.buttons=nil
+	end,
+
+
+	update_function = function(time)
+		
+
+	end,
+
+
+	items = {
+		{ ConvertToWString("Continue game"), noimage(), quitmenu(INGAMEMENU_NONE) },
+		{ ConvertToWString("Restart race"), noimage(), quitmenu(INGAMEMENU_RESTARTLEVEL) },
+		{ ConvertToWString("Replay (pc only)"), noimage(), quitmenu(INGAMEMENU_STARTLEVELREPLAY) },
+	},
+
+
+}

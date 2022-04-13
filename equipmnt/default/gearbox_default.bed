@@ -1,0 +1,72 @@
+
+Car.Gearbox.DefaultGearbox1 = {
+
+	Name = "default gearbox level 1",
+	Price = 10,
+	Mesh			=	1,
+	Settings = {
+		----#  --- Fictitious acceleration force (0.3 = 0.3G)
+		Acceleration		=	0.3,
+				
+		----#   DEFAULT GEARBOX
+		NumGears	=	4,
+		GearRRatio	=	{1.05, -3.317, 0.95},
+		GearRInertia	=	0.2,
+		Gear1Ratio	=	{1.10, 3.41, 0.90},
+		Gear1Inertia	=	0.13,
+		Gear2Ratio	=	{1.15, 1.99, 0.85},
+		Gear2Inertia	=	0.09,
+		Gear3Ratio	=	{1.15, 1.46, 0.85},   --# 1.36
+		Gear3Inertia	=	0.07,
+		Gear4Ratio	=	{1.15, 1.0, 0.85},
+		Gear4Inertia	=	0.05,
+		Gear5Ratio	=	{1.0, 1.0, 1.0},
+		Gear5Inertia	=	0.04,
+		Gear6Ratio	=	{1.0, 1.0, 1.0},
+		Gear6Inertia	=	1.0,
+	
+		----#  (multiplier for short ratio, gear ratio (default), multiplier for long ratio )
+		EndRatio		=	4.445,	--# 4.32	
+	
+		----#  AUTO TRANSMISSION
+		Gear1ShiftUp            =       6500,
+		Gear2ShiftUp            =       6500,
+		Gear3ShiftUp            =       6500,
+		Gear4ShiftUp            =       6500,
+		Gear5ShiftUp            =       6500,
+	
+		Gear2ShiftDown          =       3000,	--# 2500 all
+		Gear3ShiftDown          =       3000,
+		Gear4ShiftDown          =       3000,
+		Gear5ShiftDown          =       3000,
+		Gear6ShiftDown          =       3000,
+	},
+	
+}  ----# --# ----#  GEARBOX1 END
+
+Car.Gearbox.DefaultGearbox2 = {
+
+	Name = "default gearbox level 2",
+	Price = 10,
+	Mesh			=	2,
+	Settings = GetDefaults(GEARBOX1),
+	
+} ----# --# --# GEARBOX2 END
+
+Car.Gearbox.DefaultGearbox3 = {
+
+	Name = "default gearbox level 3",
+	Price = 10,
+	Mesh			=	3,
+	Settings = GetDefaults(GEARBOX1),
+
+}
+
+Car.Gearbox.DefaultGearbox4 = {
+
+	Name = "default gearbox level 4",
+	Price = 10,
+	Mesh			=	4,
+	Settings = GetDefaults(GEARBOX1),
+		
+} ----# --# --# --# GEARBOX4 ENDS

@@ -1,0 +1,9 @@
+
+trophies_size = { 512,256 }
+trophies = {
+	
+	goldtrophy = {  0, 0, 186, 256 },
+	silvertrophy = {  186, 0, 127, 256 },
+	bronzetrophy = {  311, 0, 127, 256 },
+
+}

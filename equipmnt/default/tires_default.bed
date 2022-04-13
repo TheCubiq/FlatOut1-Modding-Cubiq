@@ -1,0 +1,68 @@
+
+Car.Tires.DefaultTire1 = {
+	Name = "Standard tireset 1",
+	Price = 10,
+	Mesh			=	1,
+	Settings = {
+		LocalDynamics = {
+			RollingResistance  =       1.0,
+			InducedDragCoeff   =       0.0,
+			PneumaticTrail     =       0.06,
+			PneumaticOffset    =       1.0,
+			
+			----#  optimal slip ratio (SAE definition) ie. 0.2 = 20% faster than road, 1.0 = double the road speed...
+			OptimalSlipRatio	= 0.10,				--# 0.10
+			----#  optimal slip angle [deg] ie. best cornering friction
+			OptimalSlipAngle	= 28.0,
+			----#  optimal slip at load [G]
+			OptimalSlipLoad		= 1.5,	
+			----#  optimal load: ratio of normal tire load. 1.0 = neutral load
+			OptimalLoadFactor	= 1.2,
+			
+			ZFriction	=	{1.0, -0.015},
+			XFriction	=	{1.0, -0.010},			--# 1.1
+		},
+		----#  Tire radius
+		Radius		=	0.34,
+		Width		=	0.185,
+		Mass		=	50.0,
+		MomentOfInertia	=	1.0,		
+		
+		----#  Suspension lift (lengthens suspension rest/maximum lengths)
+		SuspensionLift	=	0.0,
+
+	},
+}
+	
+Car.Tires.DefaultTire2 = {
+	Name = "Standard tireset 2",
+	Price = 10,
+	Mesh			=	2,
+	Settings = {
+		LocalDynamics = {
+			RollingResistance  =       1.0,
+			InducedDragCoeff   =       0.0,
+			PneumaticTrail     =       0.06,
+			PneumaticOffset    =       1.0,
+			----#  optimal slip ratio (SAE definition) ie. 0.2 = 20% faster than road, 1.0 = double the road speed...
+			OptimalSlipRatio	= 0.10,				--# 0.10
+			----#  optimal slip angle [deg] ie. best cornering friction
+			OptimalSlipAngle	= 28.0,
+			----#  optimal slip at load [G]
+			OptimalSlipLoad		= 1.5,
+			----#  optimal load: ratio of normal tire load. 1.0 = neutral load
+			OptimalLoadFactor	= 1.2,
+			ZFriction	=	{1.0, -0.015},
+			XFriction	=	{1.0, -0.010},			--# 1.1
+		},
+		----#  Tire radius
+		Radius		=	0.305,
+		Width		=	0.155,
+		Mass		=	35.0,		
+		MomentOfInertia	=	1.0,		
+
+		----#  Suspension lift (lengthens suspension rest/maximum lengths)
+		SuspensionLift	=	0.0,
+	},
+}
+	

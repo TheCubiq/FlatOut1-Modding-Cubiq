@@ -1,0 +1,379 @@
+
+-- Racing: normal racing situation
+-- OffTrack: player off track or stopped
+-- Airborne: player's ragdoll ejected
+
+--	ThrottleMax: min,max   		maximum throttle values for AI
+--	ThrottleRange: min, max		handicap range for throttle reduction
+--	ThrottleReduction: 		maximum throttle reduction
+--	TurnRange:			handicap range for turn evaluation
+--	TurnScale: >= 1.0		scale valued for turns. 2 = double tight
+--	TurboRangeAhead:		handicap range for turbo reduction
+--	TurboAdjustAhead:		turbo reduction value
+--	TurboRangeBehind:		handicap range for extra turbo
+--	TurboAdjustBehind:		turbo adjust value (ie. engine.TurboAcceleration + turboAdjustBehind)
+
+
+Levels = {
+	[1] = {
+		AirborneDelayMs			= 6500,
+		Distance 			= 1200,
+		Racing =
+		{
+			ThrottleMax		= {0.80, 0.93},
+			ThrottleRange		= {10.0, 300.0},
+			ThrottleReduction	= 0.20,
+			TurnRange		= {20.0, 200.0},
+			TurnScale		= 6.0,
+			TurboRangeAhead		= {5.0, 70.0},
+			TurboAdjustAhead	= -0.35,
+			TurboRangeBehind	= {30.0, 500.0},
+			TurboAdjustBehind	= 0.10,
+		},
+		OffTrack =
+		{
+			ThrottleMax		= {0.6, 0.8},		
+			ThrottleRange		= {10.0, 300.0},
+			ThrottleReduction	= 0.35,
+			TurnRange		= {0.0, 200.0},
+			TurnScale		= 7.0,
+			TurboRangeAhead		= {5.0, 50.0},
+			TurboAdjustAhead	= -0.35,
+			TurboRangeBehind	= {0.0, 250.0},
+			TurboAdjustBehind	= 0.0,
+		},
+		Airborne =
+		{
+			ThrottleMax		= {0.6, 0.8},	
+			ThrottleRange		= {10.0, 100.0},
+			ThrottleReduction	= 0.35,
+			TurnRange		= {0.0, 100.0},
+			TurnScale		= 8.0,
+			TurboRangeAhead		= {0.0, 40.0},
+			TurboAdjustAhead	= -0.40,
+			TurboRangeBehind	= {0.0, 250.0},
+			TurboAdjustBehind	= 0.0,
+		},
+	},
+	[2] = {
+		AirborneDelayMs			= 6500,
+		Distance 			= 1100,
+		Racing =
+		{
+			ThrottleMax		= {0.82, 1.0},
+			ThrottleRange		= {15.0, 300.0},
+			ThrottleReduction	= 0.15,
+			TurnRange		= {30.0, 300.0},
+			TurnScale		= 5.0,
+			TurboRangeAhead		= {20.0, 100.0},
+			TurboAdjustAhead	= -0.30,
+			TurboRangeBehind	= {20.0, 400.0},
+			TurboAdjustBehind	= 0.20,
+		},
+		OffTrack =
+		{
+			ThrottleMax		= {0.6, 0.8},		
+			ThrottleRange		= {10.0, 300.0},
+			ThrottleReduction	= 0.30,
+			TurnRange		= {0.0, 200.0},
+			TurnScale		= 6.0,
+			TurboRangeAhead		= {5.0, 50.0},
+			TurboAdjustAhead	= -0.30,
+			TurboRangeBehind	= {0.0, 250.0},
+			TurboAdjustBehind	= 0.0,
+		},
+		Airborne =
+		{
+			ThrottleMax		= {0.6, 0.7},	
+			ThrottleRange		= {10.0, 100.0},
+			ThrottleReduction	= 0.35,
+			TurnRange		= {0.0, 100.0},
+			TurnScale		= 7.0,
+			TurboRangeAhead		= {0.0, 40.0},
+			TurboAdjustAhead	= -0.30,
+			TurboRangeBehind	= {0.0, 250.0},
+			TurboAdjustBehind	= 0.0,
+		},
+	},
+	[3] = {
+		AirborneDelayMs			= 6000,
+		Distance 			= 1000,
+		Racing =
+		{
+			ThrottleMax		= {0.87, 1.0},
+			ThrottleRange		= {30.0, 300.0},
+			ThrottleReduction	= 0.10,
+			TurnRange		= {30.0, 300.0},
+			TurnScale		= 4.0,
+			TurboRangeAhead		= {30.0, 100.0},
+			TurboAdjustAhead	= -0.25,
+			TurboRangeBehind	= {20.0, 250.0},
+			TurboAdjustBehind	= 0.25,
+		},
+		OffTrack =
+		{
+			ThrottleMax		= {0.6, 0.8},		
+			ThrottleRange		= {10.0, 300.0},
+			ThrottleReduction	= 0.25,
+			TurnRange		= {0.0, 200.0},
+			TurnScale		= 5.0,
+			TurboRangeAhead		= {5.0, 50.0},
+			TurboAdjustAhead	= -0.30,
+			TurboRangeBehind	= {0.0, 250.0},
+			TurboAdjustBehind	= 0.0,
+		},
+		Airborne =
+		{
+			ThrottleMax		= {0.6, 0.7},	
+			ThrottleRange		= {10.0, 100.0},
+			ThrottleReduction	= 0.35,
+			TurnRange		= {0.0, 100.0},
+			TurnScale		= 6.0,
+			TurboRangeAhead		= {0.0, 40.0},
+			TurboAdjustAhead	= -0.30,
+			TurboRangeBehind	= {0.0, 250.0},
+			TurboAdjustBehind	= 0.0,
+		},
+	},
+	[4] = {
+		AirborneDelayMs			= 6000,
+		Distance 			= 1000,
+		Racing =
+		{
+			ThrottleMax		= {0.90, 1.0},
+			ThrottleRange		= {50.0, 300.0},
+			ThrottleReduction	= 0.05,
+			TurnRange		= {80.0, 300.0},
+			TurnScale		= 2.0,
+			TurboRangeAhead		= {50.0, 100.0},
+			TurboAdjustAhead	= -0.25,
+			TurboRangeBehind	= {20.0, 100.0},
+			TurboAdjustBehind	= 0.25,
+		},
+		OffTrack =
+		{
+			ThrottleMax		= {0.6, 0.8},		
+			ThrottleRange		= {10.0, 300.0},
+			ThrottleReduction	= 0.1,
+			TurnRange		= {0.0, 200.0},
+			TurnScale		= 3.0,
+			TurboRangeAhead		= {5.0, 50.0},
+			TurboAdjustAhead	= -0.30,
+			TurboRangeBehind	= {0.0, 250.0},
+			TurboAdjustBehind	= 0.0,
+		},
+		Airborne =
+		{
+			ThrottleMax		= {0.6, 0.7},	
+			ThrottleRange		= {10.0, 100.0},
+			ThrottleReduction	= 0.1,
+			TurnRange		= {0.0, 100.0},
+			TurnScale		= 5.0,
+			TurboRangeAhead		= {0.0, 40.0},
+			TurboAdjustAhead	= -0.30,
+			TurboRangeBehind	= {0.0, 250.0},
+			TurboAdjustBehind	= 0.0,
+		},
+	},
+	[5] = {
+		AirborneDelayMs			= 5000,
+		Distance 			= 1000,	
+		Racing =
+		{
+			ThrottleMax		= {0.95, 1.0},		
+			ThrottleRange		= {100.0, 500.0},
+			ThrottleReduction	= 0.01,
+			TurnRange		= {250.0, 400.0},
+			TurnScale		= 1.0,
+			TurboRangeAhead		= {100.0, 250.0},
+			TurboAdjustAhead	= -0.20,
+			TurboRangeBehind	= {10.0, 90.0},
+			TurboAdjustBehind	= 0.20,
+		},
+		OffTrack =
+		{
+			ThrottleMax		= {0.8, 0.9},		
+			ThrottleRange		= {100.0, 300.0},
+			ThrottleReduction	= 0.1,
+			TurnRange		= {0.0, 200.0},
+			TurnScale		= 2.0,
+			TurboRangeAhead		= {50.0, 250.0},
+			TurboAdjustAhead	= -0.30,
+			TurboRangeBehind	= {0.0, 250.0},
+			TurboAdjustBehind	= 0.0,
+		},
+		Airborne =
+		{
+			ThrottleMax		= {0.7, 0.8},		
+			ThrottleRange		= {100.0, 200.0},
+			ThrottleReduction	= 0.1,
+			TurnRange		= {0.0, 100.0},
+			TurnScale		= 4.0,
+			TurboRangeAhead		= {0.0, 100.0},
+			TurboAdjustAhead	= -0.30,
+			TurboRangeBehind	= {0.0, 250.0},
+			TurboAdjustBehind	= 0.0,
+		},
+	},
+	[6] = {
+		AirborneDelayMs			= 5000,
+		Distance 			= 1000,	
+		Racing =
+		{
+			ThrottleMax		= {1.0, 1.0},		
+			ThrottleRange		= {150.0, 500.0},
+			ThrottleReduction	= 0.01,
+			TurnRange		= {250.0, 400.0},
+			TurnScale		= 0.5,
+			TurboRangeAhead		= {100.0, 250.0},
+			TurboAdjustAhead	= -0.10,
+			TurboRangeBehind	= {15.0, 80.0},
+			TurboAdjustBehind	= 0.25,
+		},
+		OffTrack =
+		{
+			ThrottleMax		= {0.9, 1.0},		
+			ThrottleRange		= {100.0, 300.0},
+			ThrottleReduction	= 0.1,
+			TurnRange		= {0.0, 200.0},
+			TurnScale		= 2.0,
+			TurboRangeAhead		= {50.0, 250.0},
+			TurboAdjustAhead	= -0.30,
+			TurboRangeBehind	= {0.0, 250.0},
+			TurboAdjustBehind	= 0.0,
+		},
+		Airborne =
+		{
+			ThrottleMax		= {0.8, 0.9},		
+			ThrottleRange		= {100.0, 200.0},
+			ThrottleReduction	= 0.1,
+			TurnRange		= {0.0, 100.0},
+			TurnScale		= 5.0,
+			TurboRangeAhead		= {0.0, 100.0},
+			TurboAdjustAhead	= -0.30,
+			TurboRangeBehind	= {0.0, 250.0},
+			TurboAdjustBehind	= 0.0,
+		},
+	},
+	[7] = {
+		AirborneDelayMs			= 5000,
+		Distance 			= 1000,	
+		Racing =
+		{
+			ThrottleMax		= {1.0, 1.0},		
+			ThrottleRange		= {150.0, 500.0},
+			ThrottleReduction	= 0.01,
+			TurnRange		= {250.0, 400.0},
+			TurnScale		= 1.0,
+			TurboRangeAhead		= {100.0, 250.0},
+			TurboAdjustAhead	= -0.10,
+			TurboRangeBehind	= {10.0, 50.0},
+			TurboAdjustBehind	= 0.25,
+		},
+		OffTrack =
+		{
+			ThrottleMax		= {0.95, 1.0},		
+			ThrottleRange		= {100.0, 300.0},
+			ThrottleReduction	= 0.1,
+			TurnRange		= {0.0, 200.0},
+			TurnScale		= 2.0,
+			TurboRangeAhead		= {50.0, 250.0},
+			TurboAdjustAhead	= -0.20,
+			TurboRangeBehind	= {0.0, 250.0},
+			TurboAdjustBehind	= 0.0,
+		},
+		Airborne =
+		{
+			ThrottleMax		= {0.8, 0.9},		
+			ThrottleRange		= {100.0, 200.0},
+			ThrottleReduction	= 0.1,
+			TurnRange		= {0.0, 100.0},
+			TurnScale		= 5.0,
+			TurboRangeAhead		= {0.0, 100.0},
+			TurboAdjustAhead	= -0.25,
+			TurboRangeBehind	= {0.0, 250.0},
+			TurboAdjustBehind	= 0.0,
+		},
+	},
+	[8] = {
+		AirborneDelayMs			= 5000,
+		Distance 			= 1000,	
+		Racing =
+		{
+			ThrottleMax		= {0.95, 1.0},		
+			ThrottleRange		= {200.0, 500.0},
+			ThrottleReduction	= 0.01,
+			TurnRange		= {300.0, 400.0},
+			TurnScale		= 1.0,
+			TurboRangeAhead		= {200.0, 300.0},
+			TurboAdjustAhead	= -0.10,
+			TurboRangeBehind	= {5.0, 100.0},
+			TurboAdjustBehind	= 0.20,
+		},
+		OffTrack =
+		{
+			ThrottleMax		= {0.95, 1.0},		
+			ThrottleRange		= {100.0, 300.0},
+			ThrottleReduction	= 0.1,
+			TurnRange		= {50.0, 200.0},
+			TurnScale		= 1.0,
+			TurboRangeAhead		= {50.0, 250.0},
+			TurboAdjustAhead	= -0.30,
+			TurboRangeBehind	= {0.0, 250.0},
+			TurboAdjustBehind	= 0.0,
+		},
+		Airborne =
+		{
+			ThrottleMax		= {0.8, 0.9},		
+			ThrottleRange		= {100.0, 200.0},
+			ThrottleReduction	= 0.1,
+			TurnRange		= {0.0, 100.0},
+			TurnScale		= 3.0,
+			TurboRangeAhead		= {0.0, 100.0},
+			TurboAdjustAhead	= -0.35,
+			TurboRangeBehind	= {0.0, 250.0},
+			TurboAdjustBehind	= 0.0,
+		},
+	},
+	[9] = {
+		AirborneDelayMs			= 5000,	
+		Distance 			= 1000,
+		Racing =
+		{
+			ThrottleMax		= {0.8, 0.9},		
+			ThrottleRange		= {200.0, 500.0},
+			ThrottleReduction	= 0.01,
+			TurnRange		= {300.0, 400.0},
+			TurnScale		= 1.0,
+			TurboRangeAhead		= {200.0, 300.0},
+			TurboAdjustAhead	= -0.10,
+			TurboRangeBehind	= {5.0, 100.0},
+			TurboAdjustBehind	= 0.25,
+		},
+		OffTrack =
+		{
+			ThrottleMax		= {0.8, 0.9},		
+			ThrottleRange		= {100.0, 300.0},
+			ThrottleReduction	= 0.1,
+			TurnRange		= {50.0, 200.0},
+			TurnScale		= 1.0,
+			TurboRangeAhead		= {50.0, 250.0},
+			TurboAdjustAhead	= -0.30,
+			TurboRangeBehind	= {0.0, 250.0},
+			TurboAdjustBehind	= 0.1,
+		},
+		Airborne =
+		{
+			ThrottleMax		= {0.8, 0.9},		
+			ThrottleRange		= {100.0, 200.0},
+			ThrottleReduction	= 0.1,
+			TurnRange		= {0.0, 100.0},
+			TurnScale		= 3.0,
+			TurboRangeAhead		= {0.0, 100.0},
+			TurboAdjustAhead	= -0.35,
+			TurboRangeBehind	= {0.0, 250.0},
+			TurboAdjustBehind	= 0.1,
+		},
+	},
+	
+}

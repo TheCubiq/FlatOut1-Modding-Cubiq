@@ -1,0 +1,128 @@
+--# --------------------------------------------------------------------
+----#  Car Settings "Car5body"
+--# --------------------------------------------------------------------
+
+Car.Body.Car5 = {
+		Speed = 4,
+		Acceleration = 2,
+		Strength = 4,
+		Name = "THUNDERBOLT",
+		Price = 15000,
+		RepairPrice		=       1000,    --repair price if 100% damage
+
+		DataPath = "data/Cars/Car_5/",
+
+		Settings = {
+			----#  --- Overlay graphics ---
+			OverlayMeterLocation		=	{752, 496},			----#  Topleft in 1024x768 coords
+			----#  Indicator locations
+			OverlaySpeedLocation		=	{77, 178},			----#  Relative locations in 256x256 map
+			OverlayRpmLocation		=	{180, 78},			----#  Relative locations in 256x256 map
+			OverlayGearLocation		=	{171, 163},			----#  Relative locations in 256x256 map
+
+			----#  Indicators dimensions (width, total length, tail length)
+			OverlaySpeedSize			=	{8, 64, 10.5},
+			OverlayRpmSize			=	{8, 64, 10.5},
+	
+			----#  Meter limits
+			OverlaySpeedMax			=	180,
+			OverlayRpmMax			=	10000,
+			InteriorSpeedMax		=	200,
+			InteriorRpmMax			=	8000,
+	
+			----#  --- Rigid body ---   
+			Mass           			=	1281.0,		--# ----#  body mass + engine mass = car mass
+			MomentOfInertia 		=     {2.067, 2.200, 0.299},	
+			CenterOfMass    		=     {0.0, 0.34, 0.12},
+	
+			----#  Aerodynamical draw
+			AeroDrag       			=	{1.2, 1.6, 0.4},
+			AeroDragLoc			=	{0.0, 0.34, 0.12},
+	
+			Damping				=	{0.01, 0.05},		----#  linear, angular 0.01, 0.1
+			DownForceConst			=	2.0,
+			CenterOfDownForce 		=	{0.0, 0.55, -0.05},
+	
+
+	
+			--# --------------------------------------------------------------------
+			----#  Drive lights
+			--# --------------------------------------------------------------------
+			DriveLightLocation		=	{0, 4.0, -1.0},
+			DriveLightAngle 		=	2.0,
+			DriveLightColor			=	{1.0, 1.0, 1.0},
+	
+			--# --------------------------------------------------------------------
+			----#  Camera/Driver locations
+			--# --------------------------------------------------------------------
+			DriverType		=	1,
+			DriverLoc		=	{-0.429, 0.192, 0.115},
+	
+			--# --------------------------------------------------------------------
+			----#  Force Feedback
+			--# --------------------------------------------------------------------
+			FFFrictionNominalLoad		= 	2350.0,
+			FFFrictionOffset		=	1.5,
+			FFCenteringNominalLoad		=	2350.0,
+			FFCenteringOffset		=	2.0,
+
+			----#  --- Misc visual settings ---
+			WheelDisplacement		=	0.1,
+			WheelAligningTorqueLimits	=	{500.0, 4000.0},
+	
+	
+			----#  --- Brakes ---
+			BrakeBalance			=	{0.60, 0.500, 0.45}, 	--# 0 -> rear, 1 -> front
+			BrakeTorque    			=     12500.0,   --# 4500.0      
+			HandBrakeTorque 		=     10500.0,
+			BrakePower			=     0.4,
+			----#  --- Engine ---
+			FrontTraction			=	0,
+			RearTraction			=	1,
+	
+	
+	
+			----#  --- Steering ---
+			----#  Steering turn speed limits (1.0 = maximum steering in 1 s)
+			SteeringSpeeds			=	{1.25, 1.85},		--# 1.25, 1.75
+			SteeringLimit			=	45,				----#  slowest turning reached at m/s	
+			SteeringReduction		=	0.4,				----#  Steering angle is reduced 40% at SteeringLimit speed	
+	
+			----#  Turn angles default: 26/28
+			TireTurnAngleIn			=	34,	--# 30		
+			TireTurnAngleOut		=	34,	--# 32	
+			TireCenteringSpeed		=	0.999,	----#  0.8 = 80% decrease/s
+	
+			----#  "Arcade" control
+			----#  -- Exponential balance factor: = -x + y*v + z*v*v  [0,1]
+			----#  --  controls how much "arcade steering" will take control
+			----#  -- x = zero speed (below that full physics are used)
+			----#  -- y = velocity factor
+			----#  -- z = quadratic factor
+			SteerBalanceFactor		=	{5.0, 0.0045, 0.00},
+			ProSteerBalanceFactor		=	{14.0, 0.0045, 0.00},
+	
+			----#  -- Steering balance rate = v / (x + y*v + z*v*v)  [0,1]
+			----#  --  controls how fast arcade steering is at various velocities
+			SteerBalanceRate		=	{0.70, 0.38, 0.00},
+			ProSteerBalanceRate		=	{0.70, 0.48, 0.00},
+
+			----#  -- Durability
+			Durability			= 0.0,
+	
+
+		},
+
+		MaxSettings = {
+
+			BrakePower			=       0.7,  			 
+			Durability			= 	1.0,
+
+
+		},
+
+}    ----# --# --# ----# --# --# ----# --# ----#  Car5 ENDS
+		
+		
+
+

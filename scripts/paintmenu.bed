@@ -1,0 +1,371 @@
+--///////////////////////////////////////////////////////////////////////////
+--// PaintMenu.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2003 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// @date 8.4.2003 12:31:24
+--// 
+--// @Author Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+
+DataPath="data/menu/"
+
+	MODE_PAINT = 0
+	MODE_DECAL = 1
+
+	DECALSIZE_STEP=0.1
+	DECALROTATE_STEP=22.5
+
+	wmNewFrame(nil,"ToolWindowPaint");
+	wmNewFrame(nil,"ToolWindowDecal");
+
+
+
+	CurrentPaintMode=MODE_PAINT;
+
+
+--toolwindow common buttons
+
+--toolwindow paint mode buttons	
+	wmNewButton(ToolWindowPaint,"DecalModeButton");
+	wmNewButton(ToolWindowPaint,"BrushSmall");
+	wmNewButton(ToolWindowPaint,"BrushMedium");
+	wmNewButton(ToolWindowPaint,"BrushLarge");
+	wmNewButton(ToolWindowPaint,"BrushPart");
+	wmNewFrame(ToolWindowPaint,"ColorPicker");
+
+	colorButtonTemplate = [[
+			wmNewColorButton(ColorPicker,"$NAME");
+			$NAME.onInit = function()
+					$NAME:SetPosition($POSITIONX,$POSITIONY);
+					$NAME:SetSize(16,16);
+			end
+			$NAME.onAction = function()
+					SetBrushColor($NAME);
+			end
+	]]
+
+	colorButtonParameters = {}
+
+
+	wmNewButton(ToolWindowPaint,"LoadSaveButtonPaint");
+	wmNewResource(BITMAP_INACTIVE,"Button_Discette",DataPath.."Button_Discette.tga")
+	wmNewResource(BITMAP_ACTIVE,"Button_DiscetteSelected",DataPath.."Button_DiscetteSelected.tga")
+--	wmNewResource(BITMAP,"Button_Load",DataPath.."Button_Load.tga")
+--	wmNewResource(BITMAP,"Button_Save",DataPath.."Button_Save.tga");
+
+	wmNewResource(BITMAP_ACTIVE,"Button_DecalSelected",DataPath.."Button_DecalSelected.tga");
+	wmNewResource(BITMAP_INACTIVE,"Button_Decal",DataPath.."Button_Decal.tga");
+
+	LoadSaveButtonPaint.onInit = function()
+							LoadSaveButtonPaint:SetPosition(6,10);
+							LoadSaveButtonPaint:SetSize(32,32);
+							LoadSaveButtonPaint:AttachResource(wmGetResource("Button_Discette"));
+							LoadSaveButtonPaint:AttachResource(wmGetResource("Button_DiscetteSelected"));
+						end
+
+
+	ToolWindowPaint.onInit = function()
+							ToolWindowPaint:SetPosition(128,432);
+							ToolWindowPaint:SetSize(384,48+32);
+
+							BrushSmall:AttachResource(wmNewResource(BITMAP_INACTIVE,"Brush_Small",DataPath.."Button_BrushSmall.tga"));
+							BrushSmall:AttachResource(wmNewResource(BITMAP_ACTIVE,"Brush_SmallSelected",DataPath.."Button_BrushSmallSelected.tga"));
+							BrushSmall:SetPosition(110,10);
+							BrushSmall:SetSize(32,32);
+							
+							BrushMedium:AttachResource(wmNewResource(BITMAP_INACTIVE,"Brush_Medium",DataPath.."Button_BrushMedium.tga"));
+							BrushMedium:AttachResource(wmNewResource(BITMAP_ACTIVE,"Brush_MediumSelected",DataPath.."Button_BrushMediumSelected.tga"));
+							BrushMedium:SetPosition(142,10);
+							BrushMedium:SetSize(32,32);
+
+							BrushLarge:AttachResource(wmNewResource(BITMAP_INACTIVE,"Brush_Large",DataPath.."Button_BrushLarge.tga"));
+							BrushLarge:AttachResource(wmNewResource(BITMAP_ACTIVE,"Brush_LargeSelected",DataPath.."Button_BrushLargeSelected.tga"));
+							BrushLarge:SetPosition(174,10);
+							BrushLarge:SetSize(32,32);
+
+							BrushPart:AttachResource(wmNewResource(BITMAP_INACTIVE,"Brush_Part",DataPath.."Button_BrushPart.tga"));
+							BrushPart:AttachResource(wmNewResource(BITMAP_ACTIVE,"Brush_PartSelected",DataPath.."Button_BrushPartSelected.tga"));
+							BrushPart:SetPosition(206,10);
+							BrushPart:SetSize(32,32);
+
+
+							BrushMedium:SetSelected();
+						end
+						
+						BrushSmall.onAction = function()
+											SetSpraySize(SPRAYSIZE_MINIMUM);
+											BrushSmall:SetSelected();
+										end
+						
+						BrushMedium.onAction = function()
+											SetSpraySize(SPRAYSIZE_DEFAULT);
+											BrushMedium:SetSelected();
+										end
+
+						BrushLarge.onAction = function()
+											SetSpraySize(SPRAYSIZE_MAXIMUM);
+											BrushLarge:SetSelected();
+										end
+
+						BrushPart.onAction = function()
+											SetSpraySize(SPRAYSIZE_FLOOD);
+											BrushPart:SetSelected();
+										end
+
+						ColorPicker.onInit = function()
+
+											local i;
+											local x=2;
+											local y=10;
+											for i=1,8 do
+												colorButtonParameters[i]={}
+												colorButtonParameters[i].NAME=format("Color%d",i);
+												colorButtonParameters[i].POSITIONX=x;
+												colorButtonParameters[i].POSITIONY=y;
+												x=x+17;
+											end
+											x=2;
+											y=27;
+											for i=9,16 do
+												colorButtonParameters[i]={}
+												colorButtonParameters[i].NAME=format("Color%d",i);
+												colorButtonParameters[i].POSITIONX=x;
+												colorButtonParameters[i].POSITIONY=y;
+												x=x+17;
+											end
+
+											for i=1,16 do
+												newButtonFromTemplate(colorButtonTemplate,colorButtonParameters[i]);
+											end
+
+											ColorPicker:ShowBorders(FALSE);
+											ColorPicker:SetPosition(240,0);
+											ColorPicker:SetSize(144,48);
+
+
+											Color1:SetColor(Palette:GetColor(PALETTE_MENU));
+											Color2:SetColor(Palette:GetColor(PALETTE_MENU+1));
+											Color3:SetColor(Palette:GetColor(PALETTE_MENU+2));
+											Color4:SetColor(Palette:GetColor(PALETTE_MENU+3));
+											Color5:SetColor(Palette:GetColor(PALETTE_MENU+4));
+											Color6:SetColor(Palette:GetColor(PALETTE_MENU+5));
+											Color7:SetColor(Palette:GetColor(PALETTE_MENU+6));
+											Color8:SetColor(Palette:GetColor(PALETTE_MENU+7));
+											Color9:SetColor(Palette:GetColor(PALETTE_MENU+8));
+											Color10:SetColor(Palette:GetColor(PALETTE_MENU+9));
+											Color11:SetColor(Palette:GetColor(PALETTE_MENU+10));
+											Color12:SetColor(Palette:GetColor(PALETTE_MENU+11));
+											Color13:SetColor(Palette:GetColor(PALETTE_MENU+12));
+											Color14:SetColor(Palette:GetColor(PALETTE_MENU+13));
+											Color15:SetColor(Palette:GetColor(PALETTE_MENU+14));
+											Color16:SetColor(Palette:GetColor(PALETTE_MENU+15));
+
+											SetBrushColor(Color1);
+										end
+
+
+
+	DecalModeButton.onInit = function()
+							DecalModeButton:SetPosition(41,10);
+							DecalModeButton:SetSize(32,32);
+							DecalModeButton:AttachResource(wmGetResource("Button_DecalSelected"));
+							DecalModeButton:AttachResource(wmGetResource("Button_Decal"));
+						end
+
+	DecalModeButton.onAction = function()
+							SetDecalMode();
+						end
+
+		
+
+
+--toolwindow decal mode buttons
+	wmNewButton(ToolWindowDecal,"DecalSmaller");
+	wmNewButton(ToolWindowDecal,"DecalLarger");
+	wmNewButton(ToolWindowDecal,"DecalRotateClock");
+	wmNewButton(ToolWindowDecal,"DecalRotateCounter");
+	wmNewButton(ToolWindowDecal,"DecalFlip");
+	wmNewButton(ToolWindowDecal,"DecalSelect");
+	wmNewButton(ToolWindowDecal,"PaintModeButton");
+
+	wmNewButton(ToolWindowDecal,"LoadSaveButtonDecal");
+
+	LoadSaveButtonDecal.onInit = function()
+							LoadSaveButtonDecal:SetPosition(6,10);
+							LoadSaveButtonDecal:SetSize(32,32);
+							LoadSaveButtonDecal:AttachResource(wmGetResource("Button_Discette"));
+							LoadSaveButtonDecal:AttachResource(wmGetResource("Button_DiscetteSelected"));
+						end
+
+	ToolWindowDecal.onInit = function()
+							ToolWindowDecal:SetPosition(128,432);
+							ToolWindowDecal:SetSize(384,48+32);
+
+							DecalSmaller:AttachResource(wmNewResource(BITMAP_INACTIVE,"Button_Minus",DataPath.."Button_Minus.tga"));
+							DecalSmaller:AttachResource(wmNewResource(BITMAP_ACTIVE,"Button_MinusSelected",DataPath.."Button_MinusSelected.tga"));
+							DecalSmaller:SetPosition(110,10);
+							DecalSmaller:SetSize(32,32);
+
+							DecalLarger:AttachResource(wmNewResource(BITMAP_INACTIVE,"Button_Plus",DataPath.."Button_Plus.tga"));
+							DecalLarger:AttachResource(wmNewResource(BITMAP_ACTIVE,"Button_PlusSelected",DataPath.."Button_PlusSelected.tga"));
+							DecalLarger:SetPosition(142,10);
+							DecalLarger:SetSize(32,32);
+
+							DecalRotateCounter:AttachResource(wmNewResource(BITMAP_INACTIVE,"Button_RotateCounter",DataPath.."Button_RotateRight.tga"));
+							DecalRotateCounter:AttachResource(wmNewResource(BITMAP_ACTIVE,"Button_RotateCounterSelected",DataPath.."Button_RotateRightSelected.tga"))
+							DecalRotateCounter:SetPosition(206,10);
+							DecalRotateCounter:SetSize(32,32);
+
+							DecalRotateClock:AttachResource(wmNewResource(BITMAP_INACTIVE,"Button_RotateClock",DataPath.."Button_RotateLeft.tga"));
+							DecalRotateClock:AttachResource(wmNewResource(BITMAP_ACTIVE,"Button_RotateClockSelected",DataPath.."Button_RotateLeftSelected.tga"))
+							DecalRotateClock:SetPosition(174,10);
+							DecalRotateClock:SetSize(32,32);
+
+							DecalFlip:AttachResource(wmNewResource(BITMAP_INACTIVE,"Button_Flip",DataPath.."Button_Flip.tga"));
+							DecalFlip:AttachResource(wmNewResource(BITMAP_ACTIVE,"Button_FlipSelected",DataPath.."Button_FlipSelected.tga"));
+							DecalFlip:SetPosition(238,10);
+							DecalFlip:SetSize(32,32);
+
+							DecalSelect:AttachResource(wmGetResource("Button_Decal"));
+							DecalSelect:AttachResource(wmGetResource("Button_DecalSelected"));
+							DecalSelect:SetPosition(41,10);
+							DecalSelect:SetSize(32,32);
+
+						end
+
+	PaintModeButton.onInit = function()
+							PaintModeButton:SetPosition(74,10);
+							PaintModeButton:SetSize(32,32);
+							PaintModeButton:AttachResource(wmNewResource(BITMAP_ACTIVE,"Button_PaintSelected",DataPath.."Button_PaintSelected.tga"));
+							PaintModeButton:AttachResource(wmNewResource(BITMAP_INACTIVE,"Button_Paint",DataPath.."Button_Paint.tga"));
+						end
+	PaintModeButton.onAction = function()
+							SetPaintMode();										
+						end
+
+
+	DecalSmaller.onAction = function()
+							SetDecalSize(GetDecalSize()-GetDecalStepSize());								
+						end
+	DecalLarger.onAction = function()
+							SetDecalSize(GetDecalSize()+GetDecalStepSize());
+						end
+	DecalRotateClock.onAction = function()
+							SetDecalRotation(GetDecalRotation()+DECALROTATE_STEP);
+						end
+	DecalRotateCounter.onAction = function()
+							SetDecalRotation(GetDecalRotation()-DECALROTATE_STEP);
+						end
+
+	DecalFlip.onAction = function()
+			DecalFlipHorizontal();
+	end
+
+	DecalSelect.onAction = function()
+							EnterDecalSelectWindow();
+						end
+	
+
+
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+	LoadSaveButtonDecal.onAction = function()
+		EnterPaintLoadSaveMenu();
+	end
+
+	LoadSaveButtonPaint.onAction = function()
+		EnterPaintLoadSaveMenu();
+	end
+	
+
+
+--functions
+function SetBrushColor(color)
+	ToolWindowPaint.CurrentColor=color;
+	SetSprayColor(color:GetColor());
+	color:SetSelected();
+end
+
+function SetPaintMode()
+
+	EnablePaintMode(TRUE);
+	CurrentPaintMode = MODE_PAINT
+	SetBrush(BRUSH_PAINT);
+
+	
+	DecalSelectWindow:HideWindow();
+	PaintLoadSaveMenu:HideWindow();
+	ToolWindowDecal:HideWindow();
+
+	ToolWindowPaint:ShowWindow();
+
+end
+
+function SetDecalMode()
+	ToolWindowPaint:HideWindow();
+	PaintLoadSaveMenu:HideWindow();
+	ToolWindowDecal:ShowWindow();
+
+
+	CurrentPaintMode = MODE_DECAL;
+
+	EnterDecalSelectWindow();
+
+end
+
+
+function EnterPaintMenu()
+	ConfirmWindow:ShowWindow();
+	MoneyWindow:ShowWindow();
+	EnablePaintMode(TRUE);
+	
+	if CurrentPaintMode == MODE_PAINT then
+		SetPaintMode();
+	else
+		SetDecalMode();
+	end
+
+	ConfirmWindow.EnableButtons(ExitPaintMenu,nil);
+	StatusBar:HideWindow();
+	Garage_door:HideWindow();
+	Office_door:HideWindow();
+	Race_calendar:HideWindow();
+	Toolbox:HideWindow();
+	Spray_can:HideWindow();
+	SwitchGarageCamera(PAINT_CAMERA);
+end
+
+function ExitPaintMenu()
+--	ConfirmWindow:HideWindow();
+--	MoneyWindow:HideWindow();
+	ToolWindowPaint:HideWindow();
+	ToolWindowDecal:HideWindow();
+	DecalSelectWindow:HideWindow();
+
+	ConfirmWindow.DisableButtons();
+	StatusBar:ShowWindow();
+	Garage_door:ShowWindow();
+	Toolbox:ShowWindow();
+	Office_door:ShowWindow();
+	Race_calendar:ShowWindow();
+	Spray_can:ShowWindow();
+	EnablePaintMode(FALSE);
+	SwitchGarageCamera(GARAGE_CAMERA);
+end
+
+
+dofile("data/scripts/DecalSelectMenu.bed");
+dofile("data/Scripts/PaintLoadSave.bed");
+
+
+wmActivateWindow(ToolWindowPaint);
+wmActivateWindow(ToolWindowDecal);
+
+ToolWindowPaint:HideWindow();
+ToolWindowDecal:HideWindow();
+
+
+

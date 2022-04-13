@@ -1,0 +1,486 @@
+--///////////////////////////////////////////////////////////////////////////
+--// CareerModeMenu.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2004 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// Created on 3.3.2004 13:55:01
+--// 
+--// @Author Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+careermode_state ={}
+
+careermode_data = {
+
+	info_plate = image("info_plate.tga"),
+	characters = {
+			image("male.tga"),
+			image("female.tga"),
+	},
+
+
+}
+
+
+menu_careermode_carselect = {
+
+	options = {
+	
+		title = CAREERMODE_CARSELECT,
+		background = noimage(), --background("bg-mainmenu.tga"),
+		orientation = MENU_HORIZONTAL,
+		position = POS(260,396),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		back_action=entermenu("menu_singleplayer"),
+	},
+
+	init_function = function()
+		cardealer_init(entermenu("menu_singleplayer"),cardealer_transmissionselect(entermenu("menu_careermode_garage")),true) --//profile_entersave(entermenu("menu_careermode_carselect"),entermenu("menu_careermode_garage"))
+		--//cardealer_init(entermenu("menu_singleplayer"),entermenu("menu_careermode_garage"),true)
+		
+	end,
+
+	deinit_function = function()
+--//		if cardealer_state.forward then
+--//			PlayerProfile:CareerModeCarSelected(TRUE)
+--//		end
+--[[--/*
+		if cardealer_state.forward then
+			PlayerProfile:CareerModeCarSelected(TRUE)
+			local c = Save.SavePlayerData(PlayerProfile:GetAutosaveSlot())
+			if c == 0 then
+				PlayerProfile:SetAutosaveEnabled(true)
+				PlayerProfile:SetAutosaveSlot(Save.GetLastSaveSlotUsed())
+		    end
+		end
+--]]--*/
+		cardealer_deinit()
+	end,
+	
+	update_function = function()
+		cardealer_update()
+	end,
+
+
+
+	items = {
+	},	
+}
+
+
+menu_careermode_characterselect = {
+
+	options = {
+	
+		title = CAREERMODE_CHARACTER,
+		background = noimage(),
+		orientation = MENU_HORIZONTAL,
+		position = POS(260,396),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		back_action=entermenu("menu_careermode_newcareer"),
+	},
+
+	buttonchange_function = function(prevbutton,newbutton)
+		local win=GetWindow("character")
+		win:AttachResource(careermode_data.characters[newbutton])
+		
+	end,
+
+	init_function = function()
+		windows_reset()
+
+		StandardUpperBalk()
+		StandardLowerBalk()
+
+		local win=addparent(Button{Name="character",Position=SAFEPOS(220,100),Size=SIZE(256,256)})
+
+
+		activateparents()
+	end,
+
+	deinit_function = function()
+		windows_reset()
+
+	end,
+
+	update_function = function()
+		--//MenuScene:SetCameraPositionOffset(GetCameraSplinePoint())
+
+	end,
+
+
+	items = {
+		{ CAREERMODE_CHARACTER_MALE,noimage(), function() 
+			PlayerProfile:SetCharacterType(0) 
+			EnterMenu("menu_careermode_difficulty")
+			end 
+		},
+		{ CAREERMODE_CHARACTER_FEMALE,noimage(), function() 
+			PlayerProfile:SetCharacterType(1) 
+			EnterMenu("menu_careermode_difficulty")
+			end 
+		},
+	},
+	
+}
+
+menu_careermode_difficulty = {
+
+	options = {
+	
+		title = CAREERMODE_HANDLING,
+		background = noimage(),
+		orientation = MENU_HORIZONTAL,
+		position = POS(260,396),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		back_action=entermenu("menu_careermode_characterselect"),
+	},
+
+	init_function = function()
+		windows_reset()
+		StandardUpperBalk()
+		StandardLowerBalk()
+
+		activateparents()
+	end,
+
+	deinit_function = function()
+		windows_reset()
+
+	end,
+
+	update_function = function()
+		--//MenuScene:SetCameraPositionOffset(GetCameraSplinePoint())
+	end,
+
+	items = {
+		{ CAREERMODE_HANDLING_NORM,noimage(), function() 
+			PlayerProfile:SetEasyDifficulty(TRUE)
+			profile_entersave(entermenu("menu_careermode_difficulty"),entermenu("menu_mainmenu")) 
+			end 
+		},
+		{ CAREERMODE_HANDLING_PRO,noimage(), function() 
+			PlayerProfile:SetEasyDifficulty(false)
+			profile_entersave(entermenu("menu_careermode_difficulty"),entermenu("menu_mainmenu"))
+			end 
+		},
+	},
+
+}
+
+
+menu_careermode = {
+
+	options = {
+	
+		title = CAREERMODE_TITLE,
+		background = noimage(), --background("bg-mainmenu_alpha.tga"),
+		orientation = MENU_HORIZONTAL,
+		position = POS(260,396),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		back_action=entermenu("menu_mainmenu"),
+	},
+
+	init_function = function()
+
+		windows_reset()
+
+		profile_updatesavestate()
+--//		PlayerProfile:Reset()
+--//		Save.RefreshSaves()
+
+		StandardUpperBalk()
+		StandardLowerBalk()
+
+		activateparents()
+	end,
+
+	deinit_function = function()
+		windows_reset()
+
+	end,
+
+
+	items = {
+		{ CAREERMODE_LOAD,noimage(), entermenu("menu_careermode_loadcareer") },
+		{ CAREERMODE_NEW,noimage(),  entermenu("menu_careermode_newcareer") },
+	},
+
+}
+
+careermode_updatesaves = function()
+
+
+	profile_updatesavestate()
+
+	if careermode_state.oldsavestate ~= Save.SAVE_DEVICE_OK then
+		careermode_setsaveinfo(1)
+	end
+
+end
+
+
+function careermode_setsaveinfo(num)
+
+	LOG("setsaveinfo %d",num)
+
+	if careermode_state.savestate == Save.SAVE_DEVICE_OK then
+
+		LOG("save device ok")
+		careermode_state.saveslot=num
+
+		local info=careermode_state.saves[num]
+
+		local w=GetWindow("save_name")
+
+		if info then
+			w:SetTitle(info.name)
+				
+			w=GetWindow("save_time")
+
+			w:SetTitle(ConvertToWString(string.format("slot %d",info.slot)))
+
+		else
+			w:SetTitle(CAREERMODE_SAVEINFO)
+		end
+	else
+
+		local w=GetWindow("save_name")
+		w:SetTitle(ConvertToWString(string.format("save device not ok %d",careermode_state.savestate or -1)))
+	end
+
+	if careermode_state.saves then
+
+		if num == 1 then
+			HideLeftBalkArrow()
+		else
+			ShowLeftBalkArrow()
+		end
+
+		if num == table.getn(careermode_state.saves) then
+			HideRightBalkArrow()
+		else
+			ShowRightBalkArrow()
+		end
+	end
+end
+
+menu_careermode_loadcareer = {
+
+	options = {
+	
+		title = CAREERMODE_LOAD,
+		background = noimage(), 
+		orientation = MENU_HORIZONTAL,
+		position = POS(260,396),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		back_action=entermenu("menu_careermode"),
+	},
+
+	init_function = function()
+		careermode_state.savestate=nil
+		careermode_state.oldsavestate=nil
+
+		windows_reset()
+
+		StandardUpperBalk()
+		StandardLowerBalk(true)
+		
+		Menu:DisableButtons()
+
+		local parentpos=SAFEPOS(0,81)
+		local parent=addparent(Frame{ Position=parentpos, Size=SIZE(256,256), ShowBorders=FALSE, })
+		parent:AttachResource(careermode_data.info_plate)
+
+		local key=addchild(ButtonGroup{Name="keyboardhook",Position=POS(0,0),Size=SIZE(0,0),ShowBorders=FALSE,Parent=parent})
+
+		addchild(StaticText{ Name="save_name", Position=RELATIVEPOS(SAFEPOS(16,123),parentpos), Size=SIZE(60,16), Font=font10(), Parent=parent })
+		addchild(StaticText{ Name="save_time", Position=RELATIVEPOS(SAFEPOS(16,171),parentpos), Size=SIZE(60,16), Font=font10(), Parent=parent })
+		--//addchild(StaticText{ Name="race3_hs", Position=RELATIVEPOS(SAFEPOS(16,220),parentpos), Size=SIZE(60,16), Font=font10(), Parent=parent })
+		--//addchild(StaticText{ Name="smashy_hs", Position=RELATIVEPOS(SAFEPOS(16,268),parentpos), Size=SIZE(60,16), Font=font10(), Parent=parent })
+
+		profile_updatesavestate()
+		careermode_setsaveinfo(1)
+		
+		activateparents()
+
+		GUI:LoadBackground("data/menu/bg/loading_screen_background.tga")
+
+		key.onMoveLeft = function(self)
+			LOG("loadcareer:onmoveleft")
+
+			if careermode_state.savestate ~= Save.SAVE_DEVICE_OK then return end
+
+			local c=careermode_state.saveslot
+			if c > 1 then
+				c = c - 1
+			else
+				c = 1
+			end
+			careermode_setsaveinfo(c)
+
+		end
+
+		key.onMoveRight = function(self)
+			LOG("loadcareer:onmoveright")
+			
+			if careermode_state.savestate ~= Save.SAVE_DEVICE_OK then return end
+
+			local c=careermode_state.saveslot
+			if c < table.getn(careermode_state.saves) then 
+				c = c + 1
+			else
+				c = table.getn(careermode_state.saves)
+			end
+
+			careermode_setsaveinfo(c)
+
+		end
+
+		key.onEscape = function(self)
+			EnterMenu("menu_careermode")
+		end
+
+		key.onAction = function(self)
+			if careermode_state.saveslot then
+				local v=Save.LoadPlayerData(careermode_state.saves[careermode_state.saveslot].slot)
+
+				if  v == 0 then
+					tuning_setplayerequipment(GameFlow.GetPlayerCar()+1)
+					tuning_loadupgrades()
+					trackselection_check_class_unlock()
+					trackselection_check_track_unlock()
+					PlayerProfile:StartCareer()
+					PlayerProfile:SetAutosaveEnabled(true)
+					PlayerProfile:SetAutosaveSlot(careermode_state.saves[careermode_state.saveslot].slot)
+					EnterMenu("menu_singleplayer")
+				else
+					LOG("loadcareer:load failed %d",v)
+				end
+			end
+		end
+	end,
+
+	deinit_function = function()
+		windows_reset()
+
+		Menu:EnableButtons()
+
+	end,
+
+
+	update_function = function()
+		--//todo: check memorycard removal/insertion
+		--//MenuScene:SetCameraPositionOffset(GetCameraSplinePoint())
+
+		careermode_updatesaves()
+	end,
+
+
+
+
+
+	items = {
+--//		{ CAREERMODE_BACK, noimage(), entermenu("menu_careermode") },
+	},
+
+
+
+}
+
+
+
+
+
+menu_careermode_newcareer = {
+
+	options = {
+	
+		title = CAREERMODE_PROFILE_NEW,
+		background = noimage(), 
+		orientation = MENU_HORIZONTAL,
+		position = DEFAULTBUTTONPOS(),
+		padding = { 6,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		back_action=entermenu("menu_profiles"),
+	},
+
+
+	init_function = function()
+		windows_reset()
+
+		StandardUpperBalk()
+		StandardLowerBalk()
+
+		wm.SetTextInput(CAREERMODE_PLAYER)
+		local kb=addparent(VirtualKeyboard{ Name="virtualkeyboard",Position=POS(80,170),Size=SIZE(32,32) })
+		kb:AttachResource(font12())
+
+		activateparents()
+
+		kb:SetFocus()
+
+		kb.onEscape = function(self)
+			menu_careermode_newcareer.options.back_action()
+		end
+
+		kb.onAction = function(self)
+			PlayerProfile:Defaults()
+			PlayerProfile:SetNameFromKeyboard() --//(wm.GetTextInput())
+			PlayerProfile:EnableClass(1)
+			PlayerProfile:EnableClass(4)
+			unlock_first_tracks_from_class(1)
+			unlock_bonustracks(1)
+			PlayerProfile:SetMoney(4000)
+			PlayerProfile:StartCareer()
+			EnterMenu("menu_careermode_characterselect")
+		end
+
+		Menu:DisableButtons()
+	end,
+
+	deinit_function = function()
+		windows_reset()
+
+		Menu:EnableButtons()
+	end,
+
+
+	update_function = function()
+		--//MenuScene:SetCameraPositionOffset(GetCameraSplinePoint())
+	end,
+
+
+
+	items = {
+	},
+
+
+}
+
+
+

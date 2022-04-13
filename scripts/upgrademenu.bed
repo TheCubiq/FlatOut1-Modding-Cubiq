@@ -1,0 +1,780 @@
+--///////////////////////////////////////////////////////////////////////////
+--// UpgradeMenu.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2004 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// Created on 29.3.2004 19:23:17
+--// 
+--// @Author Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+local dump_recursion = 0
+
+dofile("data/tracks/menu/menu1/a/data/dummies.bed")
+
+function DUMPSETTINGS(tbl)
+
+	if dump_recursion == 0 then
+		LOG("DUMPSETTINGS ----------")
+	end
+
+	local space=string.rep("\t",dump_recursion)
+	dump_recursion = dump_recursion + 1
+
+	local k,v
+	for k,v in pairs(tbl) do
+		if type(v) == "table" then
+			LOG("%s %s = {",space,k)
+			DUMPSETTINGS(v)
+			if dump_recursion == 1 then
+				LOG("%s }",space)
+		 	else
+				LOG("%s },",space)
+			end
+		else
+			if dump_recursion == 1 then
+				LOG("%s %s = %s",space,k,tostring(v))
+			else
+				LOG("%s %s = %s,",space,k,tostring(v))
+			end
+		end
+	end
+
+	dump_recursion = dump_recursion - 1
+
+
+	if dump_recursion == 0 then
+		LOG("DUMPSETTINGS ----------")
+	end
+
+end
+
+
+function CopyTable(src)
+	local k,v
+
+	local dst={}
+
+	for k,v in pairs(src) do
+		if type(v) == "table" then
+			dst[k]=CopyTable(v)
+		else
+			dst[k]=v
+		end
+	end
+
+	return dst
+end
+
+function InterpolateTable(name,tbl1,tbl2,amount)
+
+	local k,v
+	local t = {}
+
+	local space=string.rep("\t",dump_recursion)
+	dump_recursion = dump_recursion + 1
+
+	for k,v in pairs(tbl1) do
+		if type(v) == type(tbl2[k]) and amount[k] then
+			if type(v) == "number" then
+				t[k] = v + (tbl2[k]-v)*amount[k]
+				LOG("%s%s.%s: [%f] -> [%f] = %f",space,name,k,v,tbl2[k],t[k])
+			elseif type(v) == "table" and type(amount[k]) == "table" then
+				t[k] = InterpolateTable(k,v,tbl2[k],amount[k])
+			else
+				t[k]=v
+			end
+		else
+			t[k]=v
+		end
+	end
+
+	dump_recursion = dump_recursion - 1
+	return t
+end
+
+
+function AddUpgradeLevels(tbl1,tbl2)
+	local k,v
+
+	for k,v in pairs(tbl2) do
+		if type(v) == "number" then
+
+			local p=tbl1[k] or 0
+			tbl1[k] = v + p
+
+			if tbl1[k] > 1.0 then
+				tbl1[k] = 1.0
+			end
+		elseif type(v) == "table" then
+			if not tbl1[k] then tbl1[k]={} end
+			AddUpgradeLevels(tbl1[k],v)
+		end
+	end
+end
+
+
+dofile("data/equipmnt/tuning_data.bed")
+
+
+function upgrade_part(part)
+
+	local eq=Player.Equipment
+
+	LOG("upgrade_part: upgrade %d",part.Upgrade)
+    --//upgrade_func(eq.Engine,eq.Gearbox,eq.Suspension,eq.Tires,eq.Body)
+
+	if part.Engine then
+		AddUpgradeLevels(eq.Engine.UpgradeLevel,part.Engine)
+
+		if part.Engine.Mesh then
+			eq.Engine.Mesh=part.Engine.Mesh
+		end
+
+		eq.Engine.Settings=InterpolateTable("Engine",Car.Engine[eq.Engine.EqName].Settings,Car.Engine[eq.Engine.EqName].MaxSettings,eq.Engine.UpgradeLevel)
+	end
+
+	if part.Gearbox then
+		AddUpgradeLevels(eq.Gearbox.UpgradeLevel,part.Gearbox)
+		eq.Gearbox.Settings=InterpolateTable("Gearbox",Car.Gearbox[eq.Gearbox.EqName].Settings,Car.Gearbox[eq.Gearbox.EqName].MaxSettings,eq.Gearbox.UpgradeLevel)
+	end
+
+	if part.Body then
+		AddUpgradeLevels(eq.Body.UpgradeLevel,part.Body)
+		eq.Body.Settings=InterpolateTable("Body",Car.Body[eq.Body.EqName].Settings,Car.Body[eq.Body.EqName].MaxSettings,eq.Body.UpgradeLevel)
+	end
+
+	if part.Suspension then
+		AddUpgradeLevels(eq.Suspension.UpgradeLevel,part.Suspension)
+		eq.Suspension.Settings=InterpolateTable("Suspension",Car.Suspension[eq.Suspension.EqName].Settings,Car.Suspension[eq.Suspension.EqName].MaxSettings,eq.Suspension.UpgradeLevel)
+	end
+
+	if part.Tires then
+		AddUpgradeLevels(eq.Tires.UpgradeLevel,part.Tires)
+		eq.Tires.Settings=InterpolateTable("Tires",Car.Tires[eq.Tires.EqName].Settings,Car.Tires[eq.Tires.EqName].MaxSettings,eq.Tires.UpgradeLevel)
+	end
+
+
+	--//DUMPSETTINGS(eq)
+end
+
+function menu_upgrade_part(part) --//upgrade_func,part,partprice)
+
+	local f=function()
+--//		local upgradefunc=upgrade_func
+		local part_table=part
+--//		local partprice=partprice
+		local price=part_table.Price[PlayerProfile:GetCarClass()]
+		HideBalkButtons()
+		if PlayerProfile:EnoughMoney(price) then
+			PurchaseConfirmation(TUNING_ABOUTTOUPGRADE,part_table[1],part_table.Price[PlayerProfile:GetCarClass()],true,
+				MENU_YES, function() 
+											local price=price
+											local part_table=part_table
+											tuning_state.upgraded=true
+											PlayerProfile:SubtractMoney(price)
+											UpdateBalkMoney()
+											upgrade_part(part_table)
+											PlayerProfile:AddUpgrade(part_table.Upgrade)
+											ResetBalkButtonsText()
+											EnterMenu("menu_careermode_tuning")
+
+										end,
+				MENU_NO, function() ResetBalkButtonsText() EnterMenu("menu_careermode_tuning_submenu") end
+			)
+		else
+			PurchaseConfirmation(
+				UPGRADE_NOMONEY,part_table[1],part_table.Price[PlayerProfile:GetCarClass()],nil,
+				nil, function() ResetBalkButtonsText() EnterMenu("menu_careermode_tuning_submenu") end
+			)
+		end
+	end
+	return f
+end
+
+
+function tuning_setplayerequipment(carnum)
+	local tbl=Players[carnum]
+
+	local ret=false
+
+	if not Car.Body[tbl.Body].MaxSettings then
+		Car.Body[tbl.Body].MaxSettings=CopyTable(Car.Body[tbl.Body].Settings)
+	end
+
+	if not Car.Engine[tbl.Engine].MaxSettings then
+		Car.Engine[tbl.Engine].MaxSettings=CopyTable(Car.Engine[tbl.Engine].Settings)
+	end
+
+	if not Car.Gearbox[tbl.Gearbox].MaxSettings then
+		Car.Gearbox[tbl.Gearbox].MaxSettings=CopyTable(Car.Gearbox[tbl.Gearbox].Settings)
+	end
+
+	if not Car.Suspension[tbl.Suspension].MaxSettings then
+		Car.Suspension[tbl.Suspension].MaxSettings=CopyTable(Car.Suspension[tbl.Suspension].Settings)
+	end
+
+	if not Car.Tires[tbl.Tires].MaxSettings then
+		Car.Tires[tbl.Tires].MaxSettings=CopyTable(Car.Tires[tbl.Tires].Settings)
+	end
+
+	if not Player.Equipment.Body or Player.Equipment.Body.EqName ~= tbl.Body then
+		Player.Equipment.Body={
+			Name = Car.Body[tbl.Body].Name,
+			DataPath = Car.Body[tbl.Body].DataPath,
+			EqName=tbl.Body,
+			UpgradeLevel={},
+			Settings=CopyTable(Car.Body[tbl.Body].Settings),
+			MaxSettings=CopyTable(Car.Body[tbl.Body].MaxSettings),
+		}
+		ret=true
+	end
+
+	if not Player.Equipment.Engine or Player.Equipment.Engine.EqName ~= tbl.Engine then
+		Player.Equipment.Engine={
+			Name=Car.Engine[tbl.Engine].Name,
+			Mesh=Car.Engine[tbl.Engine].Mesh,
+			Sound = Car.Engine[tbl.Engine].Sound,
+			EqName=tbl.Engine,
+			UpgradeLevel={},
+			Settings=CopyTable(Car.Engine[tbl.Engine].Settings),
+			MaxSettings=CopyTable(Car.Engine[tbl.Engine].MaxSettings),
+		}
+		ret=true
+	end
+
+	if not Player.Equipment.Gearbox or Player.Equipment.Gearbox.EqName ~= tbl.Gearbox then
+		Player.Equipment.Gearbox={
+			EqName=tbl.Gearbox,
+			Mesh=Car.Gearbox[tbl.Gearbox].Mesh,
+			UpgradeLevel={},
+			Settings=CopyTable(Car.Gearbox[tbl.Gearbox].Settings),
+			MaxSettings=CopyTable(Car.Gearbox[tbl.Gearbox].MaxSettings),
+		}
+		ret=true
+	end
+
+	if not Player.Equipment.Tires or Player.Equipment.Tires.EqName ~= tbl.Tires then
+		Player.Equipment.Tires={
+			EqName=tbl.Tires,
+			UpgradeLevel={},
+			Mesh=Car.Tires[tbl.Tires].Mesh,
+			Settings=CopyTable(Car.Tires[tbl.Tires].Settings),
+			MaxSettings=CopyTable(Car.Tires[tbl.Tires].MaxSettings),
+		}
+		ret=true
+	end
+
+	if not Player.Equipment.Suspension or Player.Equipment.Suspension.EqName ~= tbl.Engine then
+		Player.Equipment.Suspension={
+			EqName=tbl.Suspension,
+			Mesh=Car.Suspension[tbl.Suspension].Mesh,
+			UpgradeLevel={},
+			Settings=CopyTable(Car.Suspension[tbl.Suspension].Settings),
+			MaxSettings=CopyTable(Car.Suspension[tbl.Suspension].MaxSettings),
+		}
+		ret=true
+	end
+
+	return ret
+end
+
+
+function tuning_setcarinfo(part)
+	
+	
+	
+	--//get car info
+	--//kludge at the moment
+	local win
+	local tbl=Player.Equipment
+
+	--//body
+	local eq=tbl.Body
+	win=GetWindow("weight")
+	win:SetTitle(ConvertToWString(string.format("%dkg",eq.Settings.Mass)))
+	
+	win=GetWindow("price")
+	if win then
+		win:SetTitle(ConvertToWString(string.format("$%d",PlayerProfile:GetCarPrice())))
+	end
+
+	--//engine
+	eq=tbl.Engine
+
+	win=GetWindow("enginetype")
+	win:SetTitle(ConvertToWString(eq.Name or "invalid"))
+
+	win=GetWindow("power")
+	win:SetTitle(ConvertToWString(string.format("%dhp",eq.Settings.Horsepower or 0)))
+
+--//	win=GetWindow("torque")
+--//	win:SetTitle(ConvertToWString(string.format("%dNm",eq.Settings.TorqueMax)))
+
+
+end
+
+
+
+function tuning_createwindows(price)
+
+	windows_reset()
+	StandardUpperBalk(true)
+	StandardLowerBalk(false,false,false)
+
+
+	local parentpos
+	if getplatform() == "PC" then
+		parentpos=SAFEPOS(0,88)
+	else
+		parentpos=SAFEPOS(0,88)
+	end
+
+	local parent=addparent(Frame{ Position=parentpos, Size=SIZE(256,256), ShowBorders=FALSE, })
+	parent:AttachResource(tuning_data.images.upgradeinfo_box)
+
+	local font=font12()
+
+	local statictext=function(text,pos,name)
+		return StaticText{ Name=name,Title=text, Position=pos, Size=SIZE(16,16), Parent=parent, Font=font,}
+	end
+
+	addchild(statictext(UPGRADE_CATEGORY,POS(8,8),"category"))
+
+	font=font10()
+
+	local parentsize=SIZE(256,256)
+	parentsize[1] = parentsize[1] - 35
+	addchild(StaticText{Title=ConvertToWString(""),WordWrap=1,Position=RELATIVEPOS(SAFEPOS(10,130),parentpos),Size=parentsize,Name="description",Parent=parent,Font=font})
+
+
+	activateparents()
+
+
+
+end
+
+
+function tuning_setcategoryinfo(cat)
+
+	GetWindow("category"):SetTitle(tuning_data.submenus[cat].Title or ConvertToWString(cat))
+	local win=GetWindow("description")
+	win:SetTitle(tuning_data.submenus[cat].Description or ConvertToWString("description missing"))
+	win:WordWrap()
+	
+
+end
+
+
+
+function enter_tuning()
+	local f=function()
+		tuning_state={}
+		EnterMenu("menu_careermode_tuning")
+	end
+	return f
+end
+
+
+
+
+function tuning_initsubmenu(menuname)
+
+	local submenu=tuning_data.submenus[menuname]
+
+	menu_careermode_tuning_submenu.options.title=submenu.title
+	menu_careermode_tuning_submenu.items={}
+
+	local k,v
+
+	for k,v in ipairs(submenu.items) do
+		
+		local i
+		if v.Icon then
+			i={ tuning_icons[v.Icon], car_icons.circle }
+		else
+			i={ v[1], car_icons.circle }
+		end
+		
+--//		if PlayerProfile:FindUpgrade(v.Upgrade) == -1 then
+			if v.Price[PlayerProfile:GetCarClass()] > 0 then
+				i[3] = menu_upgrade_part(v) --//[3],v[4],v.Price)
+				i.Part=v
+
+				local disabled
+				if v.RequiredUpgrade then
+					if PlayerProfile:FindUpgrade(v.RequiredUpgrade) == -1 then
+						disabled=true
+					end
+				end
+
+				if PlayerProfile:FindUpgrade(v.Upgrade) ~= -1 then
+					disabled=true
+				end
+
+				i[4] = disabled
+				table.insert(menu_careermode_tuning_submenu.items,i)
+			end
+--//		end
+	end
+
+end
+
+function tuning_getupgradebyid(id)
+	local k,v,category,k2
+
+	for k2,category in pairs(tuning_data.submenus) do
+		
+		for k,v in ipairs(category.items) do
+			if v.Upgrade == id then
+				return v
+			end
+		end
+	end
+end
+
+function tuning_loadupgrades()
+	local k,v,i
+
+	Player.Equipment.Body.UpgradeLevel={}
+	Player.Equipment.Engine.UpgradeLevel={}
+	Player.Equipment.Gearbox.UpgradeLevel={}
+	Player.Equipment.Tires.UpgradeLevel={}
+	Player.Equipment.Suspension.UpgradeLevel={}
+
+	local num=PlayerProfile:GetNumUpgrades()
+	LOG("loadupgrades: %d upgrades",num)
+	for i=1,num do
+		local u=PlayerProfile:GetUpgrade(i-1)
+		if u > 0 then
+			local upgrade=tuning_getupgradebyid(u)
+
+			if upgrade then
+				--//LOG("loadupgrades: adding upgrade %d",u)
+				upgrade_part(upgrade)
+			end
+		end
+	end
+
+end
+
+function tuning_submenu(menuname)
+	local f=function()
+		local m=menuname
+		tuning_state.category=m
+		tuning_initsubmenu(m)
+		EnterMenu("menu_careermode_tuning_submenu")
+	end
+	return f
+end
+
+
+
+function tuning_setpartinfo(partnro)
+	--//get car info
+	--//kludge at the moment
+	local win
+	local tbl=Player.Equipment
+
+	local part=menu_careermode_tuning_submenu.items[partnro].Part
+	--//body
+	local eq=tbl.Body
+
+	local submenu=tuning_data.submenus[tuning_state.category]
+
+	win=GetWindow("description")	
+	win:SetTitle(part.Description or part[1])
+	win:WordWrap()
+
+	win=GetWindow("category")
+	win:SetTitle(part[1])
+
+	win=GetWindow("price")
+	if win then
+		if menu_careermode_tuning_submenu.items[partnro][4] then
+			if PlayerProfile:FindUpgrade(part.Upgrade) ~= -1 then
+				win:SetTitle(UPGRADE_PURCHASED)
+			else
+				win:SetTitle(UPGRADE_LOCKED)
+			end
+		else
+			win:SetTitle(ConvertToWString(string.format("$%d",part.Price[PlayerProfile:GetCarClass()])))
+		end
+	end
+
+	local dummyname="tuning"
+
+	local u=part.Dummy
+	if u < 10 then
+		dummyname="tuning0"
+	end
+
+	local pos=CopyTable(Dummies[string.format("%s%d",dummyname,u)].Position)
+	
+--//	pos[1] = pos[1] + 0.5
+--//	local campos={ pos[1]-Dummies["tuningcamera"].Position[1],Dummies["tuningcamera"].Position[2]-pos[2],pos[3]-Dummies["tuningcamera"].Position[3] }
+
+	SetMenuCamera(18,true)
+	--//MenuScene:SetCameraTargetOffset(pos)
+	MenuScene:MoveCameraFov(part.Fov or (tuning_state.fov-50))
+	MenuScene:MoveCameraTargetOffset(pos)
+	--//MenuScene:SetCameraPositionOffset(campos)
+	--//win:SetTitle(menu_careermode_tuning.items[cat][1])
+	--//local temp_eq=CopyTable(tbl)
+
+
+	if tuning_state.category == "engine" then
+
+		GetWindow("power_icon"):ShowWindow()
+		GetWindow("power_arrow"):ShowWindow()
+--//		win=GetWindow("torque_title")
+--//		win:SetTitle(UPGRADE_TORQUE)
+
+	--//engine
+		eq=tbl.Engine
+		win=GetWindow("power_old")
+		win:SetTitle(ConvertToWString(string.format("%d hp",eq.Settings.Horsepower or 0)))
+
+--//		win=GetWindow("torque_old")
+--//		win:SetTitle(ConvertToWString(string.format("%d Nm",eq.Settings.TorqueMax)))
+
+		local newtorque=eq.Settings.TorqueMax
+		local newpower=eq.Settings.Horsepower or 0
+		if part.Engine and (menu_careermode_tuning_submenu.items[partnro][4] == nil or PlayerProfile:FindUpgrade(part.Upgrade) == -1) then
+			newtorque=eq.Settings.TorqueMax + ((Car.Engine[eq.EqName].MaxSettings.TorqueMax - eq.Settings.TorqueMax)*(part.Engine.TorqueMax or 0))
+			newpower=eq.Settings.Horsepower + ((Car.Engine[eq.EqName].MaxSettings.Horsepower - eq.Settings.Horsepower)*(part.Engine.Horsepower or 0))
+		end
+
+		win=GetWindow("power_new")
+		win:SetTitle(ConvertToWString(string.format("%d hp",newpower)))
+
+--//		win=GetWindow("torque_new")
+--//		win:SetTitle(ConvertToWString(string.format("%d Nm",newtorque)))
+	else
+		GetWindow("power_icon"):HideWindow()
+		GetWindow("power_arrow"):HideWindow()
+
+--//		win=GetWindow("torque_title")
+--//		win:SetTitle(ConvertToWString(""))
+		win=GetWindow("power_old")
+		win:SetTitle(ConvertToWString(""))
+--//		win=GetWindow("torque_old")
+--//		win:SetTitle(ConvertToWString(""))
+		win=GetWindow("power_new")
+		win:SetTitle(ConvertToWString(""))
+--//		win=GetWindow("torque_new")
+--//		win:SetTitle(ConvertToWString(""))
+	end
+
+end
+
+
+
+menu_careermode_tuning = {
+
+	options = {
+	
+		title = UPGRADE_TITLE,
+		background = noimage(),
+		orientation = MENU_HORIZONTAL,
+		position = POS(260,396),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		back_action=function()
+			if tuning_state.upgraded then
+				--//if PlayerProfile:GetAutosaveEnabled() then
+				profile_entersave(entermenu("menu_careermode_garage"),entermenu("menu_careermode_garage"))		
+				--//end
+			else
+				EnterMenu("menu_careermode_garage")
+			end
+		end,
+	},
+
+	init_function = function()
+		local fov
+		if tuning_state and tuning_state.fov then 
+			fov=tuning_state.fov
+			Menu:SetActiveItem(tuning_state.button or 1)
+		else
+			tuning_state={}
+	
+			fov=MenuScene:GetCameraFov()
+
+			MenuScene:FadeOff()
+			MenuScene:SetCameraTargetOffset(Dummies["tuning01"].Position)
+			SetMenuCamera(18,true)
+			MenuScene:StartFadeOn()
+		end
+
+		tuning_state.fov=fov
+
+		tuning_createwindows()
+--//		tuning_setcarinfo()
+
+
+--//		MenuScene:LoadCar(PlayerProfile:GetCarType()+1)
+
+--//		MenuScene:ResetCar(Startpoints[19].Position,Startpoints[19].Orientation)'
+
+--//		MenuScene:MoveCameraTargetOffset(Dummies["tuning27"].Position)
+		--//Menu:SetActiveItem(tuning_state.lastbutton or 1)
+	end,
+
+
+	deinit_function = function()
+
+		windows_reset()
+
+	end,
+
+	buttonchange_function = function(prevbutton,newbutton)
+		local categorycameras = {
+			"tuning01",
+			"tuning12",
+			"tuning21",
+			"tuning30",
+			"tuning33",
+			"tuning27",
+		}
+		local categories = {
+			"engine",
+			"drivetrain",
+			"exhaust",
+			"suspension",
+			"tires",
+			"body",
+		}
+
+		tuning_state.button=newbutton
+
+		tuning_setcategoryinfo(categories[newbutton])
+
+		MenuScene:MoveCameraTargetOffset(Dummies[categorycameras[newbutton]].Position)
+	end,
+
+
+	items = {
+		{ UPGRADE_ENGINE, noimage(), tuning_submenu("engine") },
+		{ UPGRADE_DRIVETRAIN, noimage(), tuning_submenu("drivetrain") },
+		{ UPGRADE_EXHAUST, noimage(), tuning_submenu("exhaust") },
+		{ UPGRADE_SUSPENSION, noimage(), tuning_submenu("suspension") },
+		{ UPGRADE_TIRES, noimage(), tuning_submenu("tires") },
+		{ UPGRADE_BODY, noimage(), tuning_submenu("body") },
+	},
+
+
+}
+
+
+menu_careermode_tuning_submenu = {
+
+	options = {
+	
+		title = UPGRADE_TITLE,
+		background = noimage(),
+		orientation = MENU_HORIZONTAL,
+		position = POS(280,380), 
+		padding = { 12,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		back_action=entermenu("menu_careermode_tuning")
+	},
+
+
+	init_function = function()
+		windows_reset()
+		StandardUpperBalk(true)
+		StandardLowerBalk(false,false,false)
+
+
+		local parentpos=SAFEPOS(0,88)
+
+		local parent=addparent(Frame{ Position=parentpos, Size=SIZE(256,256), ShowBorders=FALSE, })
+		parent:AttachResource(tuning_data.images.upgradeprice_box)
+
+
+		local font=font12()
+
+		local statictext=function(text,pos,name,color)
+			return StaticText{ Name=name,Title=text, Position=pos, Size=SIZE(16,16), Parent=parent, Font=font,Color=color}
+		end
+
+
+		addchild(statictext(UPGRADE_CATEGORY,POS(8,8),"category")):WordWrap()
+
+		font=font10()
+
+--//		addchild(statictext(UPGRADE_POWER,RELATIVEPOS(POS(15,245),parentpos),"power_title"))
+		addchild(Button{Name="power_icon",Position=RELATIVEPOS(SAFEPOS(58-48,297-36),parentpos),Size=SIZE(32,32),Parent=parent}):AttachResource(menucommon.horsepower_icon)
+--//		addchild(statictext(UPGRADE_TORQUE,RELATIVEPOS(POS(15,267),parentpos),"torque_title"))
+		font=font12()
+		addchild(statictext(ConvertToWString("0"),RELATIVEPOS(SAFEPOS(95-48,303-36),parentpos),"power_old"))
+--//		addchild(statictext(ConvertToWString("0"),RELATIVEPOS(POS(85,267),parentpos),"torque_old"))
+
+		addchild(Button{Name="power_arrow",Position=RELATIVEPOS(SAFEPOS(154-48,308-36),parentpos),Size=GetResourceSize(menucommon.mininuolioikea),Parent=parent}):AttachResource(menucommon.mininuolioikea)
+		
+		addchild(statictext(ConvertToWString("0"),RELATIVEPOS(SAFEPOS(180-48,303-36),parentpos),"power_new",GetPaletteColor(19)))
+--//		addchild(statictext(ConvertToWString("0"),RELATIVEPOS(POS(186,297),parentpos),"torque_new"))
+
+		font=font10()
+
+		local parentsize=SIZE(256,256)
+		parentsize[1] = parentsize[1] - 35
+		addchild(StaticText{Title=ConvertToWString(""),Position=RELATIVEPOS(SAFEPOS(10,130),parentpos),Size=parentsize,Name="description",Parent=parent,Font=font})
+
+--//		addchild(statictext(ConvertToWString(""),RELATIVEPOS(POS(15,155),parentpos),"description"))
+
+	--//	addchild(statictext(ConvertToWString("2.0l"),POS(46,30),"enginetype"))
+	--//	addchild(statictext(ConvertToWString("75hp"),POS(46,72),"power"))
+	--//	addchild(statictext(ConvertToWString("400Nm"),POS(46,115),"torque"))
+	--//	addchild(statictext(ConvertToWString("720kg"),POS(46,159),"weight"))
+
+
+
+		
+--//		parent=addparent(Frame{Position=SAFEPOS(0,263+27), Size=SIZE(222,76), ShowBorders=FALSE, Name="infobox" })
+--//		parent:AttachResource(tuning_data.images.part_info_price)
+		font=font14()
+		addchild(statictext(UPGRADE_PRICE,RELATIVEPOS(SAFEPOS(68,297),parentpos),"price"))
+	
+--//		else
+--//			parent:AttachResource(tuning_data.images.general_info)
+--//		end
+
+		activateparents()
+
+		GUI:LoadBackground()
+--//		MenuScene:SetCameraTargetOffset(Dummies["tuning27"].Position)
+
+	end,
+
+
+	deinit_function = function()
+
+		MenuScene:MoveCameraFov(tuning_state.fov)
+		windows_reset()
+
+	end,
+
+	buttonchange_function = function(oldbutton,newbutton)
+		tuning_state.part=newbutton
+
+		tuning_setpartinfo(newbutton)
+
+	end,
+
+
+	items={
+	
+	},
+
+}
+
+

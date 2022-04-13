@@ -1,0 +1,8 @@
+-- texturemap
+MapTexture		= "data/tracks/arena/textures/map_arena2A.tga"
+-- mapped world area
+WorldTopLeft	= { -369.5,366.7 }
+WorldBottomRight	= { 367.5,-370.2 }
+-- screen position & size ( in 640x480 )
+ScreenPos		= { 32.0, 336.0 }
+ScreenSize		= {128.0, 128.0 }

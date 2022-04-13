@@ -1,0 +1,8 @@
+setting_bar_size = { 256,64 }
+setting_bar = {
+	
+	balk_bg = {  0, 0, 177, 8 },
+	progress_bar = {  1, 8, 175, 6 },
+
+
+}

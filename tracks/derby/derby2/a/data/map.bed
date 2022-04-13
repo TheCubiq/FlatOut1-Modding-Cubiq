@@ -1,0 +1,8 @@
+-- texturemap
+MapTexture		= "data/tracks/derby/textures/map_derby2A.tga"
+-- mapped world area
+WorldTopLeft	= { -180.0,180.0 }
+WorldBottomRight	= { 192.0,-192.0 }
+-- screen position & size ( in 640x480 )
+ScreenPos		= { 32.0, 336.0 }
+ScreenSize		= {128.0, 128.0 }

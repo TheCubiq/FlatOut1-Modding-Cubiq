@@ -1,0 +1,11 @@
+
+Car.Gearbox.Car17Gearbox1 = {
+
+	Name = "Car17gearbox1",
+	Price = 1000,
+	RepairPrice		=       500,    --repair price if 100% damage
+	UpgradeLevel		= 	1,
+	Mesh			=	1,
+	Settings		=	Car.Gearbox.Car17_1.Settings,
+	MaxSettings		=	Car.Gearbox.Car17_1.MaxSettings,
+}  ----# --# ----#  GEARBOX1 END

@@ -1,0 +1,199 @@
+-- Equipment classes
+
+--# template table for parts
+Car = { 
+	Body = {},
+	Suspension = {},
+	Engine = {},
+	Gearbox = {},
+	Tires = {},
+}
+
+path="data/Equipmnt/";
+
+--AI upgrades
+dofile(path.."AIUpgrades.bed");
+
+--default car equipment
+dofile(path.."Default/Defaults.bed");
+dofile(path.."Default/tires_default.bed");
+
+-- custom equipments
+dofile(path.."Custom/engine_1.bed");
+dofile(path.."Custom/engine_2.bed");
+dofile(path.."Custom/engine_3.bed");
+dofile(path.."Custom/engine_4.bed");
+dofile(path.."Custom/engine_5.bed");
+dofile(path.."Custom/engine_6.bed");
+dofile(path.."Custom/engine_7.bed");
+dofile(path.."Custom/engine_8.bed");
+dofile(path.."Custom/engine_9.bed");
+dofile(path.."Custom/engine_10.bed");
+dofile(path.."Custom/engine_11.bed");
+dofile(path.."Custom/engine_12.bed");
+dofile(path.."Custom/engine_13.bed");
+dofile(path.."Custom/engine_14.bed");
+dofile(path.."Custom/engine_15.bed");
+dofile(path.."Custom/engine_16.bed");
+dofile(path.."Custom/engine_17.bed");
+
+dofile(path.."Custom/gearbox_1.bed");
+dofile(path.."Custom/gearbox_2.bed");
+dofile(path.."Custom/gearbox_3.bed");
+dofile(path.."Custom/gearbox_4.bed");
+dofile(path.."Custom/gearbox_5.bed");
+dofile(path.."Custom/gearbox_6.bed");
+dofile(path.."Custom/gearbox_7.bed");
+dofile(path.."Custom/gearbox_8.bed");
+dofile(path.."Custom/gearbox_9.bed");
+dofile(path.."Custom/gearbox_10.bed");
+dofile(path.."Custom/gearbox_11.bed");
+dofile(path.."Custom/gearbox_12.bed");
+dofile(path.."Custom/gearbox_13.bed");
+dofile(path.."Custom/gearbox_14.bed");
+dofile(path.."Custom/gearbox_15.bed");
+dofile(path.."Custom/gearbox_16.bed");
+dofile(path.."Custom/gearbox_17.bed");
+
+dofile(path.."Custom/suspension_1.bed");
+dofile(path.."Custom/suspension_2.bed");
+dofile(path.."Custom/suspension_3.bed");
+dofile(path.."Custom/suspension_4.bed");
+dofile(path.."Custom/suspension_5.bed");
+dofile(path.."Custom/suspension_6.bed");
+dofile(path.."Custom/suspension_7.bed");
+dofile(path.."Custom/suspension_8.bed");
+dofile(path.."Custom/suspension_9.bed");
+dofile(path.."Custom/suspension_10.bed");
+dofile(path.."Custom/suspension_11.bed");
+dofile(path.."Custom/suspension_12.bed");
+dofile(path.."Custom/suspension_13.bed");
+dofile(path.."Custom/suspension_14.bed");
+dofile(path.."Custom/suspension_15.bed");
+dofile(path.."Custom/suspension_16.bed");
+dofile(path.."Custom/suspension_17.bed");
+
+--# --# car1 equipment
+dofile(path.."Car1/body_car1.bed");
+dofile(path.."Car1/suspension_car1.bed");
+dofile(path.."Car1/engine_car1.bed");
+dofile(path.."Car1/gearbox_car1.bed");
+dofile(path.."Car1/tires_car1.bed");
+
+--# --# car2 equipment
+dofile(path.."Car2/body_car2.bed");
+dofile(path.."Car2/suspension_car2.bed");
+dofile(path.."Car2/engine_car2.bed");
+dofile(path.."Car2/gearbox_car2.bed");
+dofile(path.."Car2/tires_car2.bed");
+
+--# --# car3 equipment
+dofile(path.."Car3/body_car3.bed");
+dofile(path.."Car3/suspension_car3.bed");
+dofile(path.."Car3/engine_car3.bed");
+dofile(path.."Car3/gearbox_car3.bed");
+dofile(path.."Car3/tires_car3.bed");
+
+--# --# car4 equipment
+dofile(path.."Car4/body_car4.bed");
+dofile(path.."Car4/suspension_car4.bed");
+dofile(path.."Car4/engine_car4.bed");
+dofile(path.."Car4/gearbox_car4.bed");
+dofile(path.."Car4/tires_car4.bed");
+
+--# --# car5 equipment
+dofile(path.."Car5/body_car5.bed");
+dofile(path.."Car5/suspension_car5.bed");
+dofile(path.."Car5/engine_car5.bed");
+dofile(path.."Car5/gearbox_car5.bed");
+dofile(path.."Car5/tires_car5.bed");
+
+--# --# car6 equipment
+dofile(path.."Car6/body_car6.bed");
+dofile(path.."Car6/suspension_car6.bed");
+dofile(path.."Car6/engine_car6.bed");
+dofile(path.."Car6/gearbox_car6.bed");
+dofile(path.."Car6/tires_car6.bed");
+
+--# --# car7 equipment
+dofile(path.."Car7/body_car7.bed");
+dofile(path.."Car7/suspension_car7.bed");
+dofile(path.."Car7/engine_car7.bed");
+dofile(path.."Car7/gearbox_car7.bed");
+dofile(path.."Car7/tires_car7.bed");
+
+--# --# car8 equipment
+dofile(path.."Car8/body_car8.bed");
+dofile(path.."Car8/suspension_car8.bed");
+dofile(path.."Car8/engine_car8.bed");
+dofile(path.."Car8/gearbox_car8.bed");
+dofile(path.."Car8/tires_car8.bed");
+
+--# --# car9 equipment
+dofile(path.."Car9/body_car9.bed");
+dofile(path.."Car9/suspension_car9.bed");
+dofile(path.."Car9/engine_car9.bed");
+dofile(path.."Car9/gearbox_car9.bed");
+dofile(path.."Car9/tires_car9.bed");
+
+--# --# car10 equipment
+dofile(path.."Car10/body_car10.bed");
+dofile(path.."Car10/suspension_car10.bed");
+dofile(path.."Car10/engine_car10.bed");
+dofile(path.."Car10/gearbox_car10.bed");
+dofile(path.."Car10/tires_car10.bed");
+
+--# --# car11 equipment
+dofile(path.."Car11/body_car11.bed");
+dofile(path.."Car11/suspension_car11.bed");
+dofile(path.."Car11/engine_car11.bed");
+dofile(path.."Car11/gearbox_car11.bed");
+dofile(path.."Car11/tires_car11.bed");
+
+--# --# car12 equipment
+dofile(path.."Car12/body_car12.bed");
+dofile(path.."Car12/suspension_car12.bed");
+dofile(path.."Car12/engine_car12.bed");
+dofile(path.."Car12/gearbox_car12.bed");
+dofile(path.."Car12/tires_car12.bed");
+
+--# --# car13 equipment
+dofile(path.."Car13/body_car13.bed");
+dofile(path.."Car13/suspension_car13.bed");
+dofile(path.."Car13/engine_car13.bed");
+dofile(path.."Car13/gearbox_car13.bed");
+dofile(path.."Car13/tires_car13.bed");
+
+--# --# car14 equipment
+dofile(path.."Car14/body_car14.bed");
+dofile(path.."Car14/suspension_car14.bed");
+dofile(path.."Car14/engine_car14.bed");
+dofile(path.."Car14/gearbox_car14.bed");
+dofile(path.."Car14/tires_car14.bed");
+
+--# --# car15 equipment
+dofile(path.."Car15/body_car15.bed");
+dofile(path.."Car15/suspension_car15.bed");
+dofile(path.."Car15/engine_car15.bed");
+dofile(path.."Car15/gearbox_car15.bed");
+dofile(path.."Car15/tires_car15.bed");
+
+--# --# car16 equipment
+dofile(path.."Car16/body_car16.bed");
+dofile(path.."Car16/suspension_car16.bed");
+dofile(path.."Car16/engine_car16.bed");
+dofile(path.."Car16/gearbox_car16.bed");
+dofile(path.."Car16/tires_car16.bed");
+
+--# --# car17 equipment
+dofile(path.."Car17/body_car17.bed");
+dofile(path.."Car17/suspension_car17.bed");
+dofile(path.."Car17/engine_car17.bed");
+dofile(path.."Car17/gearbox_car17.bed");
+dofile(path.."Car17/tires_car17.bed");
+
+
+
+
+--# --# code to load the equipment
+--dofile(path.."LoadEquipment.bed");

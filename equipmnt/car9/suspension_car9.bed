@@ -1,0 +1,11 @@
+Car.Suspension.Car9Suspension1 = {
+	
+	Name = "Car9suspension1",
+	Price = 1000,
+	RepairPrice		=       500,    --repair price if 100% damage
+	UpgradeLevel		= 	1,
+	Mesh			=	1,	
+	Settings 			= Car.Suspension.Car9_1.Settings,
+	MaxSettings 		= Car.Suspension.Car9_1.MaxSettings,
+
+} ----# --# ----#  SUSPENSION1 END

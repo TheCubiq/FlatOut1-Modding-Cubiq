@@ -1,0 +1,104 @@
+
+Car.Engine.DefaultEngine1 = {
+
+	--# --------------------------------------------------------------------
+	----#  Default Engine Settings
+	--# --------------------------------------------------------------------
+	
+	Name 			= 	"Default engine level 1",
+	Price  			= 	10,
+	
+	Mesh			=	1,
+	
+	Settings = {
+	
+		----#  Car mass = body mass + engine mass
+		Mass			=	200,
+		
+		----#  --- Differential ---
+		----#  Locking system: 0 = spool differential, 1 = open differential
+		DifferentialLock	=	0.15,		--# 0.1
+		DifferentialBias	=	1.0,
+	
+		InertiaEngine		=	0.09,
+		InertiaDriveShaft	=	0.12,
+		EngineFriction		=	0.025,
+	
+		ClutchReleaseTime	=	0.10,		--# 0.15
+		GearShiftTime		=	0.08,		--# 0.1
+		ClutchEngageTime	=	0.15,
+	
+		----#   engine
+		IdleRpm			=	1200.0,
+	
+		TorqueMax               =       300, 		--# 160+10
+		TorqueCurveParams	=	18,
+	
+		Torque00		=	{500,	0.001},
+		Torque01		=	{1000,	0.449},
+		Torque02		=	{1500,	0.673},
+		Torque03		=	{2000,	0.773},
+		Torque04		=	{2500,	0.847},
+		Torque05		=	{3000,	0.885},
+		Torque06		=	{3500,	0.922},
+		Torque07		=	{4000,	0.947},
+		Torque08		=	{4500,	0.972},
+		Torque09		=	{5000,	0.984},
+		Torque10		=	{5500,	0.995},
+		Torque11		=	{6000,	1.000},
+		Torque12		=	{6500,	0.950},
+		Torque13		=	{7000,	0.800},
+		Torque14		=	{7500,	0.716},
+		Torque15		=	{8000,	0.580},	--# 0.360
+		Torque16		=	{8500,	0.420},
+		Torque17		=	{9000,	0.260},
+		Torque18		=	{9500,	0.000},
+		Torque19		=	{10000,	0.000},
+	
+		----#  ---- EXHAUST VISUALS ----
+		ExhaustPeakRpm		=	5000,
+	},
+	
+}   ----# --# ----#  ENGINE1 END
+
+Car.Engine.DefaultEngine2 = {
+
+	--# --------------------------------------------------------------------
+	----#  Default Engine  2 Settings
+	--# --------------------------------------------------------------------
+	
+	Name 			=	"default engine level 2",
+	Price			= 	10,
+	Mesh			=	2,
+	
+	Settings = GetDefaults(ENGINE1),
+	
+} ----# --# --# ENGINE2 END
+
+
+Car.Engine.DefaultEngine3 = {
+
+	--# --------------------------------------------------------------------
+	----#  default Engine 3 Settings
+	--# --------------------------------------------------------------------
+	
+	Name 			= 	"default engine level 3",
+	Price			=	10,
+	Mesh			=	3,
+
+	Settings = GetDefaults(ENGINE1),	
+	
+} ----# --# --# ENGINE3 ENDS
+
+Car.Engine.DefaultEngine4 = {
+
+	--# --------------------------------------------------------------------
+	----#  Engine Settings
+	--# --------------------------------------------------------------------
+	Name 			= 	"default engine level 4",
+	Price			=	10,
+	Mesh			=	4,
+	Settings = GetDefaults(ENGINE1),
+	
+	
+}  ----# --# --# ENGINE4 ENDS

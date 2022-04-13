@@ -1,0 +1,8 @@
+-- texturemap
+MapTexture		= "data/tracks/forest/textures/map_forest3B.tga"
+-- mapped world area
+WorldTopLeft	= { -483.1,507.3 }
+WorldBottomRight	= { 475.4,-451.1 }
+-- screen position & size ( in 640x480 )
+ScreenPos		= { 32.0, 336.0 }
+ScreenSize		= {128.0, 128.0 }

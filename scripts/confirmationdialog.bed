@@ -1,0 +1,92 @@
+--///////////////////////////////////////////////////////////////////////////
+--// ConfirmationWindow.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2003 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// @date 15.4.2003 10:03:37
+--// 
+--// @Author Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+
+function EnterConfirmationDialog(title,text)
+	
+	
+	local p=addparent(Frame{ Name="ConfirmationDialog",Position=POS(0,131),Size=SIZE(640,182) })
+
+	wmNewButton(ConfirmationDialog,"ConfirmationDialog_Text");
+	wmNewButton(ConfirmationDialog,"ConfirmationDialog_YesButton");
+	wmNewButton(ConfirmationDialog,"ConfirmationDialog_NoButton");
+	ConfirmationDialog.windowText=format("%s\n%s",title,text);
+	ConfirmationDialog_WindowCreated=TRUE;
+	ConfirmationDialog.Selected=FALSE;
+	wmSetExclusive(ConfirmationDialog);
+
+	LOG("ConfirmationDialog created");
+end
+
+
+function ExitConfirmationDialog()
+	wm.SetExclusive(nil);
+--------	wmSetFocus(nil);
+	EnableMouseCallback(TRUE);
+	ConfirmationDialog:DestroyWindow();
+	ConfirmationDialog_WindowCreated=FALSE;
+end
+
+function ConfirmDialog(title,text)          ---///----<   k��rme
+	local selection = nil;
+
+	if ConfirmationDialog_WindowCreated == FALSE then
+		EnterConfirmationDialog(title,text);
+	elseif ConfirmationDialog.Selected == TRUE then
+		selection=ConfirmationDialog.Selection;
+		ExitConfirmationDialog();
+	end
+	
+	if selection == nil then
+		wmRepostEvent();
+	end
+
+	return selection;
+end
+
+ConfirmationDialog.onInit = function()
+						wmActivateWindow(ConfirmationDialog);
+						ConfirmationDialog:SetPosition(143,98);
+						ConfirmationDialog:SetSize(352,118);
+--------						ConfirmationDialog:SetFocus();
+						ConfirmationDialog.Selected=FALSE;
+						ConfirmationDialog:ShowWindow();
+										
+						ConfirmationDialog_Text:ShowBorders(FALSE);
+						ConfirmationDialog_Text:AttachResource(wmGetResource(FontSmall));
+						ConfirmationDialog_Text:SetTitle(ConfirmationDialog.windowText);
+						ConfirmationDialog_Text:SetPosition(32,16);
+						ConfirmationDialog_Text:SetSize(308,46);
+						ConfirmationDialog_Text:SetTitleCentering(TITLE_CENTER_NONE);
+
+						ConfirmationDialog_YesButton:AttachResource(wmNewResource(BITMAP,"Button_Yes",DataPath.."Button_Yes.tga"));
+						ConfirmationDialog_YesButton:SetPosition(16,64);
+						ConfirmationDialog_YesButton:SetSize(32,32);
+	
+						ConfirmationDialog_NoButton:AttachResource(wmNewResource(BITMAP,"Button_No",DataPath.."Button_No.tga"));
+						ConfirmationDialog_NoButton:SetPosition(302,64);
+						ConfirmationDialog_NoButton:SetSize(32,32);
+
+						ConfirmationDialog:SetTopmostDraw(TRUE);
+						ConfirmationDialog_Text:SetTopmostDraw(TRUE);
+						ConfirmationDialog_YesButton:SetTopmostDraw(TRUE);
+						ConfirmationDialog_NoButton:SetTopmostDraw(TRUE);
+					end
+
+ConfirmationDialog_YesButton.onAction = function()
+						ConfirmationDialog.Selected=TRUE;
+						ConfirmationDialog.Selection=TRUE;
+					end
+
+ConfirmationDialog_NoButton.onAction = function()
+						ConfirmationDialog.Selected=TRUE;
+						ConfirmationDialog.Selection=FALSE;
+					end

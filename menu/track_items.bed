@@ -1,0 +1,17 @@
+track_items_size = { 256,256 }
+track_items = {
+	
+	courseicon1 = {  0, 0, 64, 36 },
+	courseicon1_x = {  42, 0, 64, 36 },
+
+	small_balk = {  55, 110, 202, 24 },
+	big_balk = {  55, 135, 202, 121 },
+	record_balk = {  54, 50, 202, 35 },
+
+	laps = { 70, 0, 47, 38 },
+	flag = {  0, 214, 52, 42 },
+	flag_reverse = {  0, 109, 52, 42 },
+	trophy = {  0, 153, 32, 58 },
+	selector = {  0, 0, 68, 41 },
+
+}

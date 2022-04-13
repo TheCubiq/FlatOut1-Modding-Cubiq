@@ -1,0 +1,10 @@
+
+tuning_parts_size = { 512,256 }
+
+tuning_parts = {
+	
+	car_info = {  0, 0, 224, 200 },
+	general_info = {  228, 79, 224, 79 },
+	part_info_price = {  228, 1, 224, 77 },
+
+}

@@ -1,0 +1,9 @@
+
+small_trophies_size = { 256,128 }
+small_trophies = {
+	
+	gold = {  0, 0, 87, 60 },
+	silver = {  88, 0, 87, 60 },
+	bronze = {  0, 62, 87, 60 },
+
+}

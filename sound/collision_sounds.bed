@@ -1,0 +1,607 @@
+
+-- COLLISIONSOUND_NONE = 0
+-- COLLISIONSOUND_TRUCK = 1
+-- COLLISIONSOUND_GROUND = 2
+-- COLLISIONSOUND_SOFT = 3
+-- COLLISIONSOUND_SOLID = 4
+-- COLLISIONSOUND_BARREL = 5
+-- COLLISIONSOUND_TIRE = 6
+-- COLLISIONSOUND_WOOD = 7
+-- COLLISIONSOUND_MALE = 8
+-- COLLISIONSOUND_FEMALE = 9
+-- COLLISIONSOUND_METAL = 10
+-- COLLISIONSOUND_PLASTIC = 11
+
+CollisionSoundTypes =
+{	
+	[1] = "Truck",
+	[2] = "Ground",
+	[3] = "Soft",
+	[4] = "Solid",
+	[5] = "Barrel",
+	[6] = "Tire",
+	[7] = "Wood",
+	[8] = "Male",
+	[9] = "Female",
+	[10] = "Metal",
+	[11] = "Plastic",
+}
+
+-- NOTE: all sounds have default "PitchRandom" 0.15 and "GainRandom" 0.10
+-- NOTE: "Gain" is the reference gain at trigger speed, actual gain grows linearly for impact speeds greater than trigger (clamped to 1.0, though)
+
+-- Truck-to-X collision sounds
+HitToTruck =
+{
+	-- Truck to truck collision
+	Truck = {
+		-- Sample count
+		Count = 3,
+		-- Delay in milliseconds
+		Delay = 200,
+		[1] = {
+			Wave		=	"Impact/impact_car_light.wav",
+			MinDistance	=	6.0,
+			Gain		=	1.0,
+			TriggerSpeed	=	3.0,
+			PitchRandom	=	0.15,
+			GainRandom	=	0.15,
+			Priority		=	100,
+		},
+		[2] = {
+			Wave		=	"Impact/impact_car_med.wav",
+			MinDistance	=	8.0,
+			Gain		=	1.0,
+			TriggerSpeed	=	8.0,		
+			PitchRandom	=	0.10,
+			GainRandom	=	0.10,		
+			Priority		=	100,		
+		},
+		[3] = {
+			Wave		=	"Impact/impact_car_high.wav",
+			MinDistance	=	10.0,
+			Gain		=	1.0,
+			TriggerSpeed	=	16.0,	
+			Priority		=	100,
+			PitchRandom	=	0.05,
+			GainRandom	=	0.0,				
+		},
+	},
+	
+	-- Truck to ground collision
+	Ground = {
+		-- Sample count
+		Count = 3,
+		-- Delay in milliseconds
+		Delay = 200,
+		[1] = {
+			Wave		=	"Impact/impact_walls_light.wav",
+			MinDistance 	=	6.0,
+			Gain		=	1.0,
+			TriggerSpeed	=	3.0,
+			Priority		=	100,		
+		},
+		[2] = {
+			Wave		=	"Impact/impact_walls_med.wav",
+			MinDistance	=	8.0,
+			Gain		=	1.0,
+			TriggerSpeed	=	8.0,		
+			Priority		=	100,		
+		},
+		[3] = {
+			Wave		=	"Impact/impact_walls_high.wav",
+			MinDistance	=	10.0,
+			Gain		=	1.0,
+			TriggerSpeed	=	20.0,		
+			Priority		=	100,		
+		},
+	},
+	
+	-- Truck to soft object collision
+	Soft = {
+		-- Sample count
+		Count = 3,
+		-- Delay in milliseconds
+		Delay = 200,
+		[1] = {
+			Wave		=	"Impact/impact_plastic.wav",
+			MinDistance 	=	1.0,
+			Gain		=	0.5,
+			TriggerSpeed	=	2.0,
+			Priority		=	100,		
+		},
+		[2] = {
+			Wave		=	"Impact/impact_plastic.wav",
+			MinDistance 	=	3.0,
+			Gain		=	0.8,
+			TriggerSpeed	=	8.0,		
+			Priority		=	100,		
+		},
+		[3] = {
+			Wave		=	"Impact/impact_plastic.wav",
+			MinDistance 	=	3.0,
+			Gain		=	1.0,
+			TriggerSpeed	=	20.0,		
+			Priority		=	100,		
+		},
+	},	
+
+	-- Truck to solid collision
+	Solid = {
+		-- Sample count
+		Count = 3,
+		-- Delay in milliseconds
+		Delay = 200,
+		[1] = {
+			Wave		=	"Impact/impact_walls_light.wav",
+			MinDistance	=	6.0,
+			Gain		=	1.0,
+			TriggerSpeed	=	4.0,
+			Priority		=	100,		
+		},
+		[2] = {
+			Wave		=	"Impact/impact_walls_med.wav",
+			MinDistance	=	8.0,
+			Gain		=	1.0,
+			TriggerSpeed	=	8.0,		
+			Priority		=	100,		
+		},
+		[3] = {
+			Wave		=	"Impact/impact_walls_high.wav",
+			MinDistance	=	10.0,
+			Gain		=	1.0,
+			TriggerSpeed	=	20.0,		
+			Priority		=	100,		
+		},
+	},
+	
+	-- Truck to barrel collision
+	Barrel = {
+		-- Sample count
+		Count = 3,
+		-- Delay in milliseconds
+		Delay = 100,
+		[1] = {
+			Wave		=	"Impact/impact_barrel_light.wav",
+			MinDistance	=	3.0,
+			Gain		=	0.6,
+			TriggerSpeed	=	4.0,
+			Priority		=	100,		
+		},
+		[2] = {
+			Wave		=	"Impact/impact_barrel_med.wav",
+			MinDistance	=	4.0,
+			Gain		=	0.8,
+			TriggerSpeed	=	8.0,		
+			Priority		=	100,		
+		},
+		[3] = {
+			Wave		=	"Impact/impact_barrel_high.wav",
+			MinDistance	=	5.0,
+			Gain		=	1.0,
+			TriggerSpeed	=	20.0,		
+			Priority		=	100,		
+		},
+	},
+	
+	-- Truck to tire collision
+	Tire = {
+		-- Sample count
+		Count = 2,
+		-- Delay in milliseconds
+		Delay = 80,
+		[1] = {
+			Wave		=	"Impact/impact_tyre_light.wav",
+			MinDistance 	=	3.0,
+			Gain		=	0.8,
+			TriggerSpeed	=	3.0,
+			Priority		=	100,		
+		},
+		[2] = {
+			Wave		=	"Impact/impact_tyre_high.wav",
+			MinDistance 	=	5.0,
+			Gain		=	1.0,
+			TriggerSpeed	=	8.0,		
+			Priority		=	100,		
+		},
+	},		
+	
+	-- Truck to wood (-pile, more like) collision
+	Wood = {
+		-- Sample count
+		Count = 3,
+		-- Delay in milliseconds
+		Delay = 100,
+		[1] = {
+			Wave		=	"Impact/impact_wood_light.wav",
+			MinDistance	=	3.0,
+			Gain		=	0.6,
+			TriggerSpeed	=	4.0,
+			Priority		=	100,		
+		},
+		[2] = {
+			Wave		=	"Impact/impact_wood_med.wav",
+			MinDistance	=	4.0,
+			Gain		=	0.8,
+			TriggerSpeed	=	12.0,		
+			Priority		=	100,		
+		},
+		[3] = {
+			Wave		=	"Impact/impact_wood_high.wav",
+			MinDistance	=	5.0,
+			Gain		=	1.0,
+			TriggerSpeed	=	30.0,		
+			Priority		=	100,		
+		},
+	},
+	
+	-- Truck to ragdoll collision
+	Ragdoll = {
+		-- Sample count
+		Count = 1,
+		-- Delay in milliseconds
+		Delay = 200,
+		[1] = {
+			Wave		=	"Impact/impact_body_bonnet.wav",
+			MinDistance 	=	5.0,
+			Gain		=	1.0,
+			TriggerSpeed	=	2.0,
+			Priority		=	100,		
+		},
+	},			
+}
+	
+-- Object-to-Ground collision sounds
+HitToGround =
+{
+	-- Soft to ground collision
+	Soft = {
+		-- Sample count
+		Count = 1,
+		-- Delay in milliseconds
+		Delay = 60,
+		[1] = {
+			Wave		=	"Impact/impact_body_light.wav",
+			MinDistance	=	5.0,
+			Gain		=	0.4,
+			TriggerSpeed	=	3.0,
+			Priority		=	100,		
+		},
+	},
+	
+	-- Tire to ground collision
+	Tire = {
+		-- Sample count
+		Count = 2,
+		-- Delay in milliseconds
+		Delay = 40,
+		[1] = {
+			Wave		=	"Impact/impact_tyre_bounce_single_light.wav",
+			MinDistance	=	5.0,
+			Gain		=	0.8,
+			TriggerSpeed	=	3.0,
+			Priority		=	100,		
+		},
+		[2] = {
+			Wave		=	"Impact/impact_tyre_bounce_single.wav",
+			MinDistance	=	5.0,
+			Gain		=	1.0,
+			TriggerSpeed	=	5.0,
+			Priority		=	100,		
+		},		
+	},
+
+	-- Barrel to ground collision
+	Barrel = {
+		-- Sample count
+		Count = 1,
+		-- Delay in milliseconds
+		Delay = 40,
+		[1] = {
+			Wave		=	"Impact/impact_barrel_ground.wav",
+			MinDistance	=	3.0,
+			Gain		=	0.5,
+			TriggerSpeed	=	2.0,
+			Priority		=	100,		
+		},
+	},
+	
+	-- Wood to ground collision
+	Wood = 
+	{
+		-- Sample count
+		Count = 1,
+		-- Delay in milliseconds
+		Delay = 60,
+		[1] = {
+			Wave		=	"Impact/impact_wood_fall_low.wav",
+			MinDistance	=	4.0,
+			Gain		=	0.6,
+			TriggerSpeed	=	2.0,
+			Priority		=	100,		
+		},		
+	},
+	
+	-- Ragdoll to ground collision / Male
+	Male = {
+		-- Sample count
+		Count = 2,
+		-- Delay in milliseconds
+		Delay = 666,
+		[1] = {
+			Wave		=	"Impact/impact_body_light.wav",
+			MinDistance 	=	5.0,
+			Gain		=	0.7,
+			GainRandom	= 	0.4,
+			PitchRandom	=	0.3,
+			TriggerSpeed	=	1.6,
+			Priority		=	100,		
+		},
+		[2] = {
+			Wave		=	"Impact/impact_body_heavy_2.wav",
+			MinDistance 	=	5.0,
+			Gain		=	1.0,
+			GainRandom	= 	0.3,
+			PitchRandom	=	0.2,
+			TriggerSpeed	=	5.0,
+			Priority		=	100,		
+		},
+		
+		Voices = 
+		{
+			[1] 	= "Voices/Male_1.wav",
+			[2] 	= "Voices/Male_2.wav",
+			[3] 	= "Voices/Male_3.wav",
+			[4] 	= "Voices/Male_4.wav",
+			[5] 	= "Voices/Male_5.wav",
+			[6] 	= "Voices/Male_6.wav",
+			[7] 	= "Voices/Male_7.wav",	
+		}
+	},
+
+	-- Ragdoll to ground collision / Female
+	Female = {
+		-- Sample count
+		Count = 2,
+		-- Delay in milliseconds
+		Delay = 666,
+		[1] = {
+			Wave		=	"Impact/impact_body_light.wav",
+			MinDistance 	=	5.0,
+			Gain		=	0.7,
+			GainRandom	= 	0.4,
+			PitchRandom	=	0.3,
+			TriggerSpeed	=	1.6,
+			Priority		=	100,		
+		},
+		[2] = {
+			Wave		=	"Impact/impact_body_heavy_2.wav",
+			MinDistance 	=	5.0,
+			Gain		=	1.0,
+			GainRandom	= 	0.3,
+			PitchRandom	=	0.2,
+			TriggerSpeed	=	5.0,
+			Priority		=	100,		
+		},
+		
+		Voices = 
+		{
+			[1] 	= "Voices/Female_1.wav",
+			[2] 	= "Voices/Female_2.wav",
+			[3] 	= "Voices/Female_3.wav",
+			[4] 	= "Voices/Female_4.wav",
+			[5] 	= "Voices/Female_5.wav",
+			[6] 	= "Voices/Female_6.wav",
+			[7] 	= "Voices/Female_7.wav",		
+		}
+	},
+
+	-- Metal to ground OR perhaps also truck to light(ish) metal collision
+	Metal = {
+		-- Sample count
+		Count = 3,
+		-- Delay in milliseconds
+		Delay = 200,
+		[1] = {
+			Wave		=	"Impact/impact_metal_fall_3.wav",
+			MinDistance	=	2.0,
+			Gain		=	0.5,
+			TriggerSpeed	=	2.0,
+			Priority		=	100,		
+		},
+		[2] = {
+			Wave		=	"Impact/impact_metal_fall_4.wav",
+			MinDistance	=	3.0,
+			Gain		=	0.9,
+			TriggerSpeed	=	8.0,		
+			Priority		=	100,		
+		},
+		[3] = {
+			Wave		=	"Impact/impact_metal_fall_6.wav",
+			MinDistance	=	5.0,
+			Gain		=	1.0,
+			TriggerSpeed	=	20.0,		
+			Priority		=	100,		
+		},
+	},
+
+	-- Truck to plastic collision
+	Plastic = {
+		-- Sample count
+		Count = 3,
+		-- Delay in milliseconds
+		Delay = 200,
+		[1] = {
+			Wave		=	"Impact/impact_plastic.wav",
+			MinDistance	=	2.0,
+			Gain		=	0.4,
+			TriggerSpeed	=	2.0,
+			Priority		=	100,		
+		},
+		[2] = {
+			Wave		=	"Impact/impact_plastic.wav",
+			MinDistance	=	3.0,
+			Gain		=	0.9,
+			TriggerSpeed	=	7.0,		
+			Priority		=	100,		
+		},
+		[3] = {
+			Wave		=	"Impact/impact_plastic.wav",
+			MinDistance	=	5.0,
+			Gain		=	1.0,
+			TriggerSpeed	=	12.0,		
+			Priority		=	100,		
+		},
+	},
+
+}
+
+--#################################################### Special ####################################################
+
+-- headlights
+Headlights = {
+	-- Sample count
+	Count = 2,
+	-- Delay in milliseconds
+	Delay = 500,
+	[1] = {
+		Wave		=	"Impact/impact_glass_windshield.wav",
+		MinDistance 	=	5.0,
+		Gain		=	1.0,
+		TriggerSpeed	=	8.0,
+		Priority		=	100,		
+	},
+	[2] = {
+		Wave		=	"Impact/impact_glass_windshield.wav",
+		MinDistance 	=	8.0,
+		Gain		=	1.0,
+		TriggerSpeed	=	15.0,		
+		Priority		=	100,		
+	},
+}	
+
+-- Windshields
+Windshields = {
+	-- Sample count
+	Count = 1,
+	-- Delay in milliseconds
+	Delay = 500,
+	[1] = {
+		Wave		=	"Impact/impact_glass_windshield.wav",
+		MinDistance 	=	8.0,
+		Gain		=	1.0,
+		TriggerSpeed	=	8.0,
+		Priority		=	100,		
+	},
+}	
+
+-- Watercrash
+WaterCrash = {
+	-- Sample count
+	Count = 1,
+	-- Delay in milliseconds
+	Delay = 3000,
+	[1] = {
+		Wave		=	"Impact/tyres_water_crash.wav",
+		MinDistance 	=	5.0,
+		Gain		=	1.0,
+		TriggerSpeed	=	5.0,
+		Priority		=	100,		
+	},
+}
+
+-- Suspension bottoming-out
+SuspensionBottomOut = {
+	-- Sample count
+	Count = 3,
+	-- Delay in milliseconds
+	Delay = 200,
+	[1] = {
+		Wave		=	"Impact/impact_suspension_low.wav",
+		MinDistance 	=	5.0,
+		Gain		=	0.6,
+		TriggerSpeed	=	0.01,
+		Priority		=	100,		
+	},
+	[2] = {
+		Wave		=	"Impact/impact_suspension_med.wav",
+		MinDistance	=	5.0,
+		Gain		=	0.8,
+		TriggerSpeed	=	5.0,		
+		Priority		=	100,		
+	},
+	[3] = {
+		Wave		=	"Impact/impact_suspension_high.wav",
+		MinDistance	=	5.0,
+		Gain		=	1.0,
+		TriggerSpeed	=	15.0,		
+		Priority		=	100,		
+	},
+}
+
+-- Ragdoll ejected, male
+RagdollEjectMale =
+{
+	-- Sample count
+	Count = 3,
+	-- Delay in milliseconds
+	Delay = 5000,
+	
+	[1] = {
+		Wave			=	"Voices/EjectMale_1.wav",
+		MinDistance 	=	10.0,
+		Gain		=	1.0,
+		TriggerSpeed	=	3.0,
+		Priority		=	100,		
+	},
+
+	[2] = {
+		Wave		=	"Voices/EjectMale_2.wav",
+		MinDistance 	=	10.0,
+		Gain		=	1.0,
+		TriggerSpeed	=	3.0,
+		Priority		=	100,		
+	},
+
+	[3] = {
+		Wave		=	"Voices/EjectMale_3.wav",
+		MinDistance 	=	10.0,
+		Gain		=	1.0,
+		TriggerSpeed	=	3.0,
+		Priority		=	100,		
+	},
+
+}
+
+-- Ragdoll ejected, female
+RagdollEjectFemale =
+{
+	-- Sample count
+	Count = 3,
+	-- Delay in milliseconds
+	Delay = 5000,
+	
+	[1] = {
+		Wave		=	"Voices/EjectFemale_1.wav",
+		MinDistance 	=	10.0,
+		Gain		=	1.0,
+		TriggerSpeed	=	3.0,
+		Priority		=	100,		
+	},
+
+	[2] = {
+		Wave		=	"Voices/EjectFemale_2.wav",
+		MinDistance 	=	10.0,
+		Gain		=	1.0,
+		TriggerSpeed	=	3.0,
+		Priority		=	100,		
+	},	
+
+	[3] = {
+		Wave		=	"Voices/EjectFemale_3.wav",
+		MinDistance 	=	10.0,
+		Gain		=	1.0,
+		TriggerSpeed	=	3.0,
+		Priority		=	100,		
+	},	
+}

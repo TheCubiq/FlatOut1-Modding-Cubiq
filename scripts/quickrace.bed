@@ -1,0 +1,216 @@
+--///////////////////////////////////////////////////////////////////////////
+--// QuickRace.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2004 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// Created on 2.3.2004 12:55:39
+--// 
+--// @Author Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+
+
+quickrace_state = {}
+--[[--
+quickrace_images = {
+	trackinfo_background=window_background("MenuWindow_1.tga"),
+	carinfo_background=window_background("MenuWindow_2.tga"),
+
+
+}	
+--]]--
+
+--------------------------------QUICK RACE----------track selection
+-------------------------------------------------------------------
+-- back goes to car_select
+-- forward goes to race
+--
+--
+--
+
+menu_quickrace_trackselect = {
+
+	options = {
+	
+		title = QUICKRACE_TITLE,
+		--subtitle = QUICKRACE_TRACK, --GetPhrase(MENU_QUICKRACE_TRACKSELECT_TITLE),
+		background = noimage(), --background("bg-mainmenu.tga"),	
+		orientation = MENU_HORIZONTAL,
+		position = DEFAULTBUTTONPOS(),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		back_action=entermenu("menu_quickrace_transmissionselect"),
+	},
+	
+	init_function = function()
+		local win=Frame{ Position=POS(0,97), Size=SIZE(376+48,288), ShowBorders=FALSE, }
+
+		win:AttachResource(quickrace_images.trackinfo_background)
+		wm.ActivateWindow(win)
+		quickrace_state.trackinfowin=win
+
+		win=StaticText{ Position=POS(48+16,16), Size=SIZE(336,32), Parent=quickrace_state.trackinfowin, Font=SYSTEMFONT(), }
+		quickrace_state.trackinfotitle=win
+
+		win=StaticText{ Position=POS(48+216,16), Size=SIZE(336,288), Parent=quickrace_state.trackinfowin, Font=SYSTEMFONT(), }
+		quickrace_state.trackinfotext=win
+
+		win=Button{ Position=POS(48+4,32), Size=SIZE(196,230), Parent=quickrace_state.trackinfowin }
+		quickrace_state.trackinfoimage=win
+
+
+	end,
+
+	deinit_function = function()
+		wm.DeactivateWindow(quickrace_state.trackinfowin)
+
+		quickrace_state.trackinfowin=nil
+		quickrace_state.trackinfotext=nil
+		quickrace_state.trackinfoimage=nil
+		quickrace_state.trackinfotitle=nil
+
+	end,
+
+	buttonchange_function = function(prevbutton,newbutton)
+		
+		quickrace_state.trackname=ConvertToWString(string.format("Trackname %d",newbutton))
+		quickrace_state.trackinfotitle:SetTitle(quickrace_state.trackname)
+
+		quickrace_state.trackinfo=ConvertToWString("record times here\n1\n2\n3\n4\n5\n6\n7\n8\n9\n")
+		quickrace_state.trackinfotext:SetTitle(quickrace_state.trackinfo)
+
+		--//quickrace_state.trackinfoimage:AttachResource(quickrace_images.track_images[newbutton])
+
+		--Menu:SetMenuSubTitle(quickrace_state.subtitle,true)
+		
+	end,
+	
+	items = {
+		{ ConvertToWString("Track 1"),noimage(), race(1) },
+		{ ConvertToWString("Track 2"),noimage(), race(2) },
+		{ ConvertToWString("Track 3"),noimage(), race(3) },
+		{ ConvertToWString("Track 4"),noimage(), race(4) },
+		{ ConvertToWString("Track 5"),noimage(), race(5) },
+		{ ConvertToWString("Track 6"),noimage(), race(6) },
+		{ ConvertToWString("Track 7"),noimage(), race(7) },
+		{ ConvertToWString("Track 8"),noimage(), race(8) },
+		{ ConvertToWString("Track 9"),noimage(), race(9) },
+		{ ConvertToWString("Track 10"),noimage(), race(13) },
+		{ ConvertToWString("Track 11"),noimage(), race(14) },
+		{ ConvertToWString("Track 12"),noimage(), race(15) },
+		{ ConvertToWString("Track 13"),noimage(), race(10) },
+		{ ConvertToWString("Track 14"),noimage(), race(11) },
+		{ ConvertToWString("Track 15"),noimage(), race(12) },
+		{ ConvertToWString("Track 16"),noimage(), race(16) },
+		{ ConvertToWString("Track 17"),noimage(), race(22) },
+		{ ConvertToWString("Track 18"),noimage(), race(23) },
+		{ ConvertToWString("Track 19"),noimage(), race(24) },
+		{ ConvertToWString("Track 20"),noimage(), race(18) },
+		{ ConvertToWString("Track 21"),noimage(), race(19) },
+		{ ConvertToWString("Track 22"),noimage(), race(25) },
+		{ ConvertToWString("Track 23"),noimage(), race(26) },
+		{ ConvertToWString("Track 24"),noimage(), race(27) },
+	},
+
+--[[/*--
+	items = {
+		{ GetPhrase(MENU_ITEM_TRACK1),image("track1-forest1.tga"), race(1) },
+		{ GetPhrase(MENU_ITEM_TRACK2),image("track2-forest2.tga"), race(2) },
+		{ GetPhrase(MENU_ITEM_TRACK3),image("track3-forest3.tga"), race(3) },
+		{ GetPhrase(MENU_ITEM_TRACK4),image("track4-pit1.tga"), race(4) },
+		{ GetPhrase(MENU_ITEM_TRACK5),image("track5-pit2.tga"), race(5) },
+		{ GetPhrase(MENU_ITEM_TRACK6),image("track6-pit3.tga"), race(6) },
+		{ GetPhrase(MENU_ITEM_TRACK7),image("track7-racing1.tga"), race(7) },
+		{ GetPhrase(MENU_ITEM_TRACK8),image("track8-racing2.tga"), race(8) },
+		{ GetPhrase(MENU_ITEM_TRACK9),image("track14-winter2.tga"), race(14) },
+		{ GetPhrase(MENU_ITEM_TRACK10),image("track10-town1.tga"), race(10) },
+		{ GetPhrase(MENU_ITEM_TRACK11),image("track11-town2.tga"), race(11) },
+	},
+--*/]]--	
+}
+
+
+--------------------------------QUICK RACE------------car selection
+-------------------------------------------------------------------
+-- back goes to main menu
+-- forward goes to track selection
+--
+--
+--
+
+
+menu_quickrace_carselect = {
+
+	options = {
+	
+		title = QUICKRACE_CARDEALER,
+		background = noimage(), --//background("bg-mainmenu_alpha.tga"),
+		orientation = MENU_HORIZONTAL,
+		position = DEFAULTBUTTONPOS(),
+		padding = { 6,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		back_action=entermenu("menu_singleplayer"),
+	},
+	
+	init_function = function()
+		GameFlow.SetEventType("RACE")
+		GameFlow.SetSubEventType("RACE_NORMAL");
+		cardealer_init(entermenu("menu_singleplayer"),cardealer_transmissionselect(enter_trackselection("menu_quickrace_carselect", race)))
+		
+	end,
+
+	deinit_function = function()
+		if cardealer_state.forward then
+			GameFlow.SetPlayerCar(cardealer_state.car-1)
+		end
+		cardealer_deinit()
+	end,
+	
+	update_function = function()
+		cardealer_update()
+	end,
+
+	items = {
+	},
+}
+
+
+menu_quickrace_transmissionselect = {
+
+	options = {
+	
+		title = QUICKRACE_CARNAME,
+		subtitle = QUICKRACE_TRANSMISSION, --GetPhrase(MENU_QUICKRACE_CARSELECT_TITLE),
+		background = noimage(), --//background("bg-mainmenu_alpha.tga"),
+		orientation = MENU_HORIZONTAL,
+		position = DEFAULTBUTTONPOS(),
+		padding = { 6,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		back_action=entermenu("menu_quickrace_carselect"),
+	},
+
+	buttonchange_function = function(prevbutton,newbutton)
+	
+		quickrace_state.subtitle=ConvertToWString(menu_quickrace_transmissionselect.items[newbutton].subtitle)
+		Menu:SetMenuSubTitle(quickrace_state.subtitle,true)
+		
+	end,
+
+
+	items = {
+		{ QUICKRACE_AUTOMATIC,noimage(), enter_trackselection("menu_quickrace_transmissionselect", race), subtitle="Automatic" },
+		{ QUICKRACE_MANUAL,noimage(), enter_trackselection("menu_quickrace_transmissionselect", race), subtitle="Manual (not supported)" },
+	},
+	
+}
+

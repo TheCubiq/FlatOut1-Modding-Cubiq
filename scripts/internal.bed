@@ -1,0 +1,759 @@
+---@diagnostic disable: duplicate-set-field
+--///////////////////////////////////////////////////////////////////////////
+--// internal.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2003 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// Created on 24.7.2003 13:03:42
+--// 
+--// @Author: Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+
+ResourceDataPath="data/menu/"
+
+menustate={}
+--//helper data
+
+function DEFAULTBUTTONPOS()
+	return { 260,396 }
+end
+
+
+function RELATIVEPOS(pos,parentpos)
+	local parent=parentpos or {0,0}
+	
+	local x=pos[1] - parentpos[1]
+	local y=pos[2] - parentpos[2]
+
+	local t={ x, y}
+
+	return t
+end
+
+function SPOS(x,y)
+	return { x+48,y+36 }
+end
+
+--//--------helper functions for menus
+
+function EnterMenu(menuname,noforward)
+	if not balk_state then
+		balk_state={}
+	end
+
+	local menu=_G[menuname]
+	if menu.options.back_action then
+		balk_state.backbutton=true
+	else
+		balk_state.backbutton=false
+	end
+
+	if not noforward then
+		balk_state.forwardbutton=true
+	else
+		balk_state.forwardbutton=false
+	end
+
+	Menu:SetMenu(menuname)
+end
+
+
+function SubImage(itemname,filename,coords,imagesize)
+
+	local r=wm.NewResource(SUBBITMAP,itemname,ResourceDataPath..filename)
+
+	local s={}
+
+	s[1] = coords[1] / imagesize[1]
+	s[2] = coords[2] / imagesize[2]
+	s[3] = coords[3] / imagesize[1]
+	s[4] = coords[4] / imagesize[2]
+
+	wm.SetOriginalImageSize(r,imagesize)
+	wm.SetSubCoordinates(r,s)
+	
+	return r
+end
+
+
+function LoadPicture(itemname,filename)
+	if not filename then
+		filename=itemname
+	end
+
+	return wm.NewResource(BITMAP,itemname,ResourceDataPath..filename)
+end
+
+
+function LoadBackground(itemname,filename)
+	if not filename then
+		filename=itemname
+	end
+
+	return wm.NewResource(BITMAP_LARGE,itemname,ResourceDataPath..filename)
+end
+
+function GetResourceSize(img)
+	return wm.GetResourceSize(img)
+end
+
+function GetWindow(name)
+	return wm.GetWindow(name)
+end
+--//---------------
+function disabled()
+	return true
+end
+
+function image(itemname)
+	if not itemname then return nil end
+
+	local f=wm.GetResource(itemname)
+	if not f then
+		f=LoadPicture(itemname)
+	end
+	return f
+	
+end
+
+function window_background(itemname)
+	return image(itemname)
+end
+
+function background(itemname)
+	if not itemname then return nil end
+
+	local f=wm.GetResource(itemname)
+	if not f then
+		f=LoadBackground(itemname)
+	end
+	return f
+end
+
+
+function subimage(itemname,subitem)
+	if not itemname then return nil end
+
+	local f=SubImage(itemname,subitem)
+
+	return f
+end
+
+function noimage()
+	return nil
+end
+
+function fontMenu()
+	return GETFONT("FontIngameMenu")
+end
+
+function font10()
+	return GETFONT("FontIngame10")
+end
+
+function font12()
+	return GETFONT("FontIngame12")
+end
+
+function font14()
+	return GETFONT("FontIngame14")
+end
+
+function font18()
+	return GETFONT("FontIngame18")
+end
+
+function font24()
+	return GETFONT("FontIngame24")
+end
+
+
+function quitmenu(parm)
+	local f=function()
+		local p=parm
+		Menu:LeaveMenu()
+		wm.QuitMenu(p)
+	end
+	return f
+end
+
+function leavemenu(parm)
+	Menu:LeaveMenu()
+	if not parm then parm=0 end
+	wm.QuitMenu(parm)
+end
+
+
+function quitgame()
+	GlobalState.QuitGame=true
+	GameFlow:QuitGame()
+	wm.QuitMenu(GAME_QUIT)
+end
+
+function playmenusound_move()
+	AUDIO.PlayMenuSound(AUDIO.MENUSFX_MOVE)
+end
+
+function playmenusound_action()
+	AUDIO.PlayMenuSound(AUDIO.MENUSFX_SELECT)
+end
+
+function playmenusound_back()
+	AUDIO.PlayMenuSound(AUDIO.MENUSFX_BACK)
+end
+
+function playmenusound_error()
+	AUDIO.PlayMenuSound(AUDIO.MENUSFX_ERROR)
+end
+
+function entermenu(menuname,noforwardbutton)
+	local f=function()
+		local n=menuname
+		local nf=noforwardbutton
+		EnterMenu(n,nf)
+	end
+	return f
+end
+
+function race(level)
+	local f=function()
+		local l=level
+		if GameFlow.GetGameMode() ~= "SPLITSCREEN" then
+			GameFlow.SetCarController(1,GUI:GetLastActiveController())
+		end
+
+		GlobalState.CurrentLevel=l
+		if GameFlow.GetEventType() == "DERBY" or GameFlow.IsArenaMode() then
+			PlayerProfile:PossibleToFinishClass(0)
+		elseif GameFlow.GetSubEventType() == "RACE_CAREER" then
+			check_class_completion_possible(PlayerProfile:GetCurrentClass(),l)
+		end
+		GameFlow.SetCurrentLevel(l)
+		AUDIO.StopMusic()
+		wm.QuitMenu(GAME_RACE)
+	end
+	return f
+end
+
+
+function select_car_and_entermenu(car,next_menu)
+	local f=function()
+		local c=car
+		local m=next_menu
+		GameFlow.SetPlayerCar(c)
+		EnterMenu(m)
+	end
+	return f
+end
+
+function addparent(win)
+	if menustate.windows and menustate.windows.parents then
+		table.insert(menustate.windows.parents,win)
+	end
+
+	return win
+end
+
+function addchild(win)
+	if menustate.windows and menustate.windows.childs then
+		table.insert(menustate.windows.childs,win)
+	end
+
+	return win
+end
+
+function activateparents()
+	local k,v
+
+	if not menustate.windows or not menustate.windows.parents then return end
+
+	for k,v in ipairs(menustate.windows.parents) do
+		wm.ActivateWindow(v)
+	end
+end
+
+function deactivateparents()
+	local k,v
+	if not menustate.windows or not menustate.windows.parents then return end
+
+	for k,v in ipairs(menustate.windows.parents) do
+		wm.DeactivateWindow(v)
+	end
+end
+
+function removeparents()
+	local k,v
+	if not menustate.windows or not menustate.windows.parents then return end
+	for k,v in ipairs(menustate.windows.parents) do
+		wm.RemoveWindow(v)
+	end
+	menustate.windows.parents=nil
+end
+
+function removechilds()
+	local k,v
+	if not menustate.windows or not menustate.windows.childs then return end
+	for k,v in ipairs(menustate.windows.childs) do
+		wm.RemoveWindow(v)
+	end
+	menustate.windows.childs=nil
+end
+
+function windows_reset()
+	deactivateparents()
+	removeparents()
+	removechilds()
+
+	menustate.moneywindow=nil
+	
+	menustate.windows = { parents={}, childs={} }
+
+end
+
+
+function GetCameraSplinePoint()
+	local tm=GUI:GetTime()/1000
+	local dt=(tm-MenuCameraTime)
+	
+	local t=dt/10
+
+--[[--/*
+	if t >= 2.0 then
+		MenuCameraTime=tm
+		t=0
+	end
+
+	if t >= 1.0 then
+		t = 1.0 - (t - 1.0)
+	end
+--]]--*/
+	t=0.5+(math.sin(t*(3.1416))/2)
+
+	return MenuScene:GetCameraSplinePoint(t)
+end
+
+function SetCameraSpline(pos1,pos2,pos3)
+	MenuCameraTime=GUI:GetTime()/1000
+	MenuScene:SetCameraSplinePoint(0,pos1)
+	MenuScene:SetCameraSplinePoint(1,pos2)
+	MenuScene:SetCameraSplinePoint(2,pos3)
+--//	MenuCameraSpline:SetNumPoints(3)
+--//	MenuCameraSpline:SetKeyPoint(0,pos1)
+--//	MenuCameraSpline:SetKeyPoint(1,pos2)
+--//	MenuCameraSpline:SetKeyPoint(2,pos3)
+--//	MenuCameraSpline:SetKeyPoint(3,pos2)
+end
+
+
+function SetMenuCamera(camnum,isworld)
+
+	if isworld then
+		menucamera=camnum
+		MenuScene:SetCameraCoordinateMode(CAMERAWORLD)
+		MenuScene:SetCameraPositionOffset(Startpoints[camnum].Position)
+		return
+	end
+
+	--//kludge
+	if camnum == 20 then
+		MenuScene:StartSmoke(Dummies.title_smoke.Position)
+	else
+		MenuScene:StopSmoke()
+    end
+
+	if menucamera and menucamera == camnum then return end
+
+	if menucamera ~= camnum then
+		MenuScene:FadeOff()
+	end
+	menucamera=camnum
+
+
+	local defaultdata=CardealerCameras.Default
+	local camdata=CardealerCameras[camnum] or defaultdata
+
+	local offset_cam=camdata.CameraOffset or defaultdata.CameraOffset
+	local offset_target=camdata.TargetOffset or defaultdata.TargetOffset
+	local cam_fov=camdata.CameraFov or defaultdata.CameraFov
+
+	MenuScene:SetCameraCoordinateMode(CAMERARELATIVE)
+--//	MenuScene:SetCameraTarget(Startpoints[camnum].Position)
+	MenuScene:SetCameraTarget(Startpoints[menucamera].Position,Startpoints[menucamera].Orientation)
+	MenuScene:SetCameraTargetOffset(offset_target)
+	MenuScene:SetCameraFov(cam_fov)
+	SetCameraSpline(offset_cam[1],offset_cam[2],offset_cam[3])
+	--//MenuScene:SetCameraPositionOffset(GetCameraSplinePoint())
+
+	MenuScene:StartFadeOn()
+end
+
+--//--finite statemachine state help functions and templates
+
+--//removes everything from state and adds newstate to it
+function FSM_init_state(self,_newstate)
+	self:RemoveAll()
+	
+	if _newstate then
+		self:AddState(_newstate)
+	end
+end
+
+--//add hang state (entercondition is always true and exitcondition is always false)
+function FSM_add_hang_state(self)
+	local t={
+		Interval = 0,
+		
+		EnterCondition = function(self,time)
+			return true
+		end,
+		
+		--no need for other functions
+	}
+
+	self:AddState(t)
+end
+
+
+
+--//add delaystate
+function FSM_add_delay_state(self,seconds)
+
+	--wait state
+	
+	local t={
+		Interval = 0,
+		
+		delay=seconds,
+		
+		EnterCondition = function(self,time)
+			return true
+		end,
+		
+		Enter = function(self,time)
+			self.time=0
+			self.exit_cond=nil
+		end,
+		
+		Update = function(self,dt)
+			self.time = self.time+dt
+			
+			if self.time >= self.delay then
+				self.exit_cond=true
+			end
+		end,
+		
+	}
+
+	--//state that exits wait state and hangs
+	local r={
+		Interval = 0,
+		
+		waitstate = t,
+		
+		EnterCondition = function(self,time)
+
+			return self.waitstate.exit_cond
+		end,
+	
+	}
+
+	self:AddState(t)
+	self:AddState(r)
+
+end
+
+--//executes function  (if exitcond is true then exitcondition is defined)
+function FSM_add_function(self,func,use_exitcond,arg)
+	
+	local t = {
+		Interval = 0,
+		
+		func = func,
+		func_args = arg,
+		
+		use_exitcondition = use_exitcond,
+		
+		EnterCondition = function(self,time)
+			return true
+		end,
+	
+		Enter = function(self,time)
+			self.func(unpack(self.func_args))
+		end,
+		
+		ExitCondition = function(self,time)
+			return self.use_exitcondition
+		end,
+	}
+	
+	self:AddState(t)
+	
+end
+
+
+
+function FSM_add_fadewait(self)
+
+	local t={
+		Interval = 0,
+		
+		EnterCondition = function(self,time)
+			return true
+		end,
+		
+		Enter = function(self,time)
+			self.exit_cond=nil		
+		end,
+		
+		Update = function(self,dt)
+			LOG("fadeupdate")
+			if not MenuScene:IsFading() then 
+				self.exit_cond=true
+			end
+		end,
+
+	}
+
+	--//state that exits wait state and hangs
+	local r={
+		Interval = 0,
+		
+		waitstate = t,
+		
+		EnterCondition = function(self,time)
+
+			return self.waitstate.exit_cond
+		end,
+	
+	}
+
+	self:AddState(t)
+	self:AddState(r)
+
+end
+
+function FSM_add_reset(self)
+	FSM_add_function(self,self.Reset,false,{ self })
+end
+
+--NOTE the state machine is automatically reinited when the condition fails
+function FSM_add_wait_for_event(Self, UpdateDelay, UpdateFunction, SuccessCondition, FailCondition, FailFunction, TimeOut)
+	local state={}
+	state.Interval = UpdateDelay
+	state.EnterCondition=function(self,time)
+		return true
+	end
+	
+	state.Enter = function(self,time)
+		self.time=0
+	end
+	
+		
+	state.Update=function(self,dt)
+		UpdateFunction()
+		local failed=false
+		if TimeOut then
+			self.time = self.time+dt
+			if self.time >= TimeOut then
+				failed=true
+			end
+		end
+		if FailCondition~=nil and FailCondition() then
+			failed=true
+		end
+		if failed then
+			FSM_init_state(Self)
+			if FailFunction~=nil then
+				FailFunction()
+			end
+		end
+	end
+		
+	state.ExitCondition=function(self,time)
+		return false
+	end
+		
+	
+	Self:AddState(state)		
+	
+	state={}
+	
+	state.EnterCondition=function(self, time)
+		return SuccessCondition()
+	end
+	
+	state.ExitCondition=function(self, time)
+		return false
+	end
+	Self:AddState(state)
+end
+
+-- The state machine is reinited after a failure
+function FSM_check_condition(Self, Condition, FailFunction)
+	local state={}
+	state.EnterCondition=function(self,time)
+		return true
+	end
+	
+	state.ExitCondition=function(self, time)
+		return false
+	end
+	
+	state.Enter=function(self, time)
+	end
+	
+	state.Update=function(self,dt)
+		if not Condition() then
+			FSM_init_state(Self)
+			FailFunction()
+		end
+	end
+	
+	
+	Self:AddState(state)
+	
+	state={}
+	state.EnterCondition=function(self, time)
+		return Condition()
+	end
+	
+	state.ExitCondition=function(self, time)
+		return false
+	end
+	Self:AddState(state)
+end
+
+
+
+--LoadingImages={
+--	[1]=SubImage("loading_anim1", "loading_disc.tga", {0,0, 32, 32}, SIZE(128, 128)),
+--	[2]=SubImage("loading_anim2", "loading_disc.tga", {32,0, 32, 32}, SIZE(128, 128)),
+--	[3]=SubImage("loading_anim3", "loading_disc.tga", {64,0, 32, 32}, SIZE(128, 128)),
+--	[4]=SubImage("loading_anim4", "loading_disc.tga", {96,0, 32, 32}, SIZE(128, 128)),
+--	[5]=SubImage("loading_anim5", "loading_disc.tga", {0,32, 32, 32}, SIZE(128, 128)),
+--	[6]=SubImage("loading_anim6", "loading_disc.tga", {32,32, 32, 32}, SIZE(128, 128)),
+--	[7]=SubImage("loading_anim7", "loading_disc.tga", {64,32, 32, 32}, SIZE(128, 128)),
+--	[8]=SubImage("loading_anim8", "loading_disc.tga", {96,32, 32, 32}, SIZE(128, 128)),
+--	[9]=SubImage("loading_anim9", "loading_disc.tga", {0,64, 32, 32}, SIZE(128, 128)),
+--	[10]=SubImage("loading_anim10", "loading_disc.tga", {32,64, 32, 32}, SIZE(128, 128)),
+--	[11]=SubImage("loading_anim11", "loading_disc.tga", {64,64, 32, 32}, SIZE(128, 128)),
+--	[12]=SubImage("loading_anim12", "loading_disc.tga", {96,64, 32, 32}, SIZE(128, 128)),
+--	[13]=SubImage("loading_anim13", "loading_disc.tga", {0,96, 32, 32}, SIZE(128, 128)),
+--	[14]=SubImage("loading_anim14", "loading_disc.tga", {32,96, 32, 32}, SIZE(128, 128)),
+--	[15]=SubImage("loading_anim15", "loading_disc.tga", {64,96, 32, 32}, SIZE(128, 128)),
+--}
+LoadingImages={
+	[1]=SubImage("loading_anim1", "xboxliveloading.tga", {0,0, 64, 64}, SIZE(128, 128)),	
+	[2]=SubImage("loading_anim2", "xboxliveloading.tga", {64,0, 64, 64}, SIZE(128, 128)),	
+	[3]=SubImage("loading_anim3", "xboxliveloading.tga", {0,64, 64, 64}, SIZE(128, 128)),	
+	[4]=SubImage("loading_anim4", "xboxliveloading.tga", {64,64, 64, 64}, SIZE(128, 128)),
+}
+LoadingImages[5]=LoadingImages[3]
+LoadingImages[6]=LoadingImages[2]		
+
+local ThinkingWindowFSM
+local ThinkingWindow
+local PrevThinkingFocus
+
+function ShowThinkingWindow()
+	if ThinkingWindow then
+		HideThinkingWindow()
+	end
+	local win=wm.GetFocus()
+	if win then
+		PrevThinkingFocus=win:GetHandle()
+	else
+		PrevThinkingFocus=nil
+	end
+	local Pos=SAFEPOS(506, 9)
+	local win=Frame{Name="thinkingwindow", Position = Pos, Size=wm.GetResourceSize(LoadingImages[1]), ShowBorders=FALSE}
+	win:AttachResource(LoadingImages[1])
+	wm.ActivateWindow(win)
+	win:SetFocus()
+	
+	local delay=0.03
+	local fsm=FSM()
+	FSM_init_state(fsm)
+	FSM_add_delay_state(fsm, delay)
+	FSM_add_function(fsm,AnimateThinkingWindow,FALSE,{2})
+	FSM_add_delay_state(fsm, delay)
+	FSM_add_function(fsm,AnimateThinkingWindow,FALSE,{3})
+	FSM_add_delay_state(fsm, delay)
+	FSM_add_function(fsm,AnimateThinkingWindow,FALSE,{4})
+	FSM_add_delay_state(fsm, delay)
+	FSM_add_function(fsm,AnimateThinkingWindow,FALSE,{5})
+	FSM_add_delay_state(fsm, delay)
+	FSM_add_function(fsm,AnimateThinkingWindow,FALSE,{6})
+	FSM_add_delay_state(fsm, delay)
+--	FSM_add_function(fsm,AnimateThinkingWindow,FALSE,{7})
+--	FSM_add_delay_state(fsm, delay)
+--	FSM_add_function(fsm,AnimateThinkingWindow,FALSE,{8})
+--	FSM_add_delay_state(fsm, delay)
+--	FSM_add_function(fsm,AnimateThinkingWindow,FALSE,{9})
+--	FSM_add_delay_state(fsm, delay)
+--	FSM_add_function(fsm,AnimateThinkingWindow,FALSE,{10})
+--	FSM_add_delay_state(fsm, delay)
+--	FSM_add_function(fsm,AnimateThinkingWindow,FALSE,{11})
+--	FSM_add_delay_state(fsm, delay)
+--	FSM_add_function(fsm,AnimateThinkingWindow,FALSE,{12})
+--	FSM_add_delay_state(fsm, delay)
+--	FSM_add_function(fsm,AnimateThinkingWindow,FALSE,{13})
+--	FSM_add_delay_state(fsm, delay)
+--	FSM_add_function(fsm,AnimateThinkingWindow,FALSE,{14})
+--	FSM_add_delay_state(fsm, delay)
+--	FSM_add_function(fsm,AnimateThinkingWindow,FALSE,{15})
+	FSM_add_delay_state(fsm, delay)
+	FSM_add_function(fsm,AnimateThinkingWindow,FALSE,{1})	 
+	ThinkingWindowFSM=fsm
+	ThinkingWindow=win
+end
+
+function AnimateThinkingWindow(FrameNr)
+	if ThinkingWindow ~=nil then
+		ThinkingWindow:AttachResource(LoadingImages[FrameNr])
+	end
+	if FrameNr==1 and ThinkingWindowFSM~=nil then
+			ThinkingWindowFSM:Reset()
+	end
+
+end
+
+function HideThinkingWindow()
+	if ThinkingWindow~=nil then
+		wm.DeactivateWindow(ThinkingWindow)
+		FSM_init_state(ThinkingWindowFSM)
+		ThinkingWindowFSM=nil
+		ThinkingWindow=nil
+		if PrevThinkingFocus then
+			local win=wm.GetWindowByHandle(PrevThinkingFocus)
+			if win then
+				wm.SetFocus(win)
+			end
+		end
+		PrevThinkingFocus=nil		
+	end
+end
+
+function LoadMaps()
+	for i,j in pairs(Levels) do
+		if j.StuntMode~=1 then
+			local trackPath=j.StagePath.."Data/map.bed"
+			dofile(trackPath)
+			local name=string.format("trackmapp%i", i)
+			j.Map=wm.GetResource(name)
+			if not j.Map then
+				j.Map=wm.NewResource(BITMAP,name, MapTexture)
+				--wm.SetResourceColor(j.Map, {255, 0, 0, 255})
+			end
+		end
+	end
+end
+
+
+
+
+
+
+

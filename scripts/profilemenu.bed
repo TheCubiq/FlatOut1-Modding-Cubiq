@@ -1,0 +1,745 @@
+--///////////////////////////////////////////////////////////////////////////
+--// ProfileMenu.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2004 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// Created on 4.6.2004 12:47:33
+--// 
+--// @Author Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+
+function profile_setsaveinfo(num)
+
+
+	LOG("setsaveinfo %d",num)
+
+	local info={}
+
+	if num > 0 then
+		profiles_state.saveslot=num
+
+		info=profiles_state.saves[num] or {}
+	end
+
+	ShowExtraButton()
+
+	local w
+	if info.name then
+		--//GetWindow("save_name_t"):SetTitle(PROFILE_NAME)
+		GetWindow("save_name"):SetTitle(info.name)
+		GetWindow("balk_infotext"):SetTitle(PROFILE_SELECT) --//"SELECT PROFILE"))
+	else
+		--//GetWindow("save_name_t"):SetTitle(ConvertToWString(""))
+		if info.slot == -1 then
+			GetWindow("balk_infotext"):SetTitle(PROFILE_NEW)
+			GetWindow("save_name"):SetTitle(PROFILE_NEW)
+		else
+			GetWindow("save_name"):SetTitle(ConvertToWString(""))
+			GetWindow("balk_infotext"):SetTitle(ConvertToWString(""))
+		end
+	end
+				
+	if info.races_completed then
+		GetWindow("save_races_t"):SetTitle(PROFILE_COMPLETED)
+		GetWindow("save_races"):SetTitle(ConvertToWString(string.format("%d / %d",info.races_completed,info.races_max)))
+	else
+		GetWindow("save_races_t"):SetTitle(ConvertToWString(""))
+		GetWindow("save_races"):SetTitle(ConvertToWString(""))
+    end
+
+	
+	if info.car and info.careercarselected then
+		local k,v
+		local menucar=1
+		local i=1
+		for k,v in ipairs(cardealer_data.car_data) do
+			if v.car == info.car+1 then
+				menucar=i
+			end
+			i=i+1
+		end
+
+		GetWindow("save_car_t"):SetTitle(PROFILE_CAR)
+		GetWindow("save_car"):SetTitle(ConvertToWString(cardealer_data.car_data[menucar].name))
+	elseif info.name then
+		GetWindow("save_car_t"):SetTitle(PROFILE_CAR)
+		GetWindow("save_car"):SetTitle(PROFILE_NONE)
+	else
+		HideExtraButton()
+		GetWindow("save_car_t"):SetTitle(ConvertToWString(""))
+		GetWindow("save_car"):SetTitle(ConvertToWString(""))
+    end
+
+	if info.money then
+		GetWindow("save_money_t"):SetTitle(PROFILE_BANK)
+		GetWindow("save_money"):SetTitle(ConvertToWString(string.format("$ %d",info.money)))
+	else
+		GetWindow("save_money_t"):SetTitle(ConvertToWString(""))
+		GetWindow("save_money"):SetTitle(ConvertToWString(""))
+    end
+
+	if info.races_completed then
+		GetWindow("save_completion_t"):SetTitle(PROFILE_GAMECOMPLETED)
+		GetWindow("save_completion"):SetTitle(ConvertToWString(string.format("%d %%",(info.races_completed/info.races_max)*100)))
+	else
+		GetWindow("save_completion_t"):SetTitle(ConvertToWString(""))
+		GetWindow("save_completion"):SetTitle(ConvertToWString(""))
+    end
+
+	if info.difficulty then
+		GetWindow("save_difficulty_t"):SetTitle(PROFILE_DIFFICULTY)
+		local t=PROFILE_DIFFICULTY_PRO
+		if info.difficulty == 1 then
+			t= PROFILE_DIFFICULTY_STANDARD
+		end
+		GetWindow("save_difficulty"):SetTitle(t)
+
+	else
+		GetWindow("save_difficulty_t"):SetTitle(ConvertToWString(""))
+		GetWindow("save_difficulty"):SetTitle(ConvertToWString(""))
+	end
+
+
+--[[--/*
+	else
+
+		local w=GetWindow("save_name")
+		w:SetTitle(ConvertToWString(string.format("save device not ok %d",profiles_state.savestate or -1)))
+	end
+--]]--*/
+	if profiles_state.saves then
+
+		if num == 1 then
+			HideLeftBalkArrow()
+		else
+			ShowLeftBalkArrow()
+		end
+
+		if num == table.getn(profiles_state.saves) then
+			HideRightBalkArrow()
+		else
+			ShowRightBalkArrow()
+		end
+	end
+end
+
+
+
+
+function profile_entersave(back,forward)
+
+	menu_profiles_save.options.back_action=back
+	menu_profiles_save.options.forward_action=forward
+
+
+	EnterMenu("menu_profiles_save")
+
+end
+
+
+menu_profiles_save = {
+
+	options = {
+	
+		title = ConvertToWString(""),
+		background = noimage(), 
+		orientation = MENU_HORIZONTAL,
+		position = POS(260,396),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+	},
+
+	init_function = function()
+		windows_reset()
+
+		StandardUpperBalk()
+		StandardLowerBalk(false,false,false,true)
+
+		Save.SavePlayerProfile(PlayerProfile:GetAutosaveSlot())
+		Save.UpdateSaveFlow()
+
+		activateparents()
+
+	end,
+
+
+	deinit_function = function()
+		windows_reset()
+
+		menu_profiles_load.state=nil
+	
+	end,
+
+	update_function = function()
+		Save.UpdateSaveFlow()
+
+
+		if Save.GetSaveFlowState() == Save.SAVEFLOW_NONE and Save.GetSaveFlowResult() == Save.SAVEFLOW_OK then
+		    menu_profiles_save.options.forward_action()
+		end
+
+		if Save.GetSaveFlowState() == Save.SAVEFLOW_NONE and Save.GetSaveFlowResult() == Save.SAVEFLOW_USER_BACK then
+			menu_profiles_save.options.back_action()
+		end
+
+	end,
+
+
+	items={
+	},
+
+}
+
+
+
+
+function profile_updatesavestate()
+
+		
+
+--//	local savestate=Save.CheckDeviceState()
+
+--//	if profiles_state.oldsavestate ~= savestate and savestate ~= Save.SAVE_DEVICE_UNFORMATTED then
+
+--//		Save.RefreshSaves()
+		
+--//	if Save.GetSaveFlowState() == Save.SAVEFLOW_NONE then --//and Save.GetSaveGameInfoValid() then --//and Save.GetSaveFlowDeviceStatus() == Save.SAVEFLOW_DEVICESTATUS_OK then
+		Save.UpdateSaveGameInfo()		
+
+		local savestate=Save.GetSaveFlowDeviceStatus()
+
+			profiles_state.saves={}		
+			local i
+			local slots=0
+			for i=1,Save.GetNumSlots() do
+				local info=Save.GetSaveGameInfo(i-1) 
+
+				if info then
+					--//info.slot=i-1
+					table.insert(profiles_state.saves,info)
+					slots = slots + 1
+				end
+			end
+			local k
+
+			if savestate ~= profiles_state.oldsavestate then
+				if not profiles_state.saveslot then
+					profiles_state.saveslot=1
+				elseif slots < profiles_state.saveslot then
+					profiles_state.saveslot=1
+				end
+--//			profiles_state.saveslot=1
+			end
+
+
+--[[--/*
+		
+		if Save.GetNumFreeSlots() > 0 then
+			--//always insert 'create new' save
+			k={ 
+						slot = -1,
+			}
+			table.insert(profiles_state.saves,k)
+		end
+--]]--*/
+--[[--/*
+		k={
+				name=PROFILE_UNLOCK,
+				slot = -2,
+				races_completed=50,
+				races_max=50,
+				money=1,
+				car=1,
+		}
+
+		table.insert(profiles_state.saves,k)
+--]]--*/
+--[[--/*
+		local info=Save.GetSaveDeviceInfo()
+
+		local text=ConvertToWString("")
+		local freespace=info.freespace
+		if getplatform() == "XBOX" then
+			local tail=""
+			if freespace > 50000 then
+				freespace=50000
+				tail="+"
+			end
+
+			text=WStringConcat(ConvertToWString(string.format("%d%s",freespace,tail)),PROFILE_BLOCKS_XBOX)
+		end
+--]]--*/						
+		SetBalkMoneyText(ConvertToWString(""))
+
+--//	end
+--[[--/*
+	elseif Save.GetSaveFlowDeviceStatus() ~= Save.SAVEFLOW_DEVICESTATUS_OK then
+		profiles_state.saves={}		
+
+		k={
+				name=ConvertToWString("UNLOCK ALL"),
+				slot = -2,
+				races_completed=50,
+				races_max=50,
+				money=1,
+				car=0,
+		}
+
+		table.insert(profiles_state.saves,k)
+
+	end
+--]]--*/
+	profiles_state.oldsavestate=profiles_state.savestate
+	profiles_state.savestate=savestate
+
+
+
+end
+
+
+
+function profile_loadsave(saveslot)
+	menu_profiles_load.state={}
+	menu_profiles_load.state.saveslot=saveslot
+	EnterMenu("menu_profiles_load")
+end
+
+
+menu_profiles_load = 
+{
+	options = {
+	
+--//		title = PROFILE_LOAD,
+		background = noimage(), 
+		orientation = MENU_HORIZONTAL,
+		position = POS(260,396),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+	},
+
+
+
+	init_function = function()
+		windows_reset()
+
+		StandardUpperBalk()
+		StandardLowerBalk(false,false,false,true)
+
+		PlayerProfile:Defaults()
+		Save.LoadPlayerProfile(menu_profiles_load.state.saveslot)
+		Save.UpdateSaveFlow()
+
+		activateparents()
+
+		startscreen_state={}
+	end,
+
+
+	deinit_function = function()
+		windows_reset()
+
+		menu_profiles_load.state=nil
+	
+	end,
+
+
+
+	update_function = function()
+		
+		Save.UpdateSaveFlow()
+
+		if Save.GetSaveFlowState() == Save.SAVEFLOW_NONE and Save.GetSaveFlowResult() == Save.SAVEFLOW_OK then
+
+			if PlayerProfile:CareerModeCarSelected() then
+				tuning_setplayerequipment(PlayerProfile:GetCarType()+1)
+				tuning_loadupgrades()
+			end
+
+			trackselection_check_track_unlock()
+			trackselection_check_class_unlock()
+			PlayerProfile:StartCareer()
+		    EnterMenu("menu_mainmenu")
+		end
+
+		if Save.GetSaveFlowState() == Save.SAVEFLOW_NONE and Save.GetSaveFlowResult() == Save.SAVEFLOW_USER_BACK then
+			EnterMenu("menu_profiles")
+		end
+
+		--//MenuScene:SetCameraPositionOffset(GetCameraSplinePoint())
+	end,
+
+
+	items = {
+
+	},
+
+}
+
+
+
+function profile_setdeletesubmenu(slot)
+
+	EnterMenu("menu_profiles_deletesaveslot")
+end
+
+
+function profile_createsavewindow()
+
+		local parentpos=SAFEPOS(0,85)
+		local parent=addparent(Frame{ Position=parentpos, Size=SIZE(256,256), ShowBorders=FALSE, })
+		parent:AttachResource(careermode_data.info_plate)
+
+		--//addchild(StaticText{ Name="save_name_t", Title=ConvertToWString(" "),Position=POS(30,31-5),Size=SIZE(60,16),Font=font10(), Parent=parent})
+		addchild(StaticText{ Name="save_races_t",Title= PROFILE_COMPLETED,Color=GetPaletteColor(18),Position=POS(15,55-5),Size=SIZE(60,16),Font=font10(), Parent=parent})
+		addchild(StaticText{ Name="save_car_t",Title=PROFILE_CAR,Color=GetPaletteColor(18),Position=POS(15,97-5),Size=SIZE(60,16),Font=font10(), Parent=parent})
+		addchild(StaticText{ Name="save_money_t",Title=PROFILE_BANK,Color=GetPaletteColor(18),Position=POS(15,140-5),Size=SIZE(60,16),Font=font10(), Parent=parent})
+		addchild(StaticText{ Name="save_completion_t",Title=PROFILE_GAMECOMPLETED,Color=GetPaletteColor(18),Position=POS(15,181-5),Size=SIZE(60,16),Font=font10(), Parent=parent})
+		addchild(StaticText{ Name="save_difficulty_t",Title=PROFILE_DIFFICULTY,Color=GetPaletteColor(18),Position=POS(15,222-5),Size=SIZE(60,16),Font=font10(), Parent=parent})
+
+		addchild(StaticText{ Name="save_name", Position=POS(15,12-4), Size=SIZE(16,16), Font=font12(), Parent=parent })
+		addchild(StaticText{ Name="save_races", Position=POS(15,70-4),Size=SIZE(16,16), Font=font12(), Parent=parent })
+		addchild(StaticText{ Name="save_car", Position=POS(15,112-4),Size=SIZE(16,16), Font=font12(), Parent=parent })
+		addchild(StaticText{ Name="save_money", Position=POS(15,153-4),Size=SIZE(16,16), Font=font12(), Parent=parent })
+		addchild(StaticText{ Name="save_completion", Position=POS(15,196-4),Size=SIZE(16,16), Font=font12(), Parent=parent })
+		addchild(StaticText{ Name="save_difficulty", Position=POS(15,237-4),Size=SIZE(16,16), Font=font12(), Parent=parent })
+
+		addparent(StaticText{Name="balk_infotext",Position=POS(305,399),Size=SIZE(32,32),TitleCentering=TITLE_CENTER_X,Font=font14(),})
+end
+
+menu_profiles_deletesaveslot = {
+	options = {
+	
+		title = PROFILE_DELETEPROFILE,
+		background = noimage(), 
+		orientation = MENU_HORIZONTAL,
+		position = POS(260,396),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		back_action=entermenu("menu_profiles"),
+	},
+
+	init_function = function()
+		windows_reset()
+		StandardUpperBalk()
+		StandardLowerBalk(false,false,false,true)
+
+		profile_createsavewindow()
+
+		profile_setsaveinfo(profiles_state.saveslot)
+
+		ShowMessageBox(
+		SAFEPOS(255, 86),
+		PROFILE_DELETE_SURE, 
+		PROFILE_YES, function() local slot=profiles_state.saves[profiles_state.saveslot].slot; Save.DeleteSave(slot); profiles_state.oldsavestate=nil; EnterMenu("menu_profiles") end, 
+		PROFILE_NO, entermenu("menu_profiles"))
+
+
+		activateparents()
+	end,
+
+	deinit_function = function()
+
+		windows_reset()
+	end,
+
+
+	update_function = function()
+		local oldstate=profiles_state.savestate
+
+
+		profile_updatesavestate()
+
+		if oldstate ~= profiles_state.savestate then
+			EnterMenu("menu_profiles")
+		end
+
+		--//MenuScene:SetCameraPositionOffset(GetCameraSplinePoint())
+	end,
+
+
+
+	items = {
+
+	},
+
+}
+
+
+function profiles_checkdevice(backmenu,forwardmenu,checkspace)
+	
+	menu_checksavedevice.options.back_action=backmenu
+	menu_checksavedevice.options.forward_action=forwardmenu
+	menu_checksavedevice.options.checkspace=checkspace
+
+	EnterMenu("menu_checksavedevice")
+end
+
+
+menu_checksavedevice = {
+
+	options = {
+	
+		title = ConvertToWString(""),
+		background = noimage(), 
+		orientation = MENU_HORIZONTAL,
+		position = POS(260,396),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+	},
+
+
+	init_function = function()
+		windows_reset()
+
+		StandardUpperBalk()
+		StandardLowerBalk(false,false,false,true)
+		
+
+		if menu_checksavedevice.options.checkspace and getplatform() == "XBOX" then
+			Save.CheckSaveDevice(TRUE)
+		else
+			Save.CheckSaveDevice(FALSE)
+		end
+		Save.UpdateSaveFlow()
+
+		activateparents()
+
+	end,
+
+
+	update_function = function()
+	
+		if Save.GetSaveFlowState() == Save.SAVEFLOW_NONE and Save.GetSaveFlowResult() == Save.SAVEFLOW_OK then
+			menu_checksavedevice.options.forward_action()
+		end
+		if Save.GetSaveFlowState() == Save.SAVEFLOW_NONE and Save.GetSaveFlowResult() == Save.SAVEFLOW_USER_BACK then
+			menu_checksavedevice.options.back_action()
+		end
+
+	end,
+
+	deinit_function = function()
+
+		windows_reset()
+	end,
+
+}
+
+
+menu_profiles = {
+
+	options = {
+	
+		title = ConvertToWString(""),
+		--//title = PROFILE_SELECT,
+		background = noimage(), 
+		orientation = MENU_HORIZONTAL,
+		position = POS(260,396),
+		padding = { 60,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+	},
+
+	init_function = function()
+
+		if not profiles_state then
+			profiles_state={}
+			profiles_state.savestate=nil
+			
+		end
+		profiles_state.oldsavestate=-1
+
+		profiles_state.dialogaction=nil
+
+		AUDIO.PlayTitleMusic()
+		GUI:ShowMusicInfo()
+
+		windows_reset()
+
+		if not startscreen_state then
+			balk_state.backbutton=true
+		end
+
+		StandardUpperBalk()
+		StandardLowerBalk(true,PROFILE_DELETE)
+
+
+		Menu:DisableButtons()
+
+		
+		--//addchild(StaticText{ Name="race3_hs", Position=RELATIVEPOS(SAFEPOS(16,220),parentpos), Size=SIZE(60,16), Font=font10(), Parent=parent })
+		--//addchild(StaticText{ Name="smashy_hs", Position=RELATIVEPOS(SAFEPOS(16,268),parentpos), Size=SIZE(60,16), Font=font10(), Parent=parent })
+		profile_createsavewindow()
+
+
+		profile_updatesavestate()
+		profile_setsaveinfo(1)
+
+		local key=addparent(InputHandler{})
+
+		GUI:LoadBackground()
+
+		MenuScene:ResetCar(Startpoints[20].Position,Startpoints[20].Orientation)
+		SetMenuCamera(20)
+
+		activateparents()
+
+
+		if not startscreen_state then
+			SetBalkButtonsText(MENU_SELECT,MENU_BACK,PROFILE_DELETE)
+			ShowBackButton()
+		else
+			HideBackButton()
+		end
+
+
+		key.onKeyPressed=function(self, Character, VirtualKey, ScanCode)
+			if VirtualKey == KeyCodes["BUTTON_LEFT"] then
+				self:onMoveLeft()
+			end
+			if VirtualKey == KeyCodes["BUTTON_RIGHT"] then
+				self:onMoveRight()
+		    end
+			if VirtualKey == KeyCodes["BUTTON_START"] then
+				self:onAction()
+		    end
+			if VirtualKey == KeyCodes["BUTTON_SELECT"] then
+				self:onEscape()
+		    end
+
+			if VirtualKey == KeyCodes["BUTTON_Y"] then
+				if profiles_state.saves[profiles_state.saveslot].slot > -1 then
+					profile_setdeletesubmenu(profiles_state.saveslot)
+				end
+			end
+		end
+
+		key.onMoveLeft=function()
+			LOG("loadcareer:onmoveleft")
+
+			local c=profiles_state.saveslot
+			if c > 1 then
+				c = c - 1
+				playmenusound_move()
+			else
+				c = 1
+			end
+			profile_setsaveinfo(c)
+
+		end
+
+		key.onMoveRight = function(self)
+			LOG("loadcareer:onmoveright")
+			
+			local c=profiles_state.saveslot
+			if c < table.getn(profiles_state.saves) then 
+				c = c + 1
+				playmenusound_move()
+			else
+				c = table.getn(profiles_state.saves)
+			end
+
+			profile_setsaveinfo(c)
+
+		end
+
+		key.onEscape = function(self)
+			if not startscreen_state then
+				EnterMenu("menu_mainmenu")
+			end
+		end
+
+		key.onAction = function(self)
+			if not Save.GetSaveGameInfoValid() then return end
+
+			if profiles_state then
+				local saves=profiles_state.saves or {}
+				if profiles_state.saveslot then
+					local save=profiles_state.saves[profiles_state.saveslot] or {}
+					if save.slot == -1 then
+	--//					if getplatform() == "XBOX" then
+							profiles_checkdevice(entermenu("menu_profiles"),entermenu("menu_careermode_newcareer"),true)
+	--//					else
+	--//						EnterMenu("menu_careermode_newcareer")
+	--//					end
+	--[[--/*
+					elseif profiles_state.saves[profiles_state.saveslot].slot == -2 then      --//FOR TESTING ONLY
+						PlayerProfile:SetName(ConvertToWString("CHEATER"))
+						PlayerProfile:EnableClass(1)
+						PlayerProfile:EnableClass(2)
+						PlayerProfile:EnableClass(3)
+						PlayerProfile:EnableClass(4)
+						PlayerProfile:SetMoney(20000)
+						PlayerProfile:SetCurrentClass(1)
+						trackselection_unlock_tracks();
+						PlayerProfile:StartCareer()
+						EnterMenu("menu_mainmenu") 
+	--]]--*/
+					elseif save.valid and save.slot then --//profiles_state.saves[profiles_state.saveslot].valid then
+						profile_loadsave(save.slot)
+					elseif not save.valid and save.slot then --//profiles_state.saves[profiles_state.saveslot].valid then
+						if getplatform() == "XBOX" then
+							profile_loadsave(save.slot)
+						else
+							playmenusound_error()
+						end
+					end
+				end
+			end
+		end
+	end,
+
+	deinit_function = function()
+		windows_reset()
+
+		Menu:EnableButtons()
+
+	end,
+
+
+	update_function = function()
+		--//MenuScene:SetCameraPositionOffset(GetCameraSplinePoint())
+
+		--//Save.UpdateSaveFlow()
+
+		if not Save.GetSaveGameInfoValid() then
+			HideBalkButtons()
+		else
+			ShowBalkButtons()
+		end
+
+		profile_updatesavestate()
+		profile_setsaveinfo(profiles_state.saveslot or 1)
+
+	end,
+
+
+
+
+
+	items = {
+--//		{ PROFILE_BACK, noimage(), entermenu("menu_careermode") },
+	},
+
+
+
+}
+
+
+

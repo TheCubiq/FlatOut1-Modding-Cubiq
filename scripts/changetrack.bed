@@ -1,0 +1,503 @@
+--///////////////////////////////////////////////////////////////////////////
+--// ChangeTrack.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2004 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// Created on 16.8.2004 17:57:19
+--// 
+--// Authors: Fred Sundvik (fred.sundvik@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+
+local Layout={
+	ChangeTrackPos=POS(206, 108),
+	ChangeTrackA=POS(7, 201),
+	ChangeTrackB=POS(7, 181),
+	ChangeTrackButtonFont=font12(),
+	ChangeTrackButtonFontColor={255, 255, 255, 255},
+	ChangeTrackIconPos=POS(61, 10),
+	ChangeTrackMapPos=POS(136, 5),
+	ChangeTrackMapSize=SIZE(64, 64),
+	
+	ChangeTrackLabelTop=59,
+	ChangeTrackOptionTop=76,
+	
+	ChangeTrackLabelLeft=10,
+	ChangeTrackLabelWidth=236,
+	ChangeTrackLabelFont=font10(),
+	ChangeTrackLabelFontColor={255, 200, 0, 255},
+	ChangeTrackLabelBackgroundColor={0,0,0,0},
+	
+	ChangeTrackOptionLeft=10,
+	ChangeTrackOptionWidth=236,
+	ChangeTrackOptionFont=font10(),
+	ChangeTrackOptionFontColor={255, 255, 255, 255},
+	ChangeTrackOptionDisabledFontColor={150,150, 150, 255},
+	ChangeTrackOptionActiveItemColor={0, 0, 0, 200},
+	ChangeTrackOptionInactiveItemColor={0,0,0,0},
+	ChangeTrackOptionArrowIndentTop=1,
+	ChangeTrackOptionArrowIndentLeftRight=1,
+	
+	ChangeTrackRowHeight=24,
+	ChangeTrackRowPadding=17,
+	ChangeTrackNumRows=3,
+}
+
+local RaceItems={
+	{
+		LIVECREATE_TRACKTYPE,
+		{ConvertToWString(""), ConvertToWString(""), ConvertToWString(""), ConvertToWString(""), ConvertToWString(""), ConvertToWString("")},
+		{1, 2, 3, 4, 5, 6},
+		1,
+		true,
+	},
+	{
+		LIVECREATE_TRACK,
+		{LIVECREATE_TEST},
+		{1},
+		1,
+		true,
+	},
+	{
+	LIVECREATE_LAPS,
+	{ConvertToWString("1"), ConvertToWString("2"), ConvertToWString("3"), ConvertToWString("4"), ConvertToWString("5"), ConvertToWString("6"), ConvertToWString("7"), ConvertToWString("8"), ConvertToWString("9"), ConvertToWString("10")},
+	{1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
+	3,
+	true,
+	}
+}
+
+local DerbyItems={
+	{
+		LIVECREATE_TRACKTYPE,
+		{ConvertToWString("")},
+		{7},
+		1,
+		true,
+	},
+	{
+		LIVECREATE_TRACK,
+		{LIVECREATE_TEST},
+		{1},
+		1,
+		true,
+	},
+	{
+	LINK_TIME,
+	{ConvertToWString("1"), ConvertToWString("2"), ConvertToWString("3"), ConvertToWString("4"), ConvertToWString("5"), ConvertToWString("6"), ConvertToWString("7"), ConvertToWString("8"), ConvertToWString("9"), ConvertToWString("10")},
+	{1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
+	3,
+	true,
+	}
+}
+
+
+local OptionItems=nil
+
+local Label=1
+local ItemLabels=2
+local ItemValues=3
+local SelectedItem=4
+local Enabled=5
+
+local TrackType=1
+local Track=2
+local Laps=3
+
+local PrevChangeTrackFocus
+
+local function GetSelectedItem(RowNr)
+	return OptionItems[RowNr][SelectedItem]
+end
+
+local function SetSelectedItem(RowNr, Item)
+	OptionItems[RowNr][SelectedItem]=Item
+end
+
+local function GetEnabled(RowNr)
+	return OptionItems[RowNr][Enabled]
+end
+
+local function SetEnabled(RowNr, Enable)
+	OptionItems[RowNr][Enabled]=Enable
+end
+
+
+local function GetItemValue(RowNr, SelectedItem)
+	return OptionItems[RowNr][ItemValues][SelectedItem]
+end
+
+local function SetItemValue(RowNr, SelectedItem, Value)
+	OptionItems[RowNr][ItemValues][SelectedItem]=Value
+end
+
+local function GetItemLabel(RowNr, SelectedItem)
+	return OptionItems[RowNr][ItemLabels][SelectedItem]
+end
+
+local function SetItemLabel(RowNr, SelectedItem, Label)
+	OptionItems[RowNr][ItemLabels][SelectedItem]=Label
+end
+
+local function GetSelectedItemValue(RowNr)
+	return GetItemValue(RowNr, GetSelectedItem(RowNr))
+end
+
+local function SetSelectedItemValue(RowNr, Value)
+	SetItemValue(RowNr, GetSelectedItem(RowNr), Value)
+end
+
+local function GetSelectedItemLabel(RowNr)
+	return GetItemLabel(RowNr, GetSelectedItem(RowNr))
+end
+
+local function SetSelectedItemLabel(RowNr, Label)
+	SetItemLabel(RowNr, GetSelectedItem(RowNr), Label)
+end
+
+
+local function GetNumItems(RowNr)
+	return table.getn(OptionItems[RowNr][ItemLabels])
+end
+
+local function ClearItemValues(RowNr)
+	OptionItems[RowNr][ItemValues]={}
+end
+
+local function ClearItemLabels(RowNr)
+	OptionItems[RowNr][ItemLabels]={}
+end
+
+local function ClearItems(RowNr)
+	ClearItemValues(RowNr)
+	ClearItemLabels(RowNr)
+end
+
+local function ClampRow(RowNr)
+	local numItems=GetNumItems(RowNr)
+	if GetSelectedItem(RowNr)>numItems then
+		SetSelectedItem(RowNr, numItems)
+	end
+end
+
+
+local function ValidateTracks()
+	ClampRow(TrackType)
+	local trackType=GetSelectedItemValue(TrackType)
+	ClearItems(Track)
+	local num=1
+	for k,v in pairs(TrackTypes[trackType].Tracks) do
+		local name=ConvertToWString(Levels[v].Name)
+		SetItemLabel(Track, num, name)
+		SetItemValue(Track, num, v)
+		num=num+1
+	end
+	ClampRow(Track)
+end
+
+local function ValidateList()
+	ValidateTracks()
+	wm.GetWindow("labellist"):Refresh()
+	wm.GetWindow("optionslist"):Refresh()	
+end
+
+
+function ShowChangeTrack()
+	
+	wm.GetWindow("changetrack_box"):ShowWindow()
+	wm.GetWindow("changetrack_back"):ShowWindow()
+	local win=wm.GetFocus()
+	if win then
+		PrevChangeTrackFocus=win:GetHandle()
+	else
+		PrevChangeTrackFocus=nil
+	end		
+	wm.GetWindow("changetrack_inputhandler"):SetFocus()
+	local info=Session:GetSessionInfo()
+	local numValues=table.getn(OptionItems[TrackType][ItemValues])
+	for i=1, numValues do
+		if GetItemValue(TrackType, i)==info.TrackType then
+			SetSelectedItem(TrackType, i)
+		end
+	end
+	local numValues=table.getn(OptionItems[Track][ItemValues])
+	for i=1, numValues do
+		if GetItemValue(Track, i)==info.StageNr then
+			SetSelectedItem(Track, i)
+		end
+	end		
+	local numValues=table.getn(OptionItems[Laps][ItemValues])
+	for i=1, numValues do
+		if GetItemValue(Laps, i)==info.LapsOrTimeLimit then
+			SetSelectedItem(Laps, i)
+		end
+	end		
+	ValidateList()
+end
+
+function HideChangeTrack()
+	wm.GetWindow("changetrack_box"):HideWindow()
+	wm.GetWindow("changetrack_back"):HideWindow()
+	if PrevChangeTrackFocus then
+		local win=wm.GetWindowByHandle(PrevChangeTrackFocus)
+		if win then
+			win:SetFocus()
+		else
+			Menu:EnableButtons()
+		end
+	else
+		Menu:EnableButtons()
+	end
+	PrevChangeTrackFocus=nil			
+end
+
+local function OnChangeTrack(TrackType, Track, NumLaps)
+	local info=Session:BeginUpdateSessionInfo()
+	info.TrackType=TrackType
+	info.StageNr=Track
+	info.LapsOrTimeLimit=NumLaps
+	Session:EndUpdateSessionInfo(info)
+end
+
+local function GetTrackIcon()
+	local level=GetSelectedItemValue(Track)
+	local class
+	local course
+	local track
+	for class=1, 4 do
+		local numCourses=table.getn(Classes[class].Courses)
+		for course=1, numCourses do
+			local numTracks=table.getn(Classes[class].Courses[course])
+			for track=1, numTracks do
+				if Classes[class].Courses[course][track].Level==level then
+					for i,j in pairs(trackselection_layout[class][track]) do
+						if j[3][1]==course then
+							return track_icons[j[2]]
+						end
+					end
+				end
+			end
+		end
+	end
+	return noimage()
+end
+
+function UpdateChangeTrack()
+		local trackIcon=GetTrackIcon()
+		local trackIconWin=wm.GetWindow("changetrack_icon")
+		if trackIcon then
+			trackIconWin:AttachResource(trackIcon)
+			trackIconWin:ShowWindow()
+		else
+			trackIconWin:HideWindow()
+		end
+		local map=wm.GetWindow("changetrack_map")
+		local track=GetSelectedItemValue(Track)
+		if Levels[track] then
+			if Levels[track].Map then
+				map:AttachResource(Levels[track].Map)
+			else
+				map:AttachResource(trackIcon)
+			end
+			map:ShowWindow()
+		else
+			map:HideWindow()
+		end
+end
+
+
+function CreateChangeTrackWindow()
+	local info=Session:GetSessionInfo()
+	if info.EventType==EventType.RACE and info.SubEventType==SubEventType.RACE_NORMAL then
+		OptionItems=RaceItems
+	else
+		OptionItems=DerbyItems
+	end 
+
+
+	local back=addparent(Frame{Name="changetrack_back", Position=POS(0, 62), Size=SIZE(640, 480-62), ShowBorders=FALSE, Layer=6})
+	back:AttachResource(menucommon.black_transparent)
+
+
+	local win=addparent(Frame{Name="changetrack_box", Position = MakeSafePos(Layout.ChangeTrackPos), Size=SIZE(256, 230), DrawBackground=TRUE, Layer=6})
+	--win:AttachResource(LobbyImages.SmallBox)
+	
+	local win2=addchild(Frame{Position = Layout.ChangeTrackA, Size=GetResourceSize(menucommon.okbutton), ShowBorders=FALSE, Parent=win})
+	win2:AttachResource(menucommon.okbutton)
+	
+	win2=addchild(StaticText{Position = AddPos(Layout.ChangeTrackA, POS(30, 0)), Size=SIZE(100, 16), Font=Layout.ChangeTrackButtonFont, ShowBorders=false, Parent=win})
+	win2:SetColor(Layout.ChangeTrackButtonFontColor)
+	win2:SetTitle(LIVE_OK)
+
+	win2=addchild(StaticText{Position = AddPos(Layout.ChangeTrackB, POS(30, 0)), Size=SIZE(100, 16), Font=Layout.ChangeTrackButtonFont, ShowBorders=false, Parent=win})
+	win2:SetColor(Layout.ChangeTrackButtonFontColor)
+	win2:SetTitle(LIVE_BACK)
+
+	win2=addchild(Frame{Position = Layout.ChangeTrackB, Size=GetResourceSize(menucommon.backbutton), ShowBorders=FALSE, Parent=win})
+	win2:AttachResource(menucommon.backbutton)
+
+	win2=addchild(Frame{Name="changetrack_icon", Position = Layout.ChangeTrackIconPos, Size=GetResourceSize(track_icons.forestI_A), ShowBorders=FALSE, Parent=win})
+	win2:AttachResource(track_icons.forestI_A)
+	
+	win2=addchild(Frame{Name="changetrack_map", Position = Layout.ChangeTrackMapPos, Size=Layout.ChangeTrackMapSize, ShowBorders=FALSE, Parent=win})
+	
+	local labelListParams={
+		ListBoxTemplate={Name="labellist", ShowBorders=FALSE, Parent=win, Layer=6},
+		Left=Layout.ChangeTrackLabelLeft,
+		Top=Layout.ChangeTrackLabelTop,
+		LeftPadding=0,
+		RightPadding=0,
+		TopPadding=0,
+		BottomPadding=0,
+		RowWidth=Layout.ChangeTrackLabelWidth,
+		RowHeight=Layout.ChangeTrackRowHeight,
+		RowPadding=Layout.ChangeTrackRowPadding,
+		RowTemplate={Font=Layout.ChangeTrackLabelFont, DrawBackgroundColor=TRUE, TitleCentering=TITLE_CENTER_X, Layer=6},
+		RowTemplateType="Button",
+		RowTemplateCust=function(Row, RowNr)
+			Row:SetColor(Layout.ChangeTrackLabelFontColor)
+			Row:SetActiveColor(Layout.ChangeTrackLabelBackgroundColor)
+			Row:SetInactiveColor(Layout.ChangeTrackLabelBackgroundColor)
+		end,
+		NumRows=Layout.ChangeTrackNumRows,	
+	}
+	
+	local labels=addchild(CreateSingleColoumnListBox(labelListParams))
+	
+	labels.onNeedData=function(Self, RowObject, RowNr, ControlRowNr)
+		RowObject:SetTitle(OptionItems[RowNr][1])
+	end
+	
+	
+	local arrowSize=GetResourceSize(menucommon.pieni_nuolivasen)
+	local arrowRight=Layout.ChangeTrackOptionWidth-Layout.ChangeTrackOptionArrowIndentLeftRight-arrowSize[1]
+	local trackIconSize=wm.GetResourceSize(menucommon.tracktype_winter)
+	local trackIconLeft=Layout.ChangeTrackOptionWidth  / 2 - trackIconSize[1] / 2
+		
+	local listboxParams={
+		ListBoxTemplate={Name="optionslist", ShowBorders=FALSE, Parent=win, Layer=6},
+		Left=Layout.ChangeTrackOptionLeft,
+		Top=Layout.ChangeTrackOptionTop,
+		LeftPadding=0,
+		RightPadding=0,
+		TopPadding=0,
+		BottomPadding=0,
+		RowWidth=Layout.ChangeTrackOptionWidth,
+		RowHeight=Layout.ChangeTrackRowHeight,
+		RowPadding=Layout.ChangeTrackRowPadding,
+		RowTemplate={Font=Layout.ChangeTrackOptionFont, DrawBackgroundColor=TRUE, TitleCentering=TITLE_CENTER_XY, Layer=6},
+		RowTemplateType="Button",
+		RowTemplateCust=function(Row, RowNr)
+			Row:SetColor(Layout.ChangeTrackOptionFontColor)
+			Row:SetActiveColor(Layout.ChangeTrackOptionActiveItemColor)
+			Row:SetInactiveColor(Layout.ChangeTrackOptionInactiveItemColor)
+		end,
+		NumRows=Layout.ChangeTrackNumRows,
+		Coloumns={
+			[1]={
+			Name="leftarrow", 
+			ColoumnTemplate={Position=POS(Layout.ChangeTrackOptionArrowIndentLeftRight, Layout.ChangeTrackOptionArrowIndentTop), Size=arrowSize, ShowBorders=FALSE},
+			ColoumnTemplateType="Frame",
+			ColoumnTemplateCust=function(Coloumn, RowNr, ColoumnNr)
+				Coloumn:AttachResource(menucommon.pieni_nuolivasen)
+				Coloumn:HideWindow()
+			end
+			},
+			[2]={
+			Name="rightarrow", 
+			ColoumnTemplate={Position=POS(arrowRight, Layout.ChangeTrackOptionArrowIndentTop), Size=arrowSize, ShowBorders=FALSE},
+			ColoumnTemplateType="Frame",
+			ColoumnTemplateCust=function(Coloumn, RowNr, ColoumnNr)
+				Coloumn:AttachResource(menucommon.pieni_nuolioikea)
+				Coloumn:HideWindow()
+			end
+			},
+			[3]={
+			Name="tracktypeicon", 
+			ColoumnTemplate={Position=POS(trackIconLeft, 0), Size=trackIconSize, ShowBorders=FALSE},
+			ColoumnTemplateType="Frame",
+			ColoumnTemplateCust=function(Coloumn, RowNr, ColoumnNr)
+				Coloumn:AttachResource(menucommon.winter)
+				Coloumn:HideWindow()
+			end
+			},
+		}
+	}
+	
+	local list=addchild(CreateMultiColoumnListBox(listboxParams))
+	
+	list.onNeedData=function(Self, RowObject, RowNr, ControlRowNr)
+		RowObject:SetTitle(GetSelectedItemLabel(RowNr))
+		if GetEnabled(RowNr) then
+			RowObject:SetColor(Layout.ChangeTrackOptionFontColor)
+		else
+			RowObject:SetColor(Layout.ChangeTrackOptionDisabledFontColor)
+		end
+		local leftArrowName=string.format("leftarrow_row%i", ControlRowNr)
+		local rightArrowName=string.format("rightarrow_row%i", ControlRowNr)
+		if RowNr==list:GetSelectedRow() and GetEnabled(RowNr) then
+			wm.GetWindow(leftArrowName):ShowWindow()
+			wm.GetWindow(rightArrowName):ShowWindow()
+		else
+			wm.GetWindow(leftArrowName):HideWindow()
+			wm.GetWindow(rightArrowName):HideWindow()
+		end
+		if RowNr==TrackType then
+			local win=wm.GetWindow(string.format("tracktypeicon_row%i", ControlRowNr))
+			win:AttachResource(menucommon[TrackTypes[GetSelectedItemValue(TrackType)].TrackIcon])
+			win:ShowWindow()
+		else
+			wm.GetWindow(string.format("tracktypeicon_row%i", ControlRowNr)):HideWindow()
+		end
+	end
+	
+	local handler=addparent(InputHandler{Name="changetrack_inputhandler"})
+	handler.onKeyPressed=function(Self, Character, VirtualKey, ScanCode)
+		if VirtualKey==KeyCodes["BUTTON_START"] then
+			--CreateSession()
+			OnChangeTrack(GetSelectedItemValue(TrackType), GetSelectedItemValue(Track), GetSelectedItemValue(Laps))
+			HideChangeTrack()
+		elseif VirtualKey==KeyCodes["BUTTON_SELECT"] then
+			HideChangeTrack()
+		elseif VirtualKey==KeyCodes["BUTTON_LEFT"] then
+			local selectedRow=list:GetSelectedRow()
+			if GetEnabled(selectedRow) then
+				local selectedItem=GetSelectedItem(selectedRow)-1
+				local numItems=GetNumItems(selectedRow)
+				if selectedItem<1 then
+					selectedItem=numItems
+				end
+				SetSelectedItem(selectedRow,selectedItem)
+				ValidateList()
+				list:Refresh()
+			end
+		elseif VirtualKey==KeyCodes["BUTTON_RIGHT"] then
+			local selectedRow=list:GetSelectedRow()
+			if GetEnabled(selectedRow) then
+				local selectedItem=GetSelectedItem(selectedRow)+1
+				local numItems=GetNumItems(selectedRow)
+				if selectedItem>numItems then
+					selectedItem=1
+				end
+				SetSelectedItem(selectedRow,selectedItem)
+				ValidateList()
+				list:Refresh()
+			end
+		elseif VirtualKey==KeyCodes["BUTTON_DOWN"] then
+			list:MoveNext()
+			labels:MoveNext()			
+		elseif VirtualKey==KeyCodes["BUTTON_UP"] then
+			list:MovePrev()
+			labels:MovePrev()
+		end
+	end
+	
+	list:SetNumRows(table.getn(OptionItems))
+	list:SetSelectedRow(1)
+	labels:SetNumRows(table.getn(OptionItems))
+	labels:SetSelectedRow(1)
+	ValidateList()
+end
+
+

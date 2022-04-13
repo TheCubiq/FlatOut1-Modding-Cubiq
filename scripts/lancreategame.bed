@@ -1,0 +1,693 @@
+--///////////////////////////////////////////////////////////////////////////
+--// LANCreateGame.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2004 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// Created on 30.9.2004 20:12:10
+--// 
+--// Authors: Fred Sundvik (fred.sundvik@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+
+
+
+local Layout=
+{
+	BigBoxPos=POS(3, 61),
+	BigBoxSize=SIZE(436, 295),
+	
+	SmallBoxPos=POS(441, 61),
+	SmallBoxSize=SIZE(83, 130),
+
+	Top=115,
+	
+	LabelLeft=10,
+	LabelFont=font10(),
+	LabelFontColor={255, 200, 0, 255},
+	LabelBackgroundColor={0,0,0,0},
+	
+	OptionLeft=238,
+	OptionWidth=197,
+	OptionFont=font10(),
+	OptionFontColor={255, 255, 255, 255},
+	OptionDisabledFontColor={150,150, 150, 255},
+	OptionActiveItemColor={0, 0, 0, 200},
+	OptionInactiveItemColor={0,0,0,0},
+	OptionArrowIndentTop=1,
+	OptionArrowIndentLeftRight=1,
+	
+	RowHeight=24,
+	RowPadding=0,
+	NumRows=12,
+	
+	ScrollUpArrowPos=POS(293, 70),
+	ScrollDownArrowPos=POS(293, 324),
+	
+	TrackIconPos=POS(448, 65),
+	MapPos=POS(448, 110),
+	MapSize=SIZE(64, 64),
+}
+
+local Numbers={
+[0]=ConvertToWString("0"),
+[1]=ConvertToWString("1"),
+[2]=ConvertToWString("2"),
+[3]=ConvertToWString("3"),
+[4]=ConvertToWString("4"),
+[5]=ConvertToWString("5"),
+[6]=ConvertToWString("6"),
+[7]=ConvertToWString("7"),
+[8]=ConvertToWString("8"),
+[9]=ConvertToWString("9"),
+[10]=ConvertToWString("10")
+}
+
+local Laps=
+{
+	LINK_LAPS,
+	{ConvertToWString("1"), ConvertToWString("2"), ConvertToWString("3"), ConvertToWString("4"), ConvertToWString("5"), ConvertToWString("6"), ConvertToWString("7"), ConvertToWString("8"), ConvertToWString("9"), ConvertToWString("10")},
+	{1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
+	3,
+	true,
+}
+
+local TimeLimit=
+{
+	LINK_TIME,
+	{ConvertToWString("1"), ConvertToWString("2"), ConvertToWString("3"), ConvertToWString("4"), ConvertToWString("5"), ConvertToWString("6"), ConvertToWString("7"), ConvertToWString("8"), ConvertToWString("9"), ConvertToWString("10")},
+	{1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
+	3,
+	true,
+}
+
+local RaceTrackType=	
+{
+		LINK_TRACKTYPE,
+		{ConvertToWString(""), ConvertToWString(""), ConvertToWString(""), ConvertToWString(""), ConvertToWString(""), ConvertToWString("")},
+		{1, 2, 3, 4, 5, 6},
+		1,
+		true,
+}
+
+
+local DerbyTrackType=	
+{
+		LINK_TRACKTYPE,
+		{ConvertToWString("")},
+		{7},
+		1,
+		true,
+}
+
+
+
+local OptionItems={
+	{
+		LINK_GAME_TYPE,
+		{LINK_GAME_QUICK, LINK_GAME_DERBY,}, --LINK_GAME_TAG
+		{{"RACE", "RACE_NORMAL"}, {"DERBY", "DERBY_LASTMANSTANDING"}},-- {"RACE", "RACE_TAG"}
+		1,
+		true,
+	},
+	{
+		LINK_HANDLING,
+		{LINK_HANDLING_NORMAL, LINK_HANDLING_PRO,},
+		{SessionInfo.SimulationLevel.Easy,  SessionInfo.SimulationLevel.Hard},
+		1,
+		true,
+	},
+	{
+		LINK_TRACKTYPE,
+		{ConvertToWString(""), ConvertToWString(""), ConvertToWString(""), ConvertToWString(""), ConvertToWString(""), ConvertToWString("")},
+		{1, 2, 3, 4, 5, 6},
+		1,
+		true,
+	},	
+	{
+		LINK_TRACK,
+		{LINK_TEST},
+		{1},
+		1,
+		true,
+	},
+	{
+		LINK_LAPS,
+		{},
+		{},
+		1,
+		true,
+	},
+	{
+		LINK_CARS,
+		{},
+		{},
+		1,
+		true,
+	},
+	{
+		LINK_UPGRADES,
+		{LINK_UPGRADES_NONE, LINK_UPGRADES_MED, LINK_UPGRADES_ALL},
+		{SessionInfo.CarUpgrades.None, SessionInfo.CarUpgrades.Medium, SessionInfo.CarUpgrades.All},
+		1,
+		true,
+	},
+--	{
+--		LINK_DAMAGE,
+--		{LINK_ON, LINK_OFF},
+--		{SessionInfo.DamageLevel.On, SessionInfo.DamageLevel.Off},
+--		1,
+--		true,
+--	},
+	{
+		LINK_RAGDOLL,
+		{LINK_ON, LINK_OFF},
+		{SessionInfo.RagdollRelease.On, SessionInfo.RagdollRelease.Off},
+		1,
+		true,
+	},
+}
+
+local Label=1
+local ItemLabels=2
+local ItemValues=3
+local SelectedItem=4
+local Enabled=5
+
+local GameType=1
+local SimulationLevel=2
+local TrackType=3
+local Track=4
+local LapsAndTimeLimit=5
+local CarClass=6
+local CarUpgrades=7
+--local DamageLevel=7
+local RagdollRelease=8
+
+local Creating=false
+
+local function GetSelectedItem(RowNr)
+	return OptionItems[RowNr][SelectedItem]
+end
+
+local function SetSelectedItem(RowNr, Item)
+	OptionItems[RowNr][SelectedItem]=Item
+end
+
+local function GetEnabled(RowNr)
+	return OptionItems[RowNr][Enabled]
+end
+
+local function SetEnabled(RowNr, Enable)
+	OptionItems[RowNr][Enabled]=Enable
+end
+
+
+local function GetItemValue(RowNr, SelectedItem)
+	return OptionItems[RowNr][ItemValues][SelectedItem]
+end
+
+local function SetItemValue(RowNr, SelectedItem, Value)
+	OptionItems[RowNr][ItemValues][SelectedItem]=Value
+end
+
+local function GetItemLabel(RowNr, SelectedItem)
+	return OptionItems[RowNr][ItemLabels][SelectedItem]
+end
+
+local function SetItemLabel(RowNr, SelectedItem, Label)
+	OptionItems[RowNr][ItemLabels][SelectedItem]=Label
+end
+
+local function GetSelectedItemValue(RowNr)
+	return GetItemValue(RowNr, GetSelectedItem(RowNr))
+end
+
+local function SetSelectedItemValue(RowNr, Value)
+	SetItemValue(RowNr, GetSelectedItem(RowNr), Value)
+end
+
+local function GetSelectedItemLabel(RowNr)
+	return GetItemLabel(RowNr, GetSelectedItem(RowNr))
+end
+
+local function SetSelectedItemLabel(RowNr, Label)
+	SetItemLabel(RowNr, GetSelectedItem(RowNr), Label)
+end
+
+
+local function GetNumItems(RowNr)
+	return table.getn(OptionItems[RowNr][ItemLabels])
+end
+
+local function ClearItemValues(RowNr)
+	OptionItems[RowNr][ItemValues]={}
+end
+
+local function ClearItemLabels(RowNr)
+	OptionItems[RowNr][ItemLabels]={}
+end
+
+local function ClearItems(RowNr)
+	ClearItemValues(RowNr)
+	ClearItemLabels(RowNr)
+end
+
+local function ClampRow(RowNr)
+	local numItems=GetNumItems(RowNr)
+	if GetSelectedItem(RowNr)>numItems then
+		SetSelectedItem(RowNr, numItems)
+	end
+end
+
+local function CreateSession()
+	Creating=true
+	ShowThinkingWindow(SAFEPOS(240, 147))
+
+	Network:StartSystemLink()
+	local eventType=GetSelectedItemValue(GameType)[1]
+	local subEventType=GetSelectedItemValue(GameType)[2]
+	--local eventType="RACE"
+	--local subEventType="RACE_NORMAL"
+	local sessionName=PlayerProfile:GetName()
+	local level=GetSelectedItemValue(Track)
+	local info=Session:BeginUpdateSessionInfo()
+	info.SessionName=sessionName
+	info.SimulationLevel=GetSelectedItemValue(SimulationLevel)
+	info.TrackNum=level
+	info.TrackType=GetSelectedItemValue(TrackType)
+	info.LapsOrTimeLimit=GetSelectedItemValue(LapsAndTimeLimit)
+	info.CarClass=GetSelectedItemValue(CarClass)
+	info.CarUpgrades=GetSelectedItemValue(CarUpgrades)
+	--info.DamageLevel=GetSelectedItemValue(DamageLevel)
+	info.DamageLevel=SessionInfo.DamageLevel.On
+	info.RagdollRelease=GetSelectedItemValue(RagdollRelease)
+	info.MaxPrivateSlots=0
+	info.MaxPublicSlots=8
+	info.RatedGame=false
+	Session:EndUpdateSessionInfo(info)
+	
+	GameFlow.SetGameMode("HOST")
+	GameFlow.SetCurrentLevel(level)
+	GameFlow.SetEventType(eventType)
+	GameFlow.SetSubEventType(subEventType)
+	
+	--kludge port 1
+	Session:AddLocalPlayer(nil, 1)
+	local player=Session:GetLocalPlayer(1)
+	player:SetName(PlayerProfile:GetName())
+	player:SetReady(false)
+	player:GenerateUserId()	
+
+	Session:CreateSession()
+end
+
+local function ValidateTrackClasses()
+	--KLUDGE should use some special class depending on game mode
+	local coursetable=Classes[1].Courses
+	ClearItems(TrackClass)
+	local k,v
+	for k,v in pairs(coursetable) do
+		local levelnum=v[1].Level
+		local levelname=nil
+		if levelnum > 0 then
+			levelname=Levels[levelnum].Name
+		end
+		SetItemLabel(TrackClass, k, 	ConvertToWString(levelname or "invalid"))
+		SetItemValue(TrackClass, k, k)
+	end	
+	ClampRow(TrackClass)
+end
+
+local function ValidateTracks()
+	local eventType=GetSelectedItemValue(GameType)[1]
+	local subEventType=GetSelectedItemValue(GameType)[2]
+	if eventType=="RACE" and subEventType=="RACE_NORMAL" then 
+		OptionItems[TrackType]=RaceTrackType
+	else
+		OptionItems[TrackType]=DerbyTrackType
+	end
+	ClampRow(TrackType)
+	local trackType=GetSelectedItemValue(TrackType)
+	ClearItems(Track)
+	local num=1
+	for k,v in pairs(TrackTypes[trackType].Tracks) do
+		local name=ConvertToWString(Levels[v].Name)
+		SetItemLabel(Track, num, name)
+		SetItemValue(Track, num, v)
+		num=num+1
+	end
+	ClampRow(Track)
+end
+
+local function ValidateLapsAndTimeLimit()
+	--local eventType="RACE"
+	--local subEventType="RACE_NORMAL"
+	local eventType=GetSelectedItemValue(GameType)[1]
+	local subEventType=GetSelectedItemValue(GameType)[2]
+	if eventType=="RACE" and subEventType=="RACE_NORMAL" then 
+		OptionItems[LapsAndTimeLimit]=Laps
+	else
+		OptionItems[LapsAndTimeLimit]=TimeLimit
+	end
+end
+
+local function ValidateCars()
+	local cartable=cardealer_data.car_data
+	ClearItems(CarClass)
+	SetItemLabel(CarClass, 1, LINK_CARS_ANY)
+	SetItemLabel(CarClass, 2, LINK_CARS_CLASSA)
+	SetItemLabel(CarClass, 3, LINK_CARS_CLASSB)
+	SetItemLabel(CarClass, 4, LINK_CARS_CLASSC)
+
+	SetItemValue(CarClass, 1, SessionInfo.CarClass.Any)
+	SetItemValue(CarClass, 2, SessionInfo.CarClass.ClassA)
+	SetItemValue(CarClass, 3, SessionInfo.CarClass.ClassB)
+	SetItemValue(CarClass, 4, SessionInfo.CarClass.ClassC)
+	for i=1, table.getn(cartable) do
+		SetItemLabel(CarClass, 4+i, ConvertToWString(cartable[i].name))
+		SetItemValue(CarClass, 4+i, cartable[i].car)
+	end
+	
+	ClampRow(CarClass)
+end
+
+
+local function ValidateList()
+	ValidateTracks()
+	ValidateLapsAndTimeLimit()
+	ValidateCars()
+	
+	local eventType=GetSelectedItemValue(GameType)[1]
+	local subEventType=GetSelectedItemValue(GameType)[2]
+	if eventType=="RACE" and subEventType=="RACE_NORMAL" then 
+		SetEnabled(RagdollRelease, true)
+	else
+		SetEnabled(RagdollRelease, false)
+		SetSelectedItem(RagdollRelease, 1)
+	end	
+	wm.GetWindow("labellist"):Refresh()
+	wm.GetWindow("optionslist"):Refresh()	
+end
+
+local function ConfirmExit()
+	local currentFocus=wm.GetFocus()
+	ShowMessageBox(SAFEPOS(154, 70), 
+			LINK_LEAVING, 
+			LINK_YES, 
+			function()Network:StopXBoxLive()EnterMenu("menu_xboxlive")end,
+			LINK_NO, 
+			function()currentFocus:SetFocus()end
+		)
+end
+
+local function GetTrackIcon()
+	local level=GetSelectedItemValue(Track)
+	local class
+	local course
+	local track
+	for class=1, 4 do
+		local numCourses=table.getn(Classes[class].Courses)
+		for course=1, numCourses do
+			local numTracks=table.getn(Classes[class].Courses[course])
+			for track=1, numTracks do
+				if Classes[class].Courses[course][track].Level==level then
+					for i,j in pairs(trackselection_layout[class][track]) do
+						if j[3][1]==course then
+							return track_icons[j[2]]
+						end
+					end
+				end
+			end
+		end
+	end
+	return noimage()
+end
+
+menu_lan_creategame={
+	options = {
+	
+		title = LINK_CREATE_TITLE,
+		background = noimage(),
+		orientation = MENU_HORIZONTAL,
+		position = { 256,400 },
+		padding = { 60,0 },	
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		back_action=function()
+			EnterMenu("menu_multiplayer_modeselect")
+		end,
+	},
+
+	
+	init_function = function()
+		windows_reset()
+		StandardUpperBalk()
+		StandardLowerBalk()
+		--XBoxLiveLowerBalk(
+		--	LINK_CREATE,
+		--	LINK_BACK
+		--)
+		GUI:LoadBackground("data/menu/bg/game_background.tga")
+		
+		Creating=false
+		
+		addparent(Frame{Position=MakeSafePos(Layout.BigBoxPos), Size=Layout.BigBoxSize, DrawBackgroundColor=TRUE, ShowBorders=TRUE})
+		addparent(Frame{Position=MakeSafePos(Layout.SmallBoxPos), Size=Layout.SmallBoxSize, DrawBackgroundColor=TRUE, ShowBorders=TRUE})
+		
+		local labelListParams={
+			ListBoxTemplate={Name="labellist", ShowBorders=FALSE},
+			Left=Layout.LabelLeft,
+			Top=Layout.Top,
+			LeftPadding=0,
+			RightPadding=0,
+			TopPadding=0,
+			BottomPadding=0,
+			RowWidth=Layout.OptionLeft-Layout.LabelLeft,
+			RowHeight=Layout.RowHeight,
+			RowPadding=Layout.RowPadding,
+			RowTemplate={Font=Layout.LabelFont, DrawBackgroundColor=TRUE, TitleCentering=TITLE_CENTER_Y},
+			RowTemplateType="Button",
+			RowTemplateCust=function(Row, RowNr)
+				Row:SetColor(Layout.LabelFontColor)
+				Row:SetActiveColor(Layout.LabelBackgroundColor)
+				Row:SetInactiveColor(Layout.LabelBackgroundColor)
+			end,
+			NumRows=Layout.NumRows,	
+		}
+		
+		local labels=addparent(CreateSingleColoumnListBox(labelListParams))
+		
+		labels.onNeedData=function(Self, RowObject, RowNr, ControlRowNr)
+			RowObject:SetTitle(OptionItems[RowNr][1])
+		end
+		
+		local upArrow=addparent(Frame{Position=MakeSafePos(Layout.ScrollUpArrowPos), Size=GetResourceSize(menucommon.nuoliylos), ShowBorders=FALSE})
+		upArrow:AttachResource(menucommon.nuoliylos)
+
+		local downArrow=addparent(Frame{Position=MakeSafePos(Layout.ScrollDownArrowPos), Size=GetResourceSize(menucommon.nuolialas), ShowBorders=FALSE})
+		downArrow:AttachResource(menucommon.nuolialas)
+
+		local trackIcon=addparent(Frame{Name="trackicon", Position=MakeSafePos(Layout.TrackIconPos), Size=wm.GetResourceSize(track_icons.forestI_A), ShowBorders=FALSE})
+		local map=addparent(Frame{Name="map", Position=MakeSafePos(Layout.MapPos), Size=Layout.MapSize, ShowBorders=FALSE})
+		
+		local arrowSize=GetResourceSize(menucommon.pieni_nuolivasen)
+		local arrowRight=Layout.OptionWidth-Layout.OptionArrowIndentLeftRight-arrowSize[1]
+		
+		local trackIconSize=wm.GetResourceSize(menucommon.tracktype_winter)
+		local trackIconLeft=Layout.OptionWidth  / 2 - trackIconSize[1] / 2
+		
+		local listboxParams={
+			ListBoxTemplate={Name="optionslist", ShowBorders=FALSE},
+			Left=Layout.OptionLeft,
+			Top=Layout.Top,
+			LeftPadding=0,
+			RightPadding=0,
+			TopPadding=0,
+			BottomPadding=0,
+			RowWidth=Layout.OptionWidth,
+			RowHeight=Layout.RowHeight,
+			RowPadding=Layout.RowPadding,
+			RowTemplate={Font=Layout.OptionFont, DrawBackgroundColor=TRUE, TitleCentering=TITLE_CENTER_XY},
+			RowTemplateType="Button",
+			RowTemplateCust=function(Row, RowNr)
+				Row:SetColor(Layout.OptionFontColor)
+				Row:SetActiveColor(Layout.OptionActiveItemColor)
+				Row:SetInactiveColor(Layout.OptionInactiveItemColor)
+			end,
+			NumRows=Layout.NumRows,
+			Coloumns={
+				[1]={
+				Name="leftarrow", -- _row# is added
+				ColoumnTemplate={Position=POS(Layout.OptionArrowIndentLeftRight, Layout.OptionArrowIndentTop), Size=arrowSize, ShowBorders=FALSE},
+				ColoumnTemplateType="Frame",
+				ColoumnTemplateCust=function(Coloumn, RowNr, ColoumnNr)
+					Coloumn:AttachResource(menucommon.pieni_nuolivasen)
+					Coloumn:HideWindow()
+				end
+				},
+				[2]={
+				Name="rightarrow", -- _row# is added
+				ColoumnTemplate={Position=POS(arrowRight, Layout.OptionArrowIndentTop), Size=arrowSize, ShowBorders=FALSE},
+				ColoumnTemplateType="Frame",
+				ColoumnTemplateCust=function(Coloumn, RowNr, ColoumnNr)
+					Coloumn:AttachResource(menucommon.pieni_nuolioikea)
+					Coloumn:HideWindow()
+				end
+				},
+				[3]={
+				Name="tracktypeicon", -- _row# is added
+				ColoumnTemplate={Position=POS(trackIconLeft, 0), Size=trackIconSize, ShowBorders=FALSE},
+				ColoumnTemplateType="Frame",
+				ColoumnTemplateCust=function(Coloumn, RowNr, ColoumnNr)
+					Coloumn:AttachResource(menucommon.winter)
+					Coloumn:HideWindow()
+				end
+				},				
+			}
+		}
+		
+		local list=addparent(CreateMultiColoumnListBox(listboxParams))
+		
+		list.onNeedData=function(Self, RowObject, RowNr, ControlRowNr)
+			RowObject:SetTitle(GetSelectedItemLabel(RowNr))
+			if GetEnabled(RowNr) then
+				RowObject:SetColor(Layout.OptionFontColor)
+			else
+				RowObject:SetColor(Layout.OptionDisabledFontColor)
+			end
+			local leftArrowName=string.format("leftarrow_row%i", ControlRowNr)
+			local rightArrowName=string.format("rightarrow_row%i", ControlRowNr)
+			if RowNr==list:GetSelectedRow() and GetEnabled(RowNr) then
+				wm.GetWindow(leftArrowName):ShowWindow()
+				wm.GetWindow(rightArrowName):ShowWindow()
+			else
+				wm.GetWindow(leftArrowName):HideWindow()
+				wm.GetWindow(rightArrowName):HideWindow()
+			end
+			if RowNr==TrackType then
+				local win=wm.GetWindow(string.format("tracktypeicon_row%i", ControlRowNr))
+				win:AttachResource(menucommon[TrackTypes[GetSelectedItemValue(TrackType)].TrackIcon])
+				win:ShowWindow()
+			else
+				wm.GetWindow(string.format("tracktypeicon_row%i", ControlRowNr)):HideWindow()
+			end
+			
+		end
+		
+		list.onShowScrollUpArrow=function()
+			upArrow:ShowWindow()
+		end
+		
+		list.onShowScrollDownArrow=function()
+			downArrow:ShowWindow()
+		end
+
+		list.onHideScrollUpArrow=function()
+			upArrow:HideWindow()
+		end
+		
+		list.onHideScrollDownArrow=function()
+			downArrow:HideWindow()
+		end
+
+
+		local handler=addparent(InputHandler{Name="inputhandler"})
+		handler.onKeyPressed=function(Self, Character, VirtualKey, ScanCode)
+			if VirtualKey==KeyCodes["BUTTON_START"] then
+				CreateSession()
+			elseif VirtualKey==KeyCodes["BUTTON_SELECT"] then
+				menu_lan_creategame.options.back_action()
+			elseif VirtualKey==KeyCodes["BUTTON_LEFT"] then
+				local selectedRow=list:GetSelectedRow()
+				if GetEnabled(selectedRow) then
+					local selectedItem=GetSelectedItem(selectedRow)-1
+					local numItems=GetNumItems(selectedRow)
+					if selectedItem<1 then
+						selectedItem=numItems
+					end
+					SetSelectedItem(selectedRow,selectedItem)
+					ValidateList()
+					list:Refresh()
+				end
+			elseif VirtualKey==KeyCodes["BUTTON_RIGHT"] then
+				local selectedRow=list:GetSelectedRow()
+				if GetEnabled(selectedRow) then
+					local selectedItem=GetSelectedItem(selectedRow)+1
+					local numItems=GetNumItems(selectedRow)
+					if selectedItem>numItems then
+						selectedItem=1
+					end
+					SetSelectedItem(selectedRow,selectedItem)
+					ValidateList()
+					list:Refresh()
+				end
+			elseif VirtualKey==KeyCodes["BUTTON_DOWN"] then
+				list:MoveNext()
+				labels:MoveNext()			
+			elseif VirtualKey==KeyCodes["BUTTON_UP"] then
+				list:MovePrev()
+				labels:MovePrev()
+			end
+		end
+		
+		ValidateList()
+		activateparents()
+		handler:SetFocus()
+		list:SetNumRows(table.getn(OptionItems))
+		list:SetSelectedRow(1)
+		labels:SetNumRows(table.getn(OptionItems))
+		labels:SetSelectedRow(1)
+	end,
+
+	update_function=function()
+		if CheckLanErrors() then
+			return
+		end
+		local trackIcon=GetTrackIcon()
+		local trackIconWin=wm.GetWindow("trackicon")
+		if trackIcon then
+			trackIconWin:AttachResource(trackIcon)
+			trackIconWin:ShowWindow()
+		else
+			trackIconWin:HideWindow()
+		end
+		local map=wm.GetWindow("map")
+		local track=GetSelectedItemValue(Track)
+		if Levels[track] then
+			if Levels[track].Map then
+				map:AttachResource(Levels[track].Map)
+			else
+				map:AttachResource(trackIcon)
+			end
+			map:ShowWindow()
+		else
+			map:HideWindow()
+		end
+	
+		if Creating then
+			if Session:GetProgress()=="SUCCESS" then
+				HideThinkingWindow()
+				ShowLanLobby()
+			elseif Session:GetProgress()=="FAILED" then
+				Creating=false
+				HideThinkingWindow()
+				ShowMessageBox(SAFEPOS(154, 70), 
+					LINK_FAILED, 
+					LINK_YES, 
+					function()CreateSession()end,
+					LINK_NO, 
+					entermenu("menu_lan_modeselect")
+				)
+			end
+		end
+	end,
+	
+	deinit_function = function()
+		windows_reset()
+	end,
+	
+	items = {},
+}

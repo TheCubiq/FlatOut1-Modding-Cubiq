@@ -1,0 +1,5345 @@
+-- collision sounds
+COLLISIONSOUND_NONE 	= 0
+COLLISIONSOUND_TRUCK 	= 1
+COLLISIONSOUND_GROUND 	= 2
+COLLISIONSOUND_SOFT 	= 3
+COLLISIONSOUND_SOLID 	= 4 -- sein�m�iset/kivet
+COLLISIONSOUND_BARREL 	= 5
+COLLISIONSOUND_TIRE 	= 6
+COLLISIONSOUND_WOOD 	= 7
+COLLISIONSOUND_MALE 	= 8
+COLLISIONSOUND_FEMALE 	= 9
+COLLISIONSOUND_METAL 	= 10
+COLLISIONSOUND_PLASTIC 	= 11
+
+-- bonus types
+BONUSTYPE_ROADBLOCK 	= 1 	-- muovit�rp�t, renkaat, betoniporsaat, tynnyrit.
+BONUSTYPE_FENCE 		= 2 	-- puu+metalli+jne -aidat, ja kaikki portit.
+BONUSTYPE_MACHINERY	= 3 	-- mekaaniset koneet/autot. kamelit, henkil�autot, pittien liukuhihnat.
+BONUSTYPE_SIGN 		= 4	-- kaikki mainoskyltit + liikennemerkit
+BONUSTYPE_ACCESSORY	= 5	-- ihmisen luomat yleiset roinat, useimmiten pienikokoiset esineet, jakoavaimet, kaasupullot, postilaatikot.
+BONUSTYPE_NATURE 		= 6	-- tukit, polttopuut, luontoonliittyv�t asiat.
+BONUSTYPE_STRUCTURE	= 7	-- kaikki tukirakenteet / isommat rakennelmat. katulamput, tikkaat, polet, rakennusten palaset jne.
+BONUSTYPE_TIRE		= 8	-- renkaat.
+BONUSTYPE_NITRO		= 9	-- esineet joista saa nitroa muttei rahaa, atm kivet.
+
+BonusTypeMayhem = {	--//percent of mayhem (nitro) received per object  1.0 is 100%
+	[BONUSTYPE_NITRO]	    = 0.18,   ----# 0.01
+	[BONUSTYPE_MACHINERY] = 0.08,   ----# 0.08
+	[BONUSTYPE_NATURE]    = 0.04,   ----# 0.03
+	[BONUSTYPE_STRUCTURE] = 0.025,  ----# 0.02
+	[BONUSTYPE_ROADBLOCK] = 0.022,   ----# 0.015
+	[BONUSTYPE_ACCESSORY] = 0.013,  ----# 0.01
+	[BONUSTYPE_TIRE]      = 0.012,  ----# 0.005
+	[BONUSTYPE_SIGN]      = 0.008,  ----# 0.008
+	[BONUSTYPE_FENCE]     = 0.006   ----# 0.005 
+
+ ----# TARKISTA PILKKU
+
+}
+
+BonusTypePrice = { 	--//price per object  1.0 is $1
+	[BONUSTYPE_MACHINERY] = 5.0, 	 ----# 5.0
+	[BONUSTYPE_STRUCTURE] = 2.7, 	 ----# 2.5
+	[BONUSTYPE_NATURE]    = 1.8, 	 ----# 2.0
+	[BONUSTYPE_ROADBLOCK] = 1.6, 	 ----# 1.5
+	[BONUSTYPE_ACCESSORY] = 1.45,	 ----# 1.5
+	[BONUSTYPE_SIGN]      = 1.25,	 ----# 1.0
+	[BONUSTYPE_FENCE]     = 0.47,	 ----# 0.5
+	[BONUSTYPE_TIRE]      = 0.46,  ----# 0.25
+	[BONUSTYPE_NITRO]	    = 0.0 	 ----# 0.0
+
+ ----# TARKISTA PILKKU
+
+}
+
+-- collision categories 
+-- car tires can collide to object
+CATEGORY_TIRE_COLLISION		=	"1"
+-- ai should avoid impact with object
+CATEGORY_AVOID_IMPACT		=	"2"
+-- car body
+CATEGORY_CAR_BODY			=	"3"
+-- car panel
+CATEGORY_CAR_PANEL		=	"4"
+-- dynamic object
+CATEGORY_DYNAMIC_OBJECT		=	"5"
+
+
+----#--#--# ----# object types ----#--#--#
+OBJECT_DEFAULT		=	1
+OBJECT_GATE			=	2
+OBJECT_POLE			=	3
+
+
+----#--#--# ----# inertia types ----#--#--#
+INERTIA_SOLID_BOX		=	1
+INERTIA_SOLID_CYLINDER	=	2
+INERTIA_SOLID_SPHERE	=	3
+INERTIA_HOLLOW_CYLINDER	=	4
+
+
+----#--#--# ----# visibility ranget ----#--#--#
+ ----# esim. MaxVisibility = VISIBILITY_HIGH,
+VISIBILITY_VERYLOW	=	50.0		 ----# todella pienet objektit (hedelm�t jne.)
+VISIBILITY_LOW		=	100.0		 ----# conet
+VISIBILITY_MEDIUM		=	200.0		 ----# renkaat
+VISIBILITY_HIGH		=	300.0		 ----# isommat
+VISIBILITY_VERYHIGH	=	450.0		 ----# todella isot
+
+function SetCategory(...)
+	local k,v
+	
+	local t={}
+	for k,v in pairs(arg) do
+		t[v]=1
+	end
+	
+	return t
+end
+
+
+----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--# ----# Concrete / Rock ----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--# ----# 
+
+concrete_balcony_tiny = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	140.0,
+	Restitution = 0.01,
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+concrete_balcony_small = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	350.0,
+	Restitution = 0.01,
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+concrete_balcony_medium = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	470.0,
+	Restitution = 0.01,
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+concrete_balcony_large = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	800.0,
+	Restitution = 0.01,
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+concrete_block = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,	
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_ROADBLOCK,
+
+	Mass	= 	1800.0,
+	Restitution = 0.09,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+concrete_block_with_sign = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_ROADBLOCK,
+
+	Mass	= 	1950.0,
+	Restitution = 0.06,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+concrete_flagpole_reinforcement = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	390.0,
+	Restitution = 0.13,
+	WakeupVelocity = 4.00,
+	ReactivationVelocity = 2.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+concrete_road_piece = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT, CATEGORY_TIRE_COLLISION),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	500.0,
+	Restitution = 0.05,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+rock_small = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,	
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_NITRO,
+
+	Mass	= 	375.0,
+	Restitution = 0.25,
+	WakeupVelocity = 10.00,
+	ReactivationVelocity = 2.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+rock_medium = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_NITRO,
+
+	Mass	= 	650.0,
+	Restitution = 0.27,
+	WakeupVelocity = 10.00,
+	ReactivationVelocity = 2.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+rock_large = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_NITRO,
+
+	Mass	= 	950.0,
+	Restitution = 0.3,
+	WakeupVelocity = 15.00,
+	ReactivationVelocity = 5.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+rock_huge = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_NITRO,
+
+	Mass	= 	1400.0,
+	Restitution = 0.35,
+	WakeupVelocity = 15.00,
+	ReactivationVelocity = 5.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--# ----# Metal ----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--# ----# 
+
+metal_barrel_medium = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_ROADBLOCK,
+
+	Mass	= 	220.0,
+	Restitution = 0.3,
+
+	CollisionSound = COLLISIONSOUND_BARREL,
+
+	Inertia = INERTIA_SOLID_CYLINDER	
+}
+
+metal_board_tiny = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_SMALL,
+
+	Mass	= 	150.0,
+	Restitution = 0.1,
+
+	CollisionSound = COLLISIONSOUND_STRUCTURE,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_board_small = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	260.0,
+	Restitution = 0.1,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_board_medium = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	430.0,
+	Restitution = 0.1,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_bucket = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	MaxVisibility = VISIBILITY_LOW,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	30.0,
+	Restitution = 0.26,
+
+	CollisionSound = COLLISIONSOUND_BARREL,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+}
+
+metal_camel_body = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,	
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	3200.0,
+	Restitution = 0.03,
+	WakeupVelocity = 10.00, --#2.00
+	ReactivationVelocity = 10.00, --#1.50
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_camel_head = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,	
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	2200.0,
+	Restitution = 0.04,
+	WakeupVelocity = 2.00,
+	ReactivationVelocity = 1.00, --#2.00
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_camel_leg = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	200.0,
+	Restitution = 0.08,
+	WakeupVelocity = 40.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_camel_tail = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	 800.0,
+	Restitution = 0.04,
+	WakeupVelocity = 2.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_cone_medium = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_LOW,
+
+	BonusType = BONUSTYPE_ROADBLOCK,
+
+	Mass	= 	90.0,
+	Restitution = 0.26,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+}
+
+metal_derby_pole = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	1150.0,
+	Restitution = 0.08,
+	WakeupVelocity = 3.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+}
+
+metal_dumptruck_mirror = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_LOW,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	90.0,
+	Restitution = 0.09,
+	WakeupVelocity = 20.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_dumptruck_tank = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_LOW,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	320.0,
+	Restitution = 0.05,
+	WakeupVelocity = 2.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_extinguisher = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_LOW,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	80.0,
+	Restitution = 0.08,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+}
+
+metal_faucet = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYLOW,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	100.0,
+	Restitution = 0.17,
+	WakeupVelocity = 15.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_fence_leg_light = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_LOW,
+
+	BonusType = BONUSTYPE_FENCE,	
+
+	Mass	= 	70.0,
+	Restitution = 0.15,
+	WakeupVelocity = 20.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_fence_leg_heavy = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_FENCE,	
+
+	Mass	= 	90.0,
+	Restitution = 0.15,
+	WakeupVelocity = 20.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_fence_tiltless = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+
+	BonusType = BONUSTYPE_FENCE,	
+
+	Mass	= 	140.0,
+	Restitution = 0.19,
+	WakeupVelocity = 2.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_gasbottle_loader = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	140.0,
+	Restitution = 0.09,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_gas_pump = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	1200.0,
+	Restitution = 0.05,
+	WakeupVelocity = 10.00,
+	ReactivationVelocity = 1.50,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_grader_plough = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	280.0,
+	Restitution = 0.08,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_grader_plough_pipe = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	90.0,
+	Restitution = 0.2,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+}
+
+metal_grader_plough_support = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	190.0,
+	Restitution = 0.05,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_graincart_holder = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	150.0,
+	Restitution = 0.15,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_gasbottle_small = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_LOW,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	140.0,
+	Restitution = 0.22,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+}
+
+metal_gasbottle_medium = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	150.0,
+	Restitution = 0.18,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+}
+
+metal_harvester_fork = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	230.0,
+	Restitution = 0.12,
+	WakeupVelocity = 15.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_ladder_tiny = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYLOW,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	40.0,
+	Restitution = 0.18,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_ladder_small = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	100.0,
+	Restitution = 0.14,
+	WakeupVelocity = 15.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_ladder_medium = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	200.0,
+	Restitution = 0.12,
+	WakeupVelocity = 10.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_ladder_large = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	350.0,
+	Restitution = 0.12,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_lightpole_lights = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	200.0,
+	Restitution = 0.15,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_lightpole_speakers = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	125.0,
+	Restitution = 0.2,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_logtrailer_fork = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	180.0,
+	Restitution = 0.12,
+	WakeupVelocity = 12.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_logtrailer_pole = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	200.0,
+	Restitution = 0.12,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_mast = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	190.0,
+	Restitution = 0.2,
+	WakeupVelocity = 2.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+}
+
+metal_motor = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	420.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_motel_roof_medium = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	750.0,
+	Restitution = 0.01,
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_motel_roof_large = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	920.0,
+	Restitution = 0.01,
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_parkingmeter = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	130.0,
+	Restitution = 0.2,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_pole_tiny = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	100.0,
+	Restitution = 0.2,
+	WakeupVelocity = 15.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_pole_short = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	150.0,
+	Restitution = 0.14,
+	WakeupVelocity = 20.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_pole_medium = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	200.0,
+	Restitution = 0.125,
+	WakeupVelocity = 16.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+
+metal_pole_tall = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	340.0,
+	Restitution = 0.11,
+	WakeupVelocity = 15.00,
+	ReactivationVelocity = 1.00,
+
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_pole_huge = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	380.0,
+	Restitution = 0.11,
+	WakeupVelocity = 13.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_pole_massive = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	500.0,
+	Restitution = 0.11,
+	WakeupVelocity = 10.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_postbox = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_LOW,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	90.0,
+	Restitution = 0.2,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_rockcrusher_belt = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	530.0,
+	Restitution = 0.1,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_rockcrusher_leg_small = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	240.0,
+	Restitution = 0.12,
+	WakeupVelocity = 29.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_rockcrusher_leg_medium = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	320.0,
+	Restitution = 0.09,
+	WakeupVelocity = 32.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_sign_large = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+
+	BonusType = BONUSTYPE_SIGN,
+
+	Mass	= 	800.0,
+	Restitution = 0.08,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+
+metal_shovel = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_LOW,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	40.0,
+	Restitution = 0.13,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_silo_pipe_b = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	130.0,
+	Restitution = 0.18,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_snowmobile = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	1450.0,
+	Restitution = 0.05,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_snowmobile_window = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	50.0,
+	Restitution = 0.05,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_stairs_tiny = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	100.0,
+	Restitution = 0.2,
+	WakeupVelocity = 2.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_stairs_small = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	270.0,
+	Restitution = 0.2,
+	WakeupVelocity = 8.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_stairs_medium = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	380.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_stairs_large = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	550.0,
+	Restitution = 0.17,
+	WakeupVelocity = 4.50,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_streetlight = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,	
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	350.0,
+	Restitution = 0.1,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_streetlight_box = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	350.0,
+	Restitution = 0.1,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_tirecart = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_TIRE_COLLISION),
+	Type	=	OBJECT_DEFAULT,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	150.0,
+	Restitution = 0.15,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_toolbox_tool = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYLOW,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	20.0,
+	Restitution = 0.14,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_trailer = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	1200.0,
+	Restitution = 0.05,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_tripod = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	170.0,
+	Restitution = 0.14,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_truck_plough = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	700.0,
+	Restitution = 0.12,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_truck_plough_piece = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	340.0,
+	Restitution = 0.12,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_trafficsign = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_SIGN,
+
+	Mass	= 	210.0,
+	Restitution = 0.12,
+	WakeupVelocity = 10.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_trafficsign_leg = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_SIGN,
+
+	Mass	= 	120.0,
+	Restitution = 0.12,
+	WakeupVelocity = 13.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_trafficsign_plate = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_SIGN,
+
+	Mass	= 	100.0,
+	Restitution = 0.16,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_trashcan_medium = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	120.0,
+	Restitution = 0.26,
+
+	CollisionSound = COLLISIONSOUND_BARREL,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+}
+
+metal_trashcan_large = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	190.0,
+	Restitution = 0.13,
+
+	CollisionSound = COLLISIONSOUND_BARREL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_trashcan_medium_lid = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_LOW,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	40.0,
+	Restitution = 0.35,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+}
+
+metal_trashcan_large_lid = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	70.0,
+	Restitution = 0.19,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_truck_bumper = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	320.0,
+	Restitution = 0.05,
+	WakeupVelocity = 2.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_watertank = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	900.0,
+	Restitution = 0.06,
+	WakeupVelocity = 7.00,
+	ReactivationVelocity = 2.00,
+
+	CollisionSound = COLLISIONSOUND_BARREL,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+}
+
+metal_watertank_leg = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	120.0,
+	Restitution = 0.15,
+	WakeupVelocity = 7.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_watertower_tank = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	2100.0,
+	Restitution = 0.02,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.70,
+
+	CollisionSound = COLLISIONSOUND_BARREL,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+}
+
+metal_vendingmachine = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	450.0,
+	Restitution = 0.08,
+	WakeupVelocity = 8.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_wheelbarrow = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	100.0,
+	Restitution = 0.08,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--# ----# Rubber / Plastic ----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--# ----# 
+
+rubber_basketball = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	20.0,
+	Restitution = 0.48,
+
+	CollisionSound = COLLISIONSOUND_PLASTIC,
+
+	Inertia = INERTIA_SOLID_SPHERE
+}
+
+rubber_cone_small = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_LOW,
+
+	BonusType = BONUSTYPE_ROADBLOCK,
+
+	Mass	= 	20.0,
+	Restitution = 0.42,
+
+	CollisionSound = COLLISIONSOUND_PLASTIC,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+rubber_cone_tall = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_ROADBLOCK,
+
+	Mass	= 	30.0,
+	Restitution = 0.38,
+
+	CollisionSound = COLLISIONSOUND_PLASTIC,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+rubber_dumptruck_flap = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_LOW,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	20.0,
+	Restitution = 0.25,
+
+	CollisionSound = COLLISIONSOUND_PLASTIC,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+plastic_flap = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_ROADBLOCK,
+
+	Mass	= 	30.0,
+	Restitution = 0.25,
+	WakeupVelocity = 10.00,
+	ReactivationVelocity = 1.00,
+
+
+	CollisionSound = COLLISIONSOUND_PLASTIC,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+plastic_lifering = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_LOW,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	10.0,
+	Restitution = 0.25,
+
+	CollisionSound = COLLISIONSOUND_PLASTIC,
+
+	Inertia = INERTIA_HOLLOW_CYLINDER
+}
+
+
+rubber_tire_car = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_TIRE,
+
+	Mass	= 	50.0,
+	Restitution = 0.35,
+
+	CollisionSound = COLLISIONSOUND_TIRE,
+
+	Inertia = INERTIA_HOLLOW_CYLINDER
+}
+
+rubber_tire_extra = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_TIRE,
+
+	Mass	= 	60.0,
+	Restitution = 0.53,
+
+	CollisionSound = COLLISIONSOUND_TIRE,
+
+	Inertia = INERTIA_HOLLOW_CYLINDER
+}
+
+rubber_tire_small = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_TIRE,
+
+	Mass	= 	40.0,
+	Restitution = 0.53,
+
+	CollisionSound = COLLISIONSOUND_TIRE,
+
+	Inertia = INERTIA_HOLLOW_CYLINDER
+}
+
+rubber_tire_big = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_TIRE,
+
+	Mass	= 	100.0,
+	Restitution = 0.45,
+
+	CollisionSound = COLLISIONSOUND_TIRE,
+
+	Inertia = INERTIA_HOLLOW_CYLINDER
+}
+
+
+rubber_tire_stack_small = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_TIRE,
+
+	Mass	= 	240.0,
+	Restitution = 0.42, --#changed:7.7.04, from 0.25
+	WakeupVelocity = 13.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_TIRE,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+rubber_tire_stack_medium = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_TIRE,
+
+	Mass	= 	360.0,
+	Restitution = 0.40, --#changed:7.7.04, from 0.22
+	WakeupVelocity = 13.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_TIRE,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+plastic_trashbag = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	60.0,
+	Restitution = 0.06,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_PLASTIC,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+}
+
+plastic_trashcan = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	--#120
+	Mass	= 	80.0,
+	Restitution = 0.32,
+
+	CollisionSound = COLLISIONSOUND_PLASTIC,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+plastic_trashcan_large = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	--#190
+	Mass	= 	110.0,
+	Restitution = 0.28,
+
+	CollisionSound = COLLISIONSOUND_PLASTIC,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+plastic_trashcan_lid = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_LOW,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	30.0,
+	Restitution = 0.46,
+
+	CollisionSound = COLLISIONSOUND_PLASTIC,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+plastic_trashcan_lid_large = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	40.0,
+	Restitution = 0.42,
+
+	CollisionSound = COLLISIONSOUND_PLASTIC,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--# ----# Wood ----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--# ----# 
+
+wood_balcony_medium = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	1700.0,
+	Restitution = 0.01,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_balcony_large = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	2200.0,
+	Restitution = 0.01,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_bench = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	90.0,
+	Restitution = 0.3,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_board_microscopic = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_LOW,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	20.0,
+	Restitution = 0.27,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_board_tiny = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	60.0,
+	Restitution = 0.27,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_board_small = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	110.0,
+	Restitution = 0.2,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_board_medium = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	--#190
+	Mass	= 	160.0,
+	Restitution = 0.16,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_board_large = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	--#380
+	Mass	= 	250.0,
+	Restitution = 0.1,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_boat = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_COLLISION),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	--#720
+	Mass	= 	680.0,
+	Restitution = 0.06,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_boat_log = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	150.0,
+	Restitution = 0.06,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+}
+
+wood_firelog_small = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_LOW,
+
+	BonusType = BONUSTYPE_NATURE,
+
+	Mass	= 	40.0,
+	Restitution = 0.25,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+}
+
+wood_firelog_large = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_NATURE,
+
+	Mass	= 	90.0,
+	Restitution = 0.17,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+
+wood_fence_leg_light = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_TIRE_COLLISION),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_FENCE,
+
+	Mass	= 	100.0,
+	Restitution = 0.15,
+	WakeupVelocity = 1.00, --#24
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+}
+
+wood_fence_leg_medium = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_TIRE_COLLISION),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_FENCE,
+
+	Mass	= 	130.0,
+	Restitution = 0.15,
+	WakeupVelocity = 1.00, --#25
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_fence_leg_heavy = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_TIRE_COLLISION),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_FENCE,
+
+	Mass	= 	170.0,
+	Restitution = 0.15,
+	WakeupVelocity = 1.00, --#28
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_fence_pole_short = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_TIRE_COLLISION),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_FENCE,
+
+	Mass	= 	90.0,
+	Restitution = 0.15,
+	WakeupVelocity = 1.00, --#15
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_fence_pole_long = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_TIRE_COLLISION),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_FENCE,
+
+	Mass	= 	120.0,
+	Restitution = 0.15,
+	WakeupVelocity = 1.00, --#15
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_fence_piece = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_TIRE_COLLISION),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_FENCE,
+
+	Mass	= 	170.0,
+	Restitution = 0.2,
+	WakeupVelocity = 1.00, --#25
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_finishlinebox_leg = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_TIRE_COLLISION),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	180.0,
+	Restitution = 0.15,
+	WakeupVelocity = 55.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_finishlinebox_element = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_TIRE_COLLISION, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	300.0,
+	Restitution = 0.08,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_finishlinebox_platform = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_TIRE_COLLISION, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	400.0,
+	Restitution = 0.08,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_graincart_body = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_TIRE_COLLISION),
+	Type	=	OBJECT_DEFAULT,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	2600.0,
+	Restitution = 0.07,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_graincart_front = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_TIRE_COLLISION),
+	Type	=	OBJECT_DEFAULT,
+
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	710.0,
+	Restitution = 0.07,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_ladder_tiny = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYLOW,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	--#80
+	Mass	= 	30.0,
+	Restitution = 0.18,
+	WakeupVelocity = 14.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_ladder_small = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_LOW,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	--#120
+	Mass	= 	50.0,
+	Restitution = 0.14,
+	WakeupVelocity = 10.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_ladder_medium = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	--#400
+	Mass	= 	180.0,
+	Restitution = 0.12,
+	WakeupVelocity = 10.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_ladder_large = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	--#540
+	Mass	= 	240.0,
+	Restitution = 0.12,
+	WakeupVelocity = 10.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_logshed_pole = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	70.0,
+	Restitution = 0.15,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_logshed_board = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_TIRE_COLLISION),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	150.0,
+	Restitution = 0.15,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_log_small = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_TIRE_COLLISION),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	370.0,
+	Restitution = 0.3,
+	WakeupVelocity = 12.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+}
+
+wood_log_medium = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_TIRE_COLLISION),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	450.0,
+	Restitution = 0.3,
+	WakeupVelocity = 12.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+}
+
+wood_market_fruit_small = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYLOW,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	30.0,
+	Restitution = 0.2,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_PLASTIC,
+
+	Inertia = INERTIA_SOLID_SPHERE
+}
+
+wood_market_fruit_medium = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYLOW,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	60.0,
+	Restitution = 0.2,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_PLASTIC,
+
+	Inertia = INERTIA_SOLID_SPHERE
+}
+
+wood_market_cardboardbox_small = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	--#80
+	Mass	= 	35.0,
+	Restitution = 0.08,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_market_cardboardbox_medium = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	--#100
+	Mass	= 	50.0,
+	Restitution = 0.04,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_market_box_medium = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	--#180
+	Mass	= 	120.0,
+	Restitution = 0.07,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_market_box_piece = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_LOW,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	20.0,
+	Restitution = 0.2,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_market_box_set = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	110.0,
+	Restitution = 0.22,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_market_legs = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_LOW,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	100.0,
+	Restitution = 0.18,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_market_chair = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	--#130
+	Mass	= 	50.0,
+	Restitution = 0.2,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_market_parasol_top = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	--#100
+	Mass	= 	80.0,
+	Restitution = 0.04,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_PLASTIC,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+}
+
+wood_market_parasol_leg = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_LOW,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	--#100
+	Mass	= 	40.0,
+	Restitution = 0.18,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_market_marquee = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	--#220
+	Mass	= 	160.0,
+	Restitution = 0.1,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_market_fruitholder = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_LOW,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	--#180
+	Mass	= 	90.0,
+	Restitution = 0.14,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_market_table_top = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	--#210
+	Mass	= 	140.0,
+	Restitution = 0.1,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_market_sign_pole = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	--#185
+	Mass	= 	90.0,
+	Restitution = 0.1,
+	WakeupVelocity = 1.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_plank_light = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_TIRE_COLLISION),
+	Type	=	OBJECT_DEFAULT,	
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_NATURE,
+
+	--#100
+	Mass	= 	80.0,
+	Restitution = 0.2,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_plank_medium = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_TIRE_COLLISION, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_NATURE,
+
+	--#175
+	Mass	= 	110.0,
+	Restitution = 0.15,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_plankpile_small = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_TIRE_COLLISION, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_NATURE,
+
+	--#420
+	Mass	= 	350.0,
+	Restitution = 0.09,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_plankpile_medium = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_TIRE_COLLISION, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_NATURE,
+
+	--#570
+	Mass	= 	480.0,
+	Restitution = 0.08,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_pole_tiny = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	--#90
+	Mass	= 	80.0,
+	Restitution = 0.17,
+	WakeupVelocity = 25.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_pole_short = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	--#140
+	Mass	= 	120.0,
+	Restitution = 0.15,
+	WakeupVelocity = 15.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_pole_medium = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	--#200
+	Mass	= 	170.0,
+	Restitution = 0.15,
+	WakeupVelocity = 15.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_pole_tall = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	--#280
+	Mass	= 	220.0,
+	Restitution = 0.1,
+	WakeupVelocity = 12.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_pole_huge = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	--#480
+	Mass	= 	310.0,
+	Restitution = 0.1,
+	WakeupVelocity = 17.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_postbox_leg = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_LOW,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 2.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_scarecrow = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	--#240
+	Mass	= 	150.0,
+	Restitution = 0.08,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_sponsor_sign_leg = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_LOW,
+
+	BonusType = BONUSTYPE_SIGN,
+
+	--#130
+	Mass	= 	95.0,
+	Restitution = 0.17,
+	WakeupVelocity = 5.00, --#25.00
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_sponsor_sign_small = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_SIGN,
+
+	--#190
+	Mass	= 	170.0,
+	Restitution = 0.13,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_sponsor_sign_medium = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_SIGN,
+
+	--#240
+	Mass	= 	210.0,
+	Restitution = 0.09,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_sponsor_sign_large = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_SIGN,
+
+	--#350
+	Mass	= 	320.0,
+	Restitution = 0.05,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_stairs_tiny = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	--#120
+	Mass	= 	100.0,
+	Restitution = 0.2,
+	WakeupVelocity = 8.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_stairs_small = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	--#360
+	Mass	= 	300.0,
+	Restitution = 0.2,
+	WakeupVelocity = 8.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_stairs_medium = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	--#490
+	Mass	= 	400.0,
+	Restitution = 0.2,
+	WakeupVelocity = 4.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_stairs_large = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	--#720
+	Mass	= 	600.0,
+	Restitution = 0.17,
+	WakeupVelocity = 3.50,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_table = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	Mass	= 	180.0,
+	Restitution = 0.2,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_toolbox_tiny = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	--#70
+	Mass	= 	60.0,
+	Restitution = 0.2,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_toolbox_small = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	--#130
+	Mass	= 	90.0,
+	Restitution = 0.2,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_toolbox_medium = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_ACCESSORY,
+
+	--#210
+	Mass	= 	160.0,
+	Restitution = 0.17,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_tree_branch_small = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_MEDIUM,
+
+	BonusType = BONUSTYPE_NATURE,
+
+	--#120
+	Mass	= 	60.0,
+	Restitution = 0.16,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_tree_branch_medium = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_NATURE,
+
+	--#190
+	Mass	= 	110.0,
+	Restitution = 0.13,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_tree_trunk = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_COLLISION),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_NATURE,
+
+	Mass	= 	2000.0,
+	Restitution = 0.02,
+	WakeupVelocity = 30.00,
+	ReactivationVelocity = 20.00,
+
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_watertower_pole = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_HIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	--#260
+	Mass	= 	90.0,
+	Restitution = 0.10,
+	WakeupVelocity = 44.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#
+
+--# ----# --- miscellaneous 
+
+hay_bale = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_NATURE,
+
+	Mass	= 	640.0,
+	Restitution = 0.08,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+}
+
+hay_box = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_NATURE,
+
+	Mass	= 	370.0,
+	Restitution = 0.07,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#
+
+--# ----# --- Portit & dummyn ymp�ri py�riv�t objektit
+
+metal_crane_truck_d = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_GATE,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	1100.0,
+	Restitution = 0.05,
+
+	Hinge	= {
+		AngleLimits	= { -28, 44 },
+		Restitution	= { 0.2, 0.2 },
+		Velocity	= 0.0,
+		MaxForce	= 10000.0,
+		
+		BreakForce	= 0.0,		
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+metal_excavator = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_GATE,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	2000.0,
+	Restitution = 0.01,
+	
+	Hinge	= {
+		AngleLimits	= { -180, 180 },
+		Restitution	= { 0.1, 0.1 },
+		Velocity	= 0.0,
+		MaxForce	= 35000.0,
+		
+		BreakForce	= 0.0,
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX	
+}
+
+metal_gardengate_180 = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_GATE,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_FENCE,
+
+	--#450
+	Mass	= 	170.0,
+	Restitution = 0.2,
+
+	Hinge	= {
+		AngleLimits	= { -92, 92 },
+		Restitution	= { 0.02, 0.02 },
+		Velocity	= 0.0,
+		MaxForce	= 1000.0,
+		
+		BreakForce	= 10000.0,	--#100000
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_METAL,
+
+	Inertia = INERTIA_SOLID_BOX	
+}
+
+metal_gate_180 = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_GATE,
+
+	BonusType = BONUSTYPE_FENCE,
+	
+	--#600
+	Mass	= 	400.0,
+	Restitution = 0.08,
+
+	Hinge	= {
+		AngleLimits	= { -92, 92 },
+		Restitution	= { 0.1, 1.0 },
+		Velocity	= 0.0,
+		MaxForce	= 1000.0,
+		
+		BreakForce	= 350000.0,
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX	
+}
+
+metal_gate_180_locked = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_GATE,
+	
+	BonusType = BONUSTYPE_FENCE,
+
+	--#600
+	Mass	= 	450.0,
+	Restitution = 0.08,
+
+	Hinge	= {
+		AngleLimits	= { -4, 4 },
+		Restitution	= { 0.1, 1.0 },
+		Velocity	= 0.0,
+		MaxForce	= 1000.0,
+		
+		BreakForce	= 0.0,
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX	
+}
+
+metal_gate_driveway_180 = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_GATE,
+
+	BonusType = BONUSTYPE_FENCE,
+	
+	--#600
+	Mass	= 	350.0,
+	Restitution = 0.08,
+
+	Hinge	= {
+		AngleLimits	= { -91, 91 },
+		Restitution	= { 0.1, 1.0 },
+		Velocity	= 0.0,
+		MaxForce	= 1000.0,
+		
+		--#350000
+		BreakForce	= 325000.0,
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX	
+}
+
+metal_harvester_crane = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_GATE,	
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	--#1000
+	Mass	= 	850.0,
+	Restitution = 0.2,
+
+	Hinge	= {
+		AngleLimits	= { -190, 190 },
+		Restitution	= { 0.02, 0.02 },
+		Velocity	= 0.0,
+		MaxForce	= 25000.0,
+		
+		BreakForce	= 350000.0,		
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX	
+}
+
+metal_silo_pipe = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_GATE,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_MACHINERY,
+	
+	Mass	= 	350.0,
+	Restitution = 0.1,
+
+	Hinge	= {
+		AngleLimits	= { -25, 33 },
+		Restitution	= { 0.6, 0.6 },
+		Velocity	= 0.0,
+		MaxForce	= 1000.0,
+		
+		BreakForce	= 100000.0,		
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_METAL,
+	
+	Inertia = INERTIA_SOLID_BOX	
+}
+
+metal_stadiongate = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_GATE,	
+
+	BonusType = BONUSTYPE_FENCE,
+
+	Mass	= 	600.0,
+	Restitution = 0.1,
+
+	Hinge	= {
+		AngleLimits	= { -4, 4 },
+		Restitution	= { 0.02, 0.02 },
+		Velocity	= 0.0,
+		MaxForce	= 1000.0,
+		
+		BreakForce	= 0.0,		
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+	
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_barngate = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_GATE,
+
+	BonusType = BONUSTYPE_FENCE,
+
+	--#450
+	Mass	= 	370.0,
+	Restitution = 0.08,
+
+	Hinge	= {
+		AngleLimits	= { -92, 92 },
+		Restitution	= { 0.4, 0.4 },
+		Velocity	= 0.0,
+		MaxForce	= 1000.0,
+		
+		BreakForce	= 175000.0,		
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+	
+	Inertia = INERTIA_SOLID_BOX	
+}
+
+wood_barngate_red = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_GATE,
+
+	BonusType = BONUSTYPE_FENCE,
+
+	--#550
+	Mass	= 	450.0,
+	Restitution = 0.08,
+
+	Hinge	= {
+		AngleLimits	= { -92, 92 },
+		Restitution	= { 0.4, 0.4 },
+		Velocity	= 0.0,
+		MaxForce	= 1000.0,
+		
+		BreakForce	= 250000.0,		
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+	
+	Inertia = INERTIA_SOLID_BOX	
+}
+
+wood_barngate_red_kludge = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_GATE,
+
+	BonusType = BONUSTYPE_FENCE,
+
+	--#550
+	Mass	= 	450.0,
+	Restitution = 0.08,
+
+	Hinge	= {
+		AngleLimits	= { -122, 62 },
+		Restitution	= { 0.4, 0.4 },
+		Velocity	= 0.0,
+		MaxForce	= 1000.0,
+		
+		BreakForce	= 250000.0,		
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+	
+	Inertia = INERTIA_SOLID_BOX		
+}
+
+wood_garagedoor = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_GATE,
+
+	BonusType = BONUSTYPE_FENCE,
+
+	--#450
+	Mass	= 	380.0,
+	Restitution = 0.08,
+
+	Hinge	= {
+		AngleLimits	= { -92, 92 },
+		Restitution	= { 0.4, 0.4 },
+		Velocity	= 0.0,
+		MaxForce	= 1000.0,
+		
+		BreakForce	= 300000.0,		
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+	
+	Inertia = INERTIA_SOLID_BOX	
+}
+
+wood_gate_180 = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_GATE,
+
+	BonusType = BONUSTYPE_FENCE,
+	
+	--#450
+	Mass	= 	230.0,
+	Restitution = 0.08,
+
+	Hinge	= {
+		AngleLimits	= { -90, 90 },
+		Restitution	= { 0.1, 1.0 },
+		Velocity	= 0.0,
+		MaxForce	= 1000.0,
+		
+		BreakForce	= 130000.0,
+		BreakTorque	= 0.0,		
+	
+	},
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+	
+	Inertia = INERTIA_SOLID_BOX		
+}
+
+wood_stairs_hang = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_GATE,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+	
+	--#900
+	Mass	= 	600.0,
+	Restitution = 0.1,
+
+	Hinge	= {
+		AngleLimits	= { -25, 33 },
+		Restitution	= { 0.6, 0.6 },
+		Velocity	= 0.0,
+		MaxForce	= 1000.0,
+		
+		BreakForce	= 200000.0,		
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_WOOD,
+	
+	Inertia = INERTIA_SOLID_BOX		
+}
+
+wood_tree_branch_tilt = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_GATE,
+
+	BonusType = BONUSTYPE_NATURE,
+	
+	--#400
+	Mass	= 	350.0,
+	Restitution = 0.1,
+
+	Hinge	= {
+		AngleLimits	= { -10, 10 },
+		Restitution	= { 0.05, 0.05 },
+		Velocity	= 0.0,
+		MaxForce	= 15000.0,
+		
+		BreakForce	= 600000.0,		
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+	
+	Inertia = INERTIA_SOLID_BOX		
+}
+
+----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#
+
+ ----# --- kallistuvat objectit, tolpat sun muut:
+
+metal_car_ford = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_POLE,	
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	5300.0,
+	Restitution = 0.02,
+
+	Joint = {
+		XAxisLimits	= { -2.5, 2.5 },
+		ZAxisLimits	= { -2.5, 2.5 },
+		Restitution	= { 0.05, 0.05 },
+		Velocity	= 0.0,
+
+		MaxForce	= 3500.0,
+
+		BreakForce	= 210000.0,		
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+	
+	Inertia = INERTIA_SOLID_BOX		
+}
+
+metal_car_roadrunner = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_POLE,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	5100.0,
+	Restitution = 0.02,
+
+	Joint = {
+		XAxisLimits	= { -2.1, 2.1 },
+		ZAxisLimits	= { -2.1, 2.1 },
+		Restitution	= { 0.05, 0.05 },
+		Velocity	= 0.0,
+
+		MaxForce	= 3500.0,
+
+		BreakForce	= 180000.0,		
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+	
+	Inertia = INERTIA_SOLID_BOX		
+}
+
+metal_car_roadrunner_wreck = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_POLE,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	5200.0,
+	Restitution = 0.02,
+
+	Joint = {
+		XAxisLimits	= { -1.1, 1.1 },
+		ZAxisLimits	= { -1.1, 1.1 },
+		Restitution	= { 0.05, 0.05 },
+		Velocity	= 0.0,
+
+		MaxForce	= 3500.0,
+
+		BreakForce	= 170000.0,		
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+	
+	Inertia = INERTIA_SOLID_BOX		
+}
+
+metal_car_police = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_POLE,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	5400.0,
+	Restitution = 0.02,
+
+	Joint = {
+		XAxisLimits	= { -2.5, 2.5 },
+		ZAxisLimits	= { -2.5, 2.5 },
+		Restitution	= { 0.05, 0.05 },
+		Velocity	= 0.0,
+
+		MaxForce	= 3500.0,
+
+		BreakForce	= 220000.0,		
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+	
+	Inertia = INERTIA_SOLID_BOX		
+}
+
+metal_car_oldie = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_POLE,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	5600.0,
+	Restitution = 0.02,
+
+	Joint = {
+		XAxisLimits	= { -1.8, 1.8 },
+		ZAxisLimits	= { -1.8, 1.8 },
+		Restitution	= { 0.05, 0.05 },
+		Velocity	= 0.0,
+
+		MaxForce	= 3500.0,
+		
+		BreakForce	= 210000.0,		
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+	
+	Inertia = INERTIA_SOLID_BOX		
+}
+
+metal_car_stationwagon = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_POLE,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	5700.0,
+	Restitution = 0.02,
+
+	Joint = {
+		XAxisLimits	= { -1.6, 1.6 },
+		ZAxisLimits	= { -1.6, 1.6 },
+		Restitution	= { 0.05, 0.05 },
+		Velocity	= 0.0,
+
+		MaxForce	= 3500.0,
+
+		BreakForce	= 210000.0,		
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+	
+	Inertia = INERTIA_SOLID_BOX		
+}
+
+metal_car_towtruck = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_POLE,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	6200.0,
+	Restitution = 0.02,
+
+	Joint = {
+		XAxisLimits	= { -1.4, 1.4 },
+		ZAxisLimits	= { -1.4, 1.4 },
+		Restitution	= { 0.05, 0.05 },
+		Velocity	= 0.0,
+
+		MaxForce	= 3500.0,
+
+		BreakForce	= 230000.0,		
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+	
+	Inertia = INERTIA_SOLID_BOX		
+}
+
+metal_car_tracktor = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_POLE,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_MACHINERY,
+
+	Mass	= 	5900.0,
+	Restitution = 0.02,
+
+	Joint = {
+		XAxisLimits	= { -1.8, 1.8 },
+		ZAxisLimits	= { -1.8, 1.8 },
+		Restitution	= { 0.05, 0.05 },
+		Velocity	= 0.0,
+
+		MaxForce	= 3500.0,
+		
+		BreakForce	= 220000.0,		
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+	
+	Inertia = INERTIA_SOLID_BOX		
+}
+
+metal_fence_tilt = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_POLE,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_FENCE,
+
+	Mass	= 	300.0,
+	Restitution = 0.19,
+
+	Joint = {
+		XAxisLimits	= { -20, 20 },
+		ZAxisLimits	= { -2, 2 },
+		Restitution	= { 0.5, 0.5 },
+		Velocity	= 0.0,
+		MaxForce	= 7500.0,
+		
+		BreakForce	= 110000.0,		
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+	
+	Inertia = INERTIA_SOLID_BOX		
+}
+
+metal_lightpole_tilt = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_POLE,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	1900.0,
+	Restitution = 0.05,
+
+	Joint = {
+		XAxisLimits	= { -8, 8 },
+		ZAxisLimits	= { -8, 8 },
+		Restitution	= { 0.01, 0.01 },
+		Velocity	= 0.0,
+		MaxForce	= 42000.0,
+		
+		BreakForce	= 0.0,		
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+	
+	Inertia = INERTIA_SOLID_CYLINDER
+}
+
+metal_flagpole_tilt = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_POLE,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	1750.0,
+	Restitution = 0.01,
+
+	Joint = {
+		XAxisLimits	= { -9, 9 },
+		ZAxisLimits	= { -9, 9 },
+		Restitution	= { 0.01, 0.01 },
+		Velocity	= 0.0,
+		MaxForce	= 42000.0,
+		
+		BreakForce	= 0.0,		
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+}
+
+metal_sign_huge = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT, CATEGORY_TIRE_COLLISION),
+	Type	=	OBJECT_POLE,	
+
+	BonusType = BONUSTYPE_SIGN,
+
+	Mass	= 	1750.0,
+	Restitution = 0.04,
+
+	Joint = {
+		XAxisLimits	= { -4, 4 },
+		ZAxisLimits	= { -4, 4 },
+		Restitution	= { 0.01, 0.01 },
+		Velocity	= 0.0,
+		MaxForce	= 42000.0,
+		
+		BreakForce	= 350000.0,
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+	
+	Inertia = INERTIA_SOLID_BOX		
+}
+
+metal_sign_massive = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT, CATEGORY_TIRE_COLLISION),
+	Type	=	OBJECT_POLE,	
+
+	BonusType = BONUSTYPE_SIGN,
+
+	Mass	= 	3000.0,
+	Restitution = 0.04,
+
+	Joint = {
+		XAxisLimits	= { -4, 4 },
+		ZAxisLimits	= { -4, 4 },
+		Restitution	= { 0.01, 0.01 },
+		Velocity	= 0.0,
+		MaxForce	= 42000.0,
+		
+		BreakForce	= 375000.0,
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+	
+	Inertia = INERTIA_SOLID_BOX		
+}
+
+metal_streetlightpole_tilt = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_POLE,	
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	1800.0,
+	Restitution = 0.01,
+
+	Joint = {
+		XAxisLimits	= { -6, 6 },
+		ZAxisLimits	= { -6, 6 },
+		Restitution	= { 0.01, 0.01 },
+		Velocity	= 0.0,
+		MaxForce	= 47000.0,
+		
+		BreakForce	= 0.0,		
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+	
+	Inertia = INERTIA_SOLID_CYLINDER
+}
+
+metal_wirefence_tilt = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_POLE,
+	MaxVisibility = VISIBILITY_VERYHIGH,
+
+	BonusType = BONUSTYPE_FENCE,
+
+	Mass	= 	600.0,
+	Restitution = 0.19,
+
+	Joint = {
+		XAxisLimits	= { -20, 20 },
+		ZAxisLimits	= { -20, 20 },
+		Restitution	= { 0.5, 0.5 },
+		Velocity	= 0.0,
+		MaxForce	= 7500.0,
+		
+		BreakForce	= 140000.0,		
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+	
+	Inertia = INERTIA_SOLID_BOX		
+}
+
+wood_lightpole_tilt = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_POLE,	
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	1700.0,
+	Restitution = 0.05,
+
+	Joint = {
+		XAxisLimits	= { -12, 12 },
+		ZAxisLimits	= { -12, 12 },
+		Restitution	= { 0.01, 0.01 },
+		Velocity	= 0.0,
+		MaxForce	= 38000.0,
+		
+		BreakForce	= 0.0,		
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+	
+	Inertia = INERTIA_SOLID_CYLINDER
+}
+
+wood_electricpole_tilt = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_POLE,	
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	1900.0,
+	Restitution = 0.01,
+
+	Joint = {
+		XAxisLimits	= { -12, 12 },
+		ZAxisLimits	= { -12, 12 },
+		Restitution	= { 0.01, 0.01 },
+		Velocity	= 0.0,
+		MaxForce	= 38000.0,
+		
+		BreakForce	= 0.0,		
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+	
+	Inertia = INERTIA_SOLID_CYLINDER		
+}
+
+wood_flagpole_tilt = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT, CATEGORY_AVOID_IMPACT),
+	Type	=	OBJECT_POLE,	
+
+	BonusType = BONUSTYPE_STRUCTURE,
+
+	Mass	= 	1500.0,
+	Restitution = 0.01,
+
+	Joint = {
+		XAxisLimits	= { -12, 12 },
+		ZAxisLimits	= { -12, 12 },
+		Restitution	= { 0.01, 0.01 },
+		Velocity	= 0.0,
+		MaxForce	= 38000.0,
+		
+		BreakForce	= 0.0,		
+		BreakTorque	= 0.0,		
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+	
+	Inertia = INERTIA_SOLID_CYLINDER
+}
+
+
+----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--#----#--#--# ----# Stunt track specials
+if not enum then
+
+enum = function(start,values)
+	
+		local i=start or 0
+		local enumeration=values
+		local k,v
+		local r={}
+		for k,v in pairs(enumeration) do
+			r[v]=i
+			i=i+1	
+		end
+		
+		return r
+	end
+end
+
+STUNT = enum( 100, {
+	"BOWLING_PIN1",
+	"BOWLING_PIN2",
+	"BOWLING_PIN3",
+	"BOWLING_PIN4",
+	"BOWLING_PIN5",
+	"BOWLING_PIN6",
+	"BOWLING_PIN7",
+	"BOWLING_PIN8",
+	"BOWLING_PIN9",
+	"BOWLING_PIN10",
+	"DARTS_SINGLE_1",
+	"DARTS_SINGLE_2",
+	"DARTS_SINGLE_3",
+	"DARTS_SINGLE_4",
+	"DARTS_SINGLE_5",
+	"DARTS_SINGLE_6",
+	"DARTS_SINGLE_7",
+	"DARTS_SINGLE_8",
+	"DARTS_SINGLE_9",
+	"DARTS_SINGLE_10",
+	"DARTS_SINGLE_11",
+	"DARTS_SINGLE_12",
+	"DARTS_SINGLE_13",
+	"DARTS_SINGLE_14",
+	"DARTS_SINGLE_15",
+	"DARTS_SINGLE_16",
+	"DARTS_SINGLE_17",
+	"DARTS_SINGLE_18",
+	"DARTS_SINGLE_19",
+	"DARTS_SINGLE_20",
+	"DARTS_DOUBLE_1",
+	"DARTS_DOUBLE_2",
+	"DARTS_DOUBLE_3",
+	"DARTS_DOUBLE_4",
+	"DARTS_DOUBLE_5",
+	"DARTS_DOUBLE_6",
+	"DARTS_DOUBLE_7",
+	"DARTS_DOUBLE_8",
+	"DARTS_DOUBLE_9",
+	"DARTS_DOUBLE_10",
+	"DARTS_DOUBLE_11",
+	"DARTS_DOUBLE_12",
+	"DARTS_DOUBLE_13",
+	"DARTS_DOUBLE_14",
+	"DARTS_DOUBLE_15",
+	"DARTS_DOUBLE_16",
+	"DARTS_DOUBLE_17",
+	"DARTS_DOUBLE_18",
+	"DARTS_DOUBLE_19",
+	"DARTS_DOUBLE_20",
+	"DARTS_TRIPLE_1",
+	"DARTS_TRIPLE_2",
+	"DARTS_TRIPLE_3",
+	"DARTS_TRIPLE_4",
+	"DARTS_TRIPLE_5",
+	"DARTS_TRIPLE_6",
+	"DARTS_TRIPLE_7",
+	"DARTS_TRIPLE_8",
+	"DARTS_TRIPLE_9",
+	"DARTS_TRIPLE_10",
+	"DARTS_TRIPLE_11",
+	"DARTS_TRIPLE_12",
+	"DARTS_TRIPLE_13",
+	"DARTS_TRIPLE_14",
+	"DARTS_TRIPLE_15",
+	"DARTS_TRIPLE_16",
+	"DARTS_TRIPLE_17",
+	"DARTS_TRIPLE_18",
+	"DARTS_TRIPLE_19",
+	"DARTS_TRIPLE_20",
+	"DARTS_BULLSEYE",
+	"CLOWNHAT",
+	"CLOWNNOSE",
+	"CLOWNMOUTH",
+	"CLOWNMUG",
+	"CLOWNPOCKET",
+	"CLOWNFLOWER",
+	"CLOWNCUP",
+})
+
+
+
+bowling_pinA = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.BOWLING_PIN1,
+
+	Mass	= 	10.0,
+	Restitution = 0.2,
+	WakeupVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+
+	
+}
+
+bowling_pinB = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.BOWLING_PIN2,
+
+	Mass	= 	10.0,
+	Restitution = 0.2,
+	WakeupVelocity = 1.00,
+
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+
+	
+}
+
+bowling_pinC = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.BOWLING_PIN3,
+
+	Mass	= 	10.0,
+	Restitution = 0.2,
+	WakeupVelocity = 1.00,
+
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+
+	
+}
+bowling_pinD = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.BOWLING_PIN4,
+
+	Mass	= 	10.0,
+	Restitution = 0.2,
+	WakeupVelocity = 1.00,
+
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+
+	
+}
+bowling_pinE = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.BOWLING_PIN5,
+
+	Mass	= 	10.0,
+	Restitution = 0.2,
+	WakeupVelocity = 1.00,
+
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+
+	
+}
+bowling_pinF = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.BOWLING_PIN6,
+
+	Mass	= 	10.0,
+	Restitution = 0.2,
+	WakeupVelocity = 1.00,
+
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+
+	
+}
+bowling_pinG = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.BOWLING_PIN7,
+
+	Mass	= 	10.0,
+	Restitution = 0.2,
+	WakeupVelocity = 1.00,
+
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+
+	
+}
+bowling_pinH = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.BOWLING_PIN8,
+
+	Mass	= 	10.0,
+	Restitution = 0.2,
+	WakeupVelocity = 1.00,
+
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+
+	
+}
+bowling_pinI = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.BOWLING_PIN9,
+
+	Mass	= 	10.0,
+	Restitution = 0.2,
+	WakeupVelocity = 1.00,
+
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+
+	
+}
+bowling_pinJ = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.BOWLING_PIN10,
+
+	Mass	= 	10.0,
+	Restitution = 0.2,
+	WakeupVelocity = 1.00,
+
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_CYLINDER
+
+	
+}
+--#darts
+
+--#single
+
+wood_dartboard_single_1 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+
+	BonusType = STUNT.DARTS_SINGLE_1,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_single_2 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_SINGLE_2,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_single_3 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_SINGLE_3,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_single_4 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_SINGLE_4,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_single_5 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_SINGLE_5,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_single_6 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_SINGLE_6,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_single_7 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_SINGLE_7,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_single_8 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_SINGLE_8,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_single_9 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_SINGLE_9,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_single_10 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_SINGLE_10,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_single_11 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_SINGLE_11,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_single_12 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_SINGLE_12,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_single_13 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_SINGLE_13,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_single_14 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_SINGLE_14,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_single_15 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_SINGLE_15,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_single_16 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_SINGLE_16,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_single_17 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_SINGLE_17,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_single_18 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_SINGLE_18,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_single_19 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_SINGLE_19,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_single_20 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_SINGLE_20,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+--#double
+
+wood_dartboard_double_1 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_DOUBLE_1,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_double_2 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_DOUBLE_2,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_double_3 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_DOUBLE_3,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_double_4 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_DOUBLE_4,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_double_5 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_DOUBLE_5,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_double_6 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_DOUBLE_6,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_double_7 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_DOUBLE_7,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_double_8 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_DOUBLE_8,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_double_9 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_DOUBLE_9,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_double_10 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_DOUBLE_10,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_double_11 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_DOUBLE_11,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_double_12 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_DOUBLE_12,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_double_13 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_DOUBLE_13,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_double_14 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_DOUBLE_14,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_double_15 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_DOUBLE_15,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_double_16 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_DOUBLE_16,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_double_17 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_DOUBLE_17,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_double_18 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_DOUBLE_18,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_double_19 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_DOUBLE_19,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_double_20 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_DOUBLE_20,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+
+--#triple
+
+wood_dartboard_triple_1 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_TRIPLE_1,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_triple_2 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_TRIPLE_2,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_triple_3 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_TRIPLE_3,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_triple_4 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_TRIPLE_4,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_triple_5 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_TRIPLE_5,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_triple_6 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_TRIPLE_6,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_triple_7 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_TRIPLE_7,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_triple_8 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_TRIPLE_8,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_triple_9 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_TRIPLE_9,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_triple_10 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_TRIPLE_10,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_triple_11 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_TRIPLE_11,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_triple_12 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_TRIPLE_12,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_triple_13 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_TRIPLE_13,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_triple_14 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_TRIPLE_14,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_triple_15 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_TRIPLE_15,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_triple_16 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_TRIPLE_16,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_triple_17 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_TRIPLE_17,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_triple_18 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_TRIPLE_18,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_triple_19 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_TRIPLE_19,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+wood_dartboard_triple_20 = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_TRIPLE_20,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+--#bullseye
+
+wood_dartboard_bullseye = {
+	Category = SetCategory(CATEGORY_TIRE_COLLISION, CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_DEFAULT,	
+	BonusType = STUNT.DARTS_BULLSEYE,
+
+	Mass	= 	40.0,
+	Restitution = 0.2,
+	WakeupVelocity = 5.00,
+	ReactivationVelocity = 1.00,
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX
+}
+
+
+--#Clown
+
+ClownHat = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_GATE,
+	BonusType = STUNT.CLOWNHAT,
+
+	Mass	= 	100.0,
+	Restitution = 0.08,
+
+	Hinge	= {
+		AngleLimits	= { -180, 180 },
+		Restitution	= { 0.1, 0.1 },
+		Velocity	= 0.0,
+		MaxForce	= 1000.0,
+		
+		BreakForce	= 0.0,
+		BreakTorque	= 0.0,
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX		
+
+}
+
+ClownNose = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_GATE,
+	BonusType = STUNT.CLOWNNOSE,
+	Mass	= 	100.0,
+	Restitution = 0.08,
+
+	Hinge	= {
+		AngleLimits	= { -180, 180 },
+		Restitution	= { 0.1, 0.1 },
+		Velocity	= 0.0,
+		MaxForce	= 1000.0,
+		
+		BreakForce	= 0.0,
+		BreakTorque	= 0.0,
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX		
+
+}
+
+ClownMouth = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_GATE,
+	BonusType = STUNT.CLOWNMOUTH,	
+
+	Mass	= 	100.0,
+	Restitution = 0.08,
+
+	Hinge	= {
+		AngleLimits	= { -180, 180 },
+		Restitution	= { 0.1, 0.1 },
+		Velocity	= 0.0,
+		MaxForce	= 1000.0,
+		
+		BreakForce	= 0.0,
+		BreakTorque	= 0.0,
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX		
+
+}
+
+ClownMug = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_GATE,
+	BonusType = STUNT.CLOWNMUG,	
+
+	Mass	= 	100.0,
+	Restitution = 0.08,
+
+	Hinge	= {
+		AngleLimits	= { -180, 180 },
+		Restitution	= { 0.1, 0.1 },
+		Velocity	= 0.0,
+		MaxForce	= 1000.0,
+		
+		BreakForce	= 0.0,
+		BreakTorque	= 0.0,
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX		
+
+}
+
+ClownPocket = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_GATE,
+	BonusType = STUNT.CLOWNPOCKET,
+
+	Mass	= 	100.0,
+	Restitution = 0.08,
+
+	Hinge	= {
+		AngleLimits	= { -180, 180 },
+		Restitution	= { 0.1, 0.1 },
+		Velocity	= 0.0,
+		MaxForce	= 1000.0,
+		
+		BreakForce	= 0.0,
+		BreakTorque	= 0.0,
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX		
+
+}
+
+ClownFlower = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_GATE,
+	BonusType = STUNT.CLOWNFLOWER,	
+
+	Mass	= 	100.0,
+	Restitution = 0.08,
+
+	Hinge	= {
+		AngleLimits	= { -180, 180 },
+		Restitution	= { 0.1, 0.1 },
+		Velocity	= 0.0,
+		MaxForce	= 1000.0,
+		
+		BreakForce	= 0.0,
+		BreakTorque	= 0.0,
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX		
+
+}
+
+ClownCup = {
+	Category = SetCategory(CATEGORY_DYNAMIC_OBJECT),
+	Type	=	OBJECT_GATE,
+	BonusType = STUNT.CLOWNCUP,
+
+	Mass	= 	100.0,
+	Restitution = 0.08,
+
+	Hinge	= {
+		AngleLimits	= { -180, 180 },
+		Restitution	= { 0.1, 0.1 },
+		Velocity	= 0.0,
+		MaxForce	= 1000.0,
+		
+		BreakForce	= 0.0,
+		BreakTorque	= 0.0,
+	},
+
+	CollisionSound = COLLISIONSOUND_SOLID,
+
+	Inertia = INERTIA_SOLID_BOX		
+
+}
+

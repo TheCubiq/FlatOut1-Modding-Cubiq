@@ -1,0 +1,163 @@
+--///////////////////////////////////////////////////////////////////////////
+--// SplitScreen.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2004 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// Created on 27.4.2004 16:39:21
+--// 
+--// @Author Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+menustate_splitscreen = {}
+
+function splitscreen_selectcar()
+	
+	SplitScreenPlayers[menustate_splitscreen.currentplayer]={ Car=cardealer_state.car-1,Skin=cardealer_state.skin,Controller=GUI:GetLastActiveController() }
+	GameFlow.SetSplitScreenPlayerCar(menustate_splitscreen.currentplayer-1,cardealer_state.car-1)
+	GameFlow.SetSplitScreenPlayerSkin(menustate_splitscreen.currentplayer-1,cardealer_state.skin)
+	GameFlow.SetSplitScreenPlayerAutoTransmission(menustate_splitscreen.currentplayer-1,GameFlow.GetAutoTransmission())
+
+	GameFlow.SetCarController(menustate_splitscreen.currentplayer,GUI:GetLastActiveController())
+	GUI:SetControllerAllowed(GUI:GetLastActiveController(),FALSE)
+	menustate_splitscreen.currentplayer = menustate_splitscreen.currentplayer + 1
+	GameFlow.SetPlayerCar(cardealer_state.car-1)
+	if menustate_splitscreen.currentplayer == GameFlow.GetNumSplitScreenPlayers()+1 then
+		menustate_splitscreen.initialized=nil
+		GUI:ResetAllowedControllers()
+		GameFlow.SetGameMode("SPLITSCREEN")
+		GameFlow.SetEventType("RACE")
+		local f=enter_trackselection("menu_multiplayer_splitscreen", race)
+		f()
+	else
+		EnterMenu("menu_multiplayer_splitscreen_carselect")
+	end
+end
+
+function splitscreen_backaction()
+	
+	menustate_splitscreen.currentplayer = menustate_splitscreen.currentplayer - 1
+	if menustate_splitscreen.currentplayer == 0 then
+		menustate_splitscreen.initialized=nil
+		GUI:ResetAllowedControllers()
+		EnterMenu("menu_multiplayer_splitscreen")
+	else
+		GUI:SetControllerAllowed(SplitScreenPlayers[menustate_splitscreen.currentplayer].Controller,TRUE)
+		if SplitScreenPlayers[menustate_splitscreen.currentplayer+1] then
+			GUI:SetControllerAllowed(SplitScreenPlayers[menustate_splitscreen.currentplayer+1].Controller,TRUE)
+			SplitScreenPlayers[menustate_splitscreen.currentplayer+1]=nil
+		end
+		EnterMenu("menu_multiplayer_splitscreen_carselect")
+	end
+
+end
+
+menu_multiplayer_splitscreen_carselect = {
+
+	options = {
+		title = SPLIT_PLAYER1,
+		background = noimage(),
+		orientation = MENU_HORIZONTAL,
+		position = DEFAULTBUTTONPOS(),
+		padding = { 6,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+
+	},
+
+	init_function = function()
+		if not menustate_splitscreen.initialized then
+				
+			SplitScreenPlayers = {}
+			menustate_splitscreen.currentplayer=1
+			menustate_splitscreen.initialized=true
+		else
+			if not cardealer_state then cardealer_State={} end
+
+			cardealer_state.car=0
+			--//GUI:SetControllerAllowed(GUI:GetLastActiveController(),FALSE)
+		end
+
+		--//GameFlow.SetPlayerCar(0)
+		--//GUI:SetMenuController(menustate_splitscreen.currentplayer)
+
+		--//menu_cardealer.options.title=ConvertToWString(string.format("Player %d",menustate_splitscreen.currentplayer))
+		menu_cardealer.options.title=WStringConcat(CAREERMODE_PLAYER,ConvertToWString(string.format(" %d",menustate_splitscreen.currentplayer)))
+		Menu:SetMenuTitle(menu_multiplayer_splitscreen.options.title)
+		cardealer_init(splitscreen_backaction,cardealer_transmissionselect(splitscreen_selectcar))
+	end,
+
+
+	deinit_function = function()
+--//		GUI:SetMenuController(0)
+		cardealer_deinit()
+	end,
+
+	update_function = function()
+		cardealer_update()
+	end,
+
+	items = {
+
+	},
+
+}
+
+
+menu_multiplayer_splitscreen = {
+
+	options = {
+		title = SPLIT_NUMBER,
+		background = noimage(),
+		orientation = MENU_HORIZONTAL,
+		position = DEFAULTBUTTONPOS(),
+		padding = { 6,0 },
+		button  = {
+			image = image("button.tga"),
+		},
+		
+		back_action = entermenu("menu_multiplayer")
+	},
+
+	init_function = function()
+		windows_reset()
+
+		StandardUpperBalk()
+		StandardLowerBalk()
+
+		activateparents()
+
+		GUI:LoadBackground()
+		SetMenuCamera(20)
+		GUI:SetRenderScene(TRUE)
+		MenuScene:StartFadeOn()
+
+		if cardealer_state then
+			cardealer_state.forward=nil
+		end
+
+		--//GUI:LoadBackground("data/menu/bg/class_select_background.tga")
+	end,
+
+
+	deinit_function = function()
+
+		windows_reset()
+	end,
+
+	items = {
+		{ SPLIT_P2, noimage(), function() GameFlow.SetNumSplitScreenPlayers(2); GameFlow.SetGameMode("SPLITSCREEN"); EnterMenu("menu_multiplayer_splitscreen_carselect") end },
+--//		{ SPLIT_P3, noimage(), function() GameFlow.SetNumSplitScreenPlayers(2) EnterMenu("menu_multiplayer_splitscreen_carselect") end },
+		
+
+	},
+
+}
+
+if getplatform() == "XBOX" then
+	table.insert(menu_multiplayer_splitscreen.items,{ SPLIT_P4, noimage(), function() GameFlow.SetNumSplitScreenPlayers(4); GameFlow.SetGameMode("SPLITSCREEN"); EnterMenu("menu_multiplayer_splitscreen_carselect") end })
+end
+
+

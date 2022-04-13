@@ -1,0 +1,355 @@
+Car.Suspension.DefaultSuspension1 = {
+	
+	Name = "default suspension level 1",
+	Price = 10,
+	Mesh			=	1,
+	Settings = {
+		Front = {
+			----#   1 = Independed suspension, 0 = beam axle suspension
+			Independed		=	1,
+			
+			----#  dimensions [m]
+			MinLength		=	0.00,
+			MaxLength		=	0.60,
+			----#  Rest length [m]
+			RestLength		=	0.35,
+			----#  Default compression [m]
+			----#  --- to convert old spring const [n/m]
+			----#  --- compression = car.mass*0.25*9.81/const
+			DefaultCompression	=	0.10,
+			
+			----#  Dampers [n/(m/s)]
+			----#  -- critical damping: b = 2*m*sqrt(k/m)
+			----#  NOTE: new notation for easier editing!!!!!!!!!!!!
+			----#        0.0 = no damping, 1.0 = critical damping
+			BumpDamp		=	0.45,
+			ReboundDamp		=	0.50,
+			
+			----#  Bump rubbers (HARD stop)
+			BumperLength		=	0.03,
+			BumperConst		=	100000.0,
+			BumperRestitution	=	0.25, --# 0.25
+			----#  NOTE: new notation
+			----#  0 = no rollbar, 0.5 = half from the suspension stiffness etc.
+			RollBarStiffness	=	0.3,
+			
+			----#  Camber angle [deg] (negative -> leans outward, positive -> leans inward)
+			CamberAngle		=	3.0,
+			----#  Camber change [deg/m] due to suspension travel
+			CamberChangeUp		=	0.0,
+			CamberChangeDown	=	0.0,
+			----#  Camber change[deg/deg] due to steering
+			CamberChangeIn		=	0.0,
+			CamberChangeOut		=	0.0,
+			
+		},
+		Rear = {
+			----#   1 = Independed suspension, 0 = beam axle suspension
+			Independed		=	0,
+			
+			----#  dimensions [m]
+			MinLength		=	0.00,
+			MaxLength		=	0.60 ,
+			----#  Rest length [m]
+			RestLength		=	0.35,
+			----#  Default compression [m]
+			----#  --- to convert old spring const [n/m]
+			----#  --- compression = car.mass*0.25*9.81/const
+			DefaultCompression	=	0.10,
+
+			----#  Dampers [n/(m/s)]
+			----#  -- critical damping: b = 2*m*sqrt(k/m)
+			----#  NOTE: new notation for easier editing!!!!!!!!!!!!
+			----#        0.0 = no damping, 1.0 = critical damping
+			BumpDamp		=	0.45,
+			ReboundDamp		=	0.50,
+			
+			----#  Bump rubbers (HARD stop)
+			BumperLength		=	0.03,
+			BumperConst		=	100000.0,
+			BumperRestitution	=	0.25, --# 0.25
+			----#  NOTE: new notation
+			----#  0 = no rollbar, 0.5 = half from the suspension stiffness etc.
+			RollBarStiffness	=	0.3,
+			
+			----#  Camber angle [deg] (negative -> leans outward, positive -> leans inward)
+			CamberAngle		=	0.0,
+			----#  Camber change [deg/m] due to suspension travel
+			CamberChangeUp		=	0.0,
+			CamberChangeDown	=	0.0,
+			----#  Camber change[deg/deg] due to steering
+			CamberChangeIn		=	0.0,
+			CamberChangeOut		=	0.0,
+		
+		},
+	},
+	
+} ----# --# ----#  SUSPENSION1 END
+
+Car.Suspension.DefaultSuspension2 = {
+
+	Name = "default suspension level 2",
+	Price = 10,
+	Mesh			=	2,
+		Settings = {
+		Front = {
+			----#   1 = Independed suspension, 0 = beam axle suspension
+			Independed		=	1,
+			
+			----#  dimensions [m]
+			MinLength		=	0.00,
+			MaxLength		=	0.53,
+			----#  Rest length [m]
+			RestLength		=	0.25,
+			----#  Default compression [m]
+			----#  --- to convert old spring const [n/m]
+			----#  --- compression = car.mass*0.25*9.81/const
+			DefaultCompression	=	0.10,
+			
+			----#  Dampers [n/(m/s)]
+			----#  -- critical damping: b = 2*m*sqrt(k/m)
+			----#  NOTE: new notation for easier editing!!!!!!!!!!!!
+			----#        0.0 = no damping, 1.0 = critical damping
+			BumpDamp		=	0.45,
+			ReboundDamp		=	0.50,
+			
+			----#  Bump rubbers (HARD stop)
+			BumperLength		=	0.03,
+			BumperConst		=	100000.0,
+			BumperRestitution	=	0.25, --# 0.25
+			----#  NOTE: new notation
+			----#  0 = no rollbar, 0.5 = half from the suspension stiffness etc.
+			RollBarStiffness	=	0.3,
+			
+			----#  Camber angle [deg] (negative -> leans outward, positive -> leans inward)
+			CamberAngle		=	3.0,
+			----#  Camber change [deg/m] due to suspension travel
+			CamberChangeUp		=	0.0,
+			CamberChangeDown	=	0.0,
+			----#  Camber change[deg/deg] due to steering
+			CamberChangeIn		=	0.0,
+			CamberChangeOut		=	0.0,
+			
+		},
+		Rear = {
+			----#   1 = Independed suspension, 0 = beam axle suspension
+			Independed		=	0,
+			
+			----#  dimensions [m]
+			MinLength		=	0.00,
+			MaxLength		=	0.53 ,
+			----#  Rest length [m]
+			RestLength		=	0.25,
+			----#  Default compression [m]
+			----#  --- to convert old spring const [n/m]
+			----#  --- compression = car.mass*0.25*9.81/const
+			DefaultCompression	=	0.10,
+
+			----#  Dampers [n/(m/s)]
+			----#  -- critical damping: b = 2*m*sqrt(k/m)
+			----#  NOTE: new notation for easier editing!!!!!!!!!!!!
+			----#        0.0 = no damping, 1.0 = critical damping
+			BumpDamp		=	0.45,
+			ReboundDamp		=	0.50,
+			
+			----#  Bump rubbers (HARD stop)
+			BumperLength		=	0.03,
+			BumperConst		=	100000.0,
+			BumperRestitution	=	0.25, --# 0.25
+			----#  NOTE: new notation
+			----#  0 = no rollbar, 0.5 = half from the suspension stiffness etc.
+			RollBarStiffness	=	0.3,
+			
+			----#  Camber angle [deg] (negative -> leans outward, positive -> leans inward)
+			CamberAngle		=	0.0,
+			----#  Camber change [deg/m] due to suspension travel
+			CamberChangeUp		=	0.0,
+			CamberChangeDown	=	0.0,
+			----#  Camber change[deg/deg] due to steering
+			CamberChangeIn		=	0.0,
+			CamberChangeOut		=	0.0,
+		
+		},
+		
+	},
+	
+	
+} ----# --# ----#  SUSPENSION2 END
+
+
+Car.Suspension.DefaultSuspension3 = {
+
+	Name = "default suspension level 3",
+	Price = 10,
+	Mesh			=	3,
+	Settings = {
+		Front = {
+			----#   1 = Independed suspension, 0 = beam axle suspension
+			Independed		=	1,
+			
+			----#  dimensions [m]
+			MinLength		=	0.00,
+			MaxLength		=	0.53,
+			----#  Rest length [m]
+			RestLength		=	0.25,
+			----#  Default compression [m]
+			----#  --- to convert old spring const [n/m]
+			----#  --- compression = car.mass*0.25*9.81/const
+			DefaultCompression	=	0.10,
+			
+			----#  Dampers [n/(m/s)]
+			----#  -- critical damping: b = 2*m*sqrt(k/m)
+			----#  NOTE: new notation for easier editing!!!!!!!!!!!!
+			----#        0.0 = no damping, 1.0 = critical damping
+			BumpDamp		=	0.45,
+			ReboundDamp		=	0.50,
+			
+			----#  Bump rubbers (HARD stop)
+			BumperLength		=	0.03,
+			BumperConst		=	100000.0,
+			BumperRestitution	=	0.25, --# 0.25
+			----#  NOTE: new notation
+			----#  0 = no rollbar, 0.5 = half from the suspension stiffness etc.
+			RollBarStiffness	=	0.3,
+			
+			----#  Camber angle [deg] (negative -> leans outward, positive -> leans inward)
+			CamberAngle		=	3.0,
+			----#  Camber change [deg/m] due to suspension travel
+			CamberChangeUp		=	0.0,
+			CamberChangeDown	=	0.0,
+			----#  Camber change[deg/deg] due to steering
+			CamberChangeIn		=	0.0,
+			CamberChangeOut		=	0.0,
+			
+		},
+		Rear = {
+			----#   1 = Independed suspension, 0 = beam axle suspension
+			Independed		=	0,
+			
+			----#  dimensions [m]
+			MinLength		=	0.00,
+			MaxLength		=	0.53 ,
+			----#  Rest length [m]
+			RestLength		=	0.25,
+			----#  Default compression [m]
+			----#  --- to convert old spring const [n/m]
+			----#  --- compression = car.mass*0.25*9.81/const
+			DefaultCompression	=	0.10,
+
+			----#  Dampers [n/(m/s)]
+			----#  -- critical damping: b = 2*m*sqrt(k/m)
+			----#  NOTE: new notation for easier editing!!!!!!!!!!!!
+			----#        0.0 = no damping, 1.0 = critical damping
+			BumpDamp		=	0.45,
+			ReboundDamp		=	0.50,
+			
+			----#  Bump rubbers (HARD stop)
+			BumperLength		=	0.03,
+			BumperConst		=	100000.0,
+			BumperRestitution	=	0.25, --# 0.25
+			----#  NOTE: new notation
+			----#  0 = no rollbar, 0.5 = half from the suspension stiffness etc.
+			RollBarStiffness	=	0.3,
+			
+			----#  Camber angle [deg] (negative -> leans outward, positive -> leans inward)
+			CamberAngle		=	0.0,
+			----#  Camber change [deg/m] due to suspension travel
+			CamberChangeUp		=	0.0,
+			CamberChangeDown	=	0.0,
+			----#  Camber change[deg/deg] due to steering
+			CamberChangeIn		=	0.0,
+			CamberChangeOut		=	0.0,
+		
+		},
+	},
+	
+} ----# --# ----#  SUSPENSION3 END
+
+
+Car.Suspension.DefaultSuspension4 = {
+
+	Name = "default suspension level 4",
+	Price = 10,
+	Mesh			=	4,
+	Settings = {
+		Front = {
+			----#   1 = Independed suspension, 0 = beam axle suspension
+			Independed		=	1,
+			
+			----#  dimensions [m]
+			MinLength		=	0.00,
+			MaxLength		=	0.53,
+			----#  Rest length [m]
+			RestLength		=	0.25,
+			----#  Default compression [m]
+			----#  --- to convert old spring const [n/m]
+			----#  --- compression = car.mass*0.25*9.81/const
+			DefaultCompression	=	0.10,
+			
+			----#  Dampers [n/(m/s)]
+			----#  -- critical damping: b = 2*m*sqrt(k/m)
+			----#  NOTE: new notation for easier editing!!!!!!!!!!!!
+			----#        0.0 = no damping, 1.0 = critical damping
+			BumpDamp		=	0.45,
+			ReboundDamp		=	0.50,
+			
+			----#  Bump rubbers (HARD stop)
+			BumperLength		=	0.03,
+			BumperConst		=	100000.0,
+			BumperRestitution	=	0.25, --# 0.25
+			----#  NOTE: new notation
+			----#  0 = no rollbar, 0.5 = half from the suspension stiffness etc.
+			RollBarStiffness	=	0.3,
+			
+			----#  Camber angle [deg] (negative -> leans outward, positive -> leans inward)
+			CamberAngle		=	3.0,
+			----#  Camber change [deg/m] due to suspension travel
+			CamberChangeUp		=	0.0,
+			CamberChangeDown	=	0.0,
+			----#  Camber change[deg/deg] due to steering
+			CamberChangeIn		=	0.0,
+			CamberChangeOut		=	0.0,
+			
+		},
+		Rear = {
+			----#   1 = Independed suspension, 0 = beam axle suspension
+			Independed		=	0,
+			
+			----#  dimensions [m]
+			MinLength		=	0.00,
+			MaxLength		=	0.53 ,
+			----#  Rest length [m]
+			RestLength		=	0.25,
+			----#  Default compression [m]
+			----#  --- to convert old spring const [n/m]
+			----#  --- compression = car.mass*0.25*9.81/const
+			DefaultCompression	=	0.10,
+
+			----#  Dampers [n/(m/s)]
+			----#  -- critical damping: b = 2*m*sqrt(k/m)
+			----#  NOTE: new notation for easier editing!!!!!!!!!!!!
+			----#        0.0 = no damping, 1.0 = critical damping
+			BumpDamp		=	0.45,
+			ReboundDamp		=	0.50,
+			
+			----#  Bump rubbers (HARD stop)
+			BumperLength		=	0.03,
+			BumperConst		=	100000.0,
+			BumperRestitution	=	0.25, --# 0.25
+			----#  NOTE: new notation
+			----#  0 = no rollbar, 0.5 = half from the suspension stiffness etc.
+			RollBarStiffness	=	0.3,
+			
+			----#  Camber angle [deg] (negative -> leans outward, positive -> leans inward)
+			CamberAngle		=	0.0,
+			----#  Camber change [deg/m] due to suspension travel
+			CamberChangeUp		=	0.0,
+			CamberChangeDown	=	0.0,
+			----#  Camber change[deg/deg] due to steering
+			CamberChangeIn		=	0.0,
+			CamberChangeOut		=	0.0,
+		
+		},
+	},
+	
+} ----# --# ----#  SUSPENSION4 END

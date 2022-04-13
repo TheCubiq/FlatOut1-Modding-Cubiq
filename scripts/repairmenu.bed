@@ -1,0 +1,386 @@
+--///////////////////////////////////////////////////////////////////////////
+--// RepairMenu.bed
+--///////////////////////////////////////////////////////////////////////////
+--// Copyright (c) 2003 Bugbear Entertainment ltd. 
+--// All Rights Reserved.
+--// 
+--// @date 22.4.2003 11:10:42
+--// 
+--// @Author Mikko Sivulainen (mikko.sivulainen@bugbear.fi)
+--///////////////////////////////////////////////////////////////////////////
+
+	wmNewFrame(nil,"ToolWindowRepair");
+	wmNewFrame(nil,"PartSelectButtonWindow");
+
+-------------------------------------------------------------------------
+-- part select buttons 
+-------------------------------------------------------------------------
+
+	progressBarColors = {
+		[PROGRESSBAR_COLORSTART] = { 0,255,0,255 },
+		[PROGRESSBAR_COLORMIDDLE] = { 255,255,0,255 },
+		[PROGRESSBAR_COLOREND] = { 255,0,0,255 },
+		[PROGRESSBAR_COLORBACKGROUND] = { 0,0,0,255 },
+	}
+
+
+
+	partSelectButtonTemplate = [[
+
+			wmNewFrame(PartSelectButtonWindow,"$PARENT");
+			wmNewButton($PARENT,"$NAME");
+
+			$PARENT.onInit = function()
+					$PARENT:SetPosition($POSITIONX,$POSITIONY);
+					$PARENT:SetSize(224,32);
+			end
+
+			$NAME.onInit = function()
+					$NAME:AttachResource(wmGetResource(FontLarge));
+					$NAME:SetPosition(0,0);
+					$NAME:SetSize(224,31);
+					$NAME:SetTitle("$TITLE")
+					$NAME.partName="$TITLE";
+			end
+
+			$NAME.onAction = function()
+					SetCarInfo($NAME.partName);
+			end
+
+	]]
+
+
+
+	partSelectButtonParameters = {
+		[1] = {
+			PARENT="EngineButton_frame",
+			NAME="EngineButton",
+			TITLE="ENGINE",
+			POSITIONX=19,
+			POSITIONY=18,
+		},
+		[2] = {   
+			PARENT="GearBoxButton_frame",
+			NAME="GearBoxButton",
+			TITLE="GEARBOX",
+			POSITIONX=19,
+			POSITIONY=82,
+		},
+		[3] = {
+			PARENT="SuspensionButton_frame",
+			NAME="SuspensionButton",
+			TITLE="SUSPENSION",
+			POSITIONX=19,
+			POSITIONY=146,
+		},
+		[4] = {
+			PARENT="TireButton_frame",
+			NAME="TireButton",
+			TITLE="TIRES",
+			POSITIONX=19,
+			POSITIONY=210,
+		},
+		[5] = {
+			PARENT="BodyButton_frame",
+			NAME="BodyButton",
+			TITLE="BODY",
+			POSITIONX=19,
+			POSITIONY=274,
+		},
+	}
+	
+	PartSelectButtonWindow.onInit = function()
+				
+			PartSelectButtonWindow:ShowBorders(FALSE);
+			PartSelectButtonWindow:SetPosition(28,14);
+			PartSelectButtonWindow:SetSize(246,328);
+
+			local i;
+			for i=1,getn(partSelectButtonParameters) do
+				newButtonFromTemplate(partSelectButtonTemplate,partSelectButtonParameters[i])
+			end
+	end
+
+	ToolWindowRepair.onInit = function()
+			ToolWindowRepair:SetPosition(128,432);
+			ToolWindowRepair:SetSize(384,48+32);
+	end
+
+
+	partSelectCurrentPart = 0;
+	partCurrentUpgradePrice = 0;
+	partCurrentRepairPrice = 0;
+
+-------------------------------------------------------------------------
+-- part info
+-------------------------------------------------------------------------
+
+
+	wmNewFrame(nil,"PartInfoWindow");
+	wmNewButton(PartInfoWindow,"CarInfoTitle");
+
+	wmNewButton(PartInfoWindow,"ReparBalk");
+	wmNewButton(PartInfoWindow,"UpgBalk");
+	wmNewButton(PartInfoWindow,"UpgradePartButton");
+	wmNewButton(PartInfoWindow,"UpgradeTextStatic");
+	wmNewButton(PartInfoWindow,"PartUpgradePrice");
+	wmNewProgressBar(PartInfoWindow,"PartUpgradeBar");
+
+
+	wmNewButton(PartInfoWindow,"RepairDamageButton");
+	wmNewButton(PartInfoWindow,"DamageTextStatic");
+	wmNewButton(PartInfoWindow,"RepairDamagePrice");
+	wmNewProgressBar(PartInfoWindow,"PartDamageBar");
+
+	wmNewButton(PartInfoWindow,"PartPicture");
+
+
+	PartInfoWindow.onInit = function()
+
+			PartInfoWindow:SetPosition(286,16);
+			PartInfoWindow:SetSize(320,330);
+
+			CarInfoTitle:SetPosition(80,10);
+			CarInfoTitle:AttachResource(wmGetResource(FontLarge));
+			CarInfoTitle:SetSize(178,16);
+			CarInfoTitle:SetSound(FALSE);
+
+			UpgradeTextStatic:SetTitle("Upgrade");
+			UpgradeTextStatic:AttachResource(wmGetResource(FontSmall));
+			UpgradeTextStatic:SetPosition(221,26);
+			UpgradeTextStatic:SetSize(85,20);
+			UpgradeTextStatic:SetSound(FALSE);
+		
+			DamageTextStatic:SetTitle("Damage");
+			DamageTextStatic:SetPosition(221,72);
+			DamageTextStatic:AttachResource(wmGetResource(FontSmall));
+			DamageTextStatic:SetSize(85,20);
+			DamageTextStatic:SetSound(FALSE);
+
+		ReparBalk:AttachResource(wmNewResource(BITMAP,"RBalk",DataPath.."reparbalk.tga"));
+			ReparBalk:SetPosition(51,91)
+			ReparBalk:SetSize(256,32)
+			ReparBalk:SetSound(FALSE);
+
+		UpgBalk:AttachResource(wmNewResource(BITMAP,"UBalk",DataPath.."upgbalk.tga"));
+			UpgBalk:SetPosition(52,47)
+			UpgBalk:SetSize(256,32)
+			UpgBalk:SetSound(FALSE);
+		
+		UpgradePartButton:AttachResource(wmNewResource(BITMAP_INACTIVE,"Upgrade_Part",DataPath.."Button_SmallBuy.tga"));
+			UpgradePartButton:AttachResource(wmNewResource(BITMAP_ACTIVE,"Upgrade_PartSelected",DataPath.."Button_SmallBuySelected.tga"));
+			UpgradePartButton:SetPosition(16,48);
+			UpgradePartButton:SetSize(32,16);
+
+			wmNewResource(BITMAP,"Upgrade_PartNo",DataPath.."Button_SmallBuyNo.tga");
+			wmNewResource(BITMAP,"Repair_DamageNo",DataPath.."Button_SmallRepairNo.tga");
+
+			RepairDamageButton:AttachResource(wmNewResource(BITMAP_INACTIVE,"Repair_Damage",DataPath.."Button_SmallRepair.tga"));
+			RepairDamageButton:AttachResource(wmNewResource(BITMAP_ACTIVE,"Repair_DamageSelected",DataPath.."Button_SmallRepairSelected.tga"));
+			RepairDamageButton:SetPosition(16,92);
+			RepairDamageButton:SetSize(32,16);
+
+			PartUpgradePrice:AttachResource(wmGetResource(FontSmall));
+			PartUpgradePrice:SetPosition(04,48);
+			PartUpgradePrice:SetSize(158,16);
+			PartUpgradePrice:SetSound(FALSE);
+
+			RepairDamagePrice:AttachResource(wmGetResource(FontSmall));
+			RepairDamagePrice:SetPosition(0,92);
+			RepairDamagePrice:SetSize(158,16);
+			RepairDamagePrice:SetSound(FALSE);
+
+			PartUpgradeBar:SetTickCount(4);
+			PartUpgradeBar:SetPosition(224,48);
+			PartUpgradeBar:SetSize(82,16);
+			
+			PartDamageBar:SetTickCount(10);
+			PartDamageBar:SetPosition(224,92);
+			PartDamageBar:SetSize(82,16);
+
+			PartUpgradeBar:SetGradientColor(PROGRESSBAR_COLORSTART,{255,0,0,255});
+			PartUpgradeBar:SetGradientColor(PROGRESSBAR_COLORMIDDLE,{255,0,0,255});
+			PartUpgradeBar:SetGradientColor(PROGRESSBAR_COLOREND,{255,0,0,255});
+			PartUpgradeBar:SetGradientColor(PROGRESSBAR_COLORBACKGROUND,{100,100,100,255});
+
+			for key,value in progressBarColors do
+				PartDamageBar:SetGradientColor(key,value);
+			end
+
+			PartPicture:SetColor(0,0,0,255);
+			PartPicture:SetSize(256,226);
+			PartPicture:SetPosition(68,115);
+			PartPicture:SetDrawCallback(GetDrawCallback());
+			PartPicture:SetDelayedDraw(TRUE);
+			PartPicture:SetSound(FALSE);
+	end
+
+	UpgradePartButton.onAction = function()
+			if PartUpgradeBar:GetValue() < 4 and partSelectCurrentPart ~= "BODY" then			
+------------------------				if ConfirmDialog("Upgrade part","Do you want to upgrade this part?") == TRUE then
+				if Purchase(partCurrentUpgradePrice,"Upgrade",strlower(partSelectCurrentPart)) == TRUE then
+					UpgradePart(partSelectCurrentPart);
+				end
+			end
+	end
+
+	RepairDamageButton.onAction = function()
+			if PartDamageBar:GetValue() > 0 then
+-----------------------				if ConfirmDialog("Repair part","Do you want to repair this part?") == TRUE then
+				if Purchase(partCurrentRepairPrice,"Repair",strlower(partSelectCurrentPart)) == TRUE then
+					RepairPart(partSelectCurrentPart);
+				end
+			end
+	end
+
+
+function UpgradePart(partname)
+	
+	local inventory = GetPlayerInventory(PLAYERID);
+	
+	local part;
+	if inventory ~= nil and partname ~= "BODY" then
+		local upgradelevel=PartUpgradeBar:GetValue()+1;
+		local car=GetPlayerCar();
+		LOG(format("car %d part %s upgradelevel %d",car,inventory[partname].Class,upgradelevel));
+		inventory[partname].Name=UpgradeList[car][inventory[partname].Class][upgradelevel];
+	end
+
+	SetPlayerInventory(PLAYERID,inventory);
+	RepairPart(partname);
+	SetCarInfo(partname);
+end
+
+function RepairPart(partname)
+	local inventory = GetPlayerInventory(PLAYERID);
+
+	local part;
+	if inventory ~= nil then
+		RepairPartDamage(inventory[partname].ID);
+	end
+
+	SetCarInfo(partname);
+end
+
+
+function SetCarInfo(partname)
+
+	PartInfoWindow:ShowWindow();
+	CarInfoTitle:SetTitle(partname);
+
+	local inventory = GetPlayerInventory(PLAYERID);
+	partCurrentUpgradePrice=0;
+	partCurrentRepairPrice=0;
+
+	local part=Car[inventory[partname].Class][inventory[partname].Name];
+--upgrade
+	if inventory ~= nil and partname ~= "BODY" then
+
+		if part ~= nil then
+			PartUpgradeBar:SetValue(part.UpgradeLevel);
+			
+
+			if part.UpgradeLevel < 4 then
+				local nextpart=UpgradeList[GetPlayerCar()][inventory[partname].Class][part.UpgradeLevel+1];
+				local upgradepart=Car[inventory[partname].Class][nextpart];
+				partCurrentUpgradePrice=upgradepart.Price;
+			else
+				partCurrentUpgradePrice=0;
+			end
+
+			PartUpgradePrice:SetTitle(format("$ %d",partCurrentUpgradePrice));
+			
+
+			if part.UpgradeLevel < 4 then
+				UpgradePartButton:AttachResource(wmGetResource("Upgrade_Part"));
+				UpgradePartButton:AttachResource(wmGetResource("Upgrade_PartSelected"));
+			else
+				UpgradePartButton:AttachResource(wmGetResource("Upgrade_PartNo"));
+			end
+
+		end
+	end
+
+
+---repair
+	local damage=GetPartDamage(inventory[partname].ID);
+	if  damage > 0 then
+		PartDamageBar:SetValue(ceil(damage*10));
+
+
+		partCurrentRepairPrice=floor(damage*(part.RepairPrice or 0));
+
+		RepairDamagePrice:SetTitle(format("$ %d",partCurrentRepairPrice));
+		RepairDamageButton:AttachResource(wmGetResource("Repair_Damage"));
+		RepairDamageButton:AttachResource(wmGetResource("Repair_DamageSelected"));
+	else
+		RepairDamageButton:AttachResource(wmGetResource("Repair_DamageNo"));
+		RepairDamagePrice:SetTitle("$ 0");
+		PartDamageBar:SetValue(0);
+		partCurrentRepairPrice=0;
+	end
+
+	if partname ~= "BODY" then
+		SetVisiblePart(inventory[partname].Name);
+	else
+		PartUpgradePrice:SetTitle("$ 0");
+		SetVisiblePart(nil);
+		UpgradePartButton:AttachResource(wmGetResource("Upgrade_PartNo"));
+		PartUpgradeBar:SetValue(0);
+	end
+
+	PartPicture:SetDrawCallback(GetDrawCallback());
+
+	partSelectCurrentPart=partname;
+end
+
+
+function EnterRepairMenu()
+
+	Race_calendar:HideWindow();
+	Garage_door:HideWindow();
+	LevelsWindow:HideWindow();
+	Spray_can:HideWindow();
+	Toolbox:HideWindow();
+	Office_door:HideWindow();
+	
+
+	PartSelectButtonWindow:ShowWindow();
+	ToolWindowRepair:ShowWindow();
+
+	PartInfoWindow:ShowWindow();
+
+	SetCarInfo("ENGINE");
+
+	ConfirmWindow.EnableButtons(ExitRepairMenu,nil);
+
+end
+		
+function ExitRepairMenu()
+
+	PartSelectButtonWindow:HideWindow();
+	ToolWindowRepair:HideWindow();
+	PartInfoWindow:HideWindow();
+
+	Office_door:ShowWindow();
+	Race_calendar:ShowWindow();
+	Garage_door:ShowWindow();
+	LevelsWindow:ShowWindow();
+	Spray_can:ShowWindow();
+	Toolbox:ShowWindow();
+
+	ConfirmWindow.DisableButtons();
+
+	SwitchGarageMenu(GARAGE_CAMERA);
+
+end
+		
+
+
+
+wmActivateWindow(PartSelectButtonWindow);
+wmActivateWindow(PartInfoWindow);
+wmActivateWindow(ToolWindowRepair);
+ToolWindowRepair:HideWindow();
+PartInfoWindow:HideWindow();
+PartSelectButtonWindow:HideWindow();
