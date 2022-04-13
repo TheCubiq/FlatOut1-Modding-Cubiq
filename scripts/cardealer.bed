@@ -609,9 +609,10 @@ addchild(Button{Position=RELATIVEPOS(SPOS(516,142),ppos),Size=GetResourceSize(co
 		MenuScene:SetCarSkin(self.number)
 	end
 
-	local colors=cardealer_data.car_data[cardealer_state.carnum].colors
+	local colors
 
 	parent.SetButtonColors = function(self)
+		colors=cardealer_data.car_data[cardealer_state.carnum].colors
 		
 		local i
 		for i=1,table.getn(colors) do
