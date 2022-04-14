@@ -14,6 +14,7 @@
 local max_skins = 20;
 
 local CarPaletteProps = {
+	Enable = false, -- Enable/Disable the car palette
 	Size = SIZE(30,128),
 	Position = POS(0,7), -- offsets
 	Padding = 10, -- padding between y items
@@ -568,11 +569,12 @@ function cardealer_real_init(backaction,forwardaction,useprice,istrade, enabled_
 	--//parent:AttachResource(cardealer_data.images.colorbox)
 
 	--//nuolet
-	addchild(Button{Position=RELATIVEPOS(SPOS(516,142),ppos),Size=GetResourceSize(menucommon.nuoliylos),Parent=parent, Layer=11}):AttachResource(menucommon.nuoliylos)
-	addchild(Button{Position=RELATIVEPOS(SPOS(516,266),ppos),Size=GetResourceSize(menucommon.nuolialas),Parent=parent, Layer=11}):AttachResource(menucommon.nuolialas)
-	addchild(Button{Position=RELATIVEPOS(SPOS(516,147),ppos),Size=SIZE(128,128),Parent=parent, Layer=10}):AttachResource(cardealer_data.images.colorbox)
-	addchild(Button{Position=RELATIVEPOS(SPOS(516,142),ppos),Size=GetResourceSize(common.color_glassblock),Parent=parent, Layer=0}):AttachResource(common.color_glassblock)
-
+	if (CarPaletteProps.Enable) then
+		addchild(Button{Position=RELATIVEPOS(SPOS(516,142),ppos),Size=GetResourceSize(menucommon.nuoliylos),Parent=parent, Layer=11}):AttachResource(menucommon.nuoliylos)
+		addchild(Button{Position=RELATIVEPOS(SPOS(516,266),ppos),Size=GetResourceSize(menucommon.nuolialas),Parent=parent, Layer=11}):AttachResource(menucommon.nuolialas)
+		addchild(Button{Position=RELATIVEPOS(SPOS(516,147),ppos),Size=SIZE(128,128),Parent=parent, Layer=10}):AttachResource(cardealer_data.images.colorbox)
+		addchild(Button{Position=RELATIVEPOS(SPOS(516,142),ppos),Size=GetResourceSize(common.color_glassblock),Parent=parent, Layer=0}):AttachResource(common.color_glassblock)
+	end
 	parent=addchild(ButtonGroup{Name="colorbox",Position=POS(0,0),Layer=0,Size=SIZE(128,128),ShowBorders=FALSE,Parent=parent})
 	parent.childs={f={}}
 
@@ -630,6 +632,9 @@ function cardealer_real_init(backaction,forwardaction,useprice,istrade, enabled_
 	end
 
 	parent.ResetSkin = function(self)
+		if (not(CarPaletteProps.Enable)) then 
+			GetWindow("colorbox"):HideWindow()
+		end
 		cardealer_state.skin=1
 		MenuScene:SetCarSkin(cardealer_state.skin)
 		self:SetButtonColors()
@@ -639,7 +644,7 @@ function cardealer_real_init(backaction,forwardaction,useprice,istrade, enabled_
 	parent.onMoveUp = function(self)
 		local c=cardealer_state.skin
 		local sn = table.getn(colors) -- skin count
-		if sn>0 then
+		if sn>0 and CarPaletteProps.Enable then
 			if c > 1 then
 				c = c - 1
 			else
@@ -654,7 +659,7 @@ function cardealer_real_init(backaction,forwardaction,useprice,istrade, enabled_
 	parent.onMoveDown = function(self)
 		local c=cardealer_state.skin
 		local sn = table.getn(colors) -- skin count
-		if sn>0 then
+		if sn>0 and CarPaletteProps.Enable then
 			if c < sn then
 				c = c + 1
 			else
