@@ -14,7 +14,7 @@
 local max_skins = 20;
 
 local CarPaletteProps = {
-	Enable = false, -- Enable/Disable the car palette
+	Enable = true, -- Enable/Disable the car palette
 	Size = SIZE(30,128),
 	Position = POS(0,7), -- offsets
 	Padding = 10, -- padding between y items
